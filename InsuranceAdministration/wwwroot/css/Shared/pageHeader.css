@@ -1,0 +1,18 @@
+﻿:root {
+    --navy-primary: #1684b5;
+    --navy-secondary: #084274;
+    --military-blue: #004080;
+    --rank-gold: #b8860b;
+    --rank-silver: #c0c0c0;
+    --white: #ffffff;
+    --light-gray: #f5f5f5;
+    --gray-border: #dee2e6;
+    --dark-text: #212529;
+}
+/* Header */
+.card-header-modern {
+    background: linear-gradient(180deg, var(--navy-primary) 0%, var(--navy-secondary) 100%);
+    padding: 2rem 2.5rem;
+    border-bottom: 4px solid var(--rank-gold);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

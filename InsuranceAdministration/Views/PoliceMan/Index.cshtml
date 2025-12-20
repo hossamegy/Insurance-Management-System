@@ -1,0 +1,123 @@
+﻿@using InsuranceAdministration.Core.Entities.PoliceManEntities
+@using System.Globalization
+@model IEnumerable<PoliceMan>
+@{
+}
+<head>
+    <link rel="stylesheet" href="~/css/PoliceMan/Index.css" asp-append-version="true" />
+</head>
+
+
+<div class="container">
+    <div class="header-section">
+        <input type="text" class="search-input" placeholder="بحث عن فرد شرطة ...">
+        <a class="btn-primary add-button" asp-area="" asp-controller="PoliceMan" asp-action="Add">اضافة فرد شرطة جديد +</a>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="soldiers-table m-2">
+            <thead>
+
+                <tr class="table-header">
+                    <th>م</th>
+                    <th>الاسم</th>
+                    <th>الدورية</th>
+                    <th>حاصل على فرقة</th>
+                    <th>البلد</th>
+                    <th>المركز</th>
+                    <th>المحافظة</th>
+                    <th>رقم الهاتف</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rowNumber = ((int)ViewBag.PageNumber - 1) * (int)ViewBag.PageSize;
+                }
+
+                @foreach (var policeMan in Model)
+                {
+                    rowNumber++;
+                    <tr>
+                        <td>@rowNumber</td>
+                        <td>@policeMan.Name</td>
+                        <td>@policeMan.GroupName</td>
+                        @if (policeMan.HasChantDriverCertificate == "حاصل على فرقة")
+                        {
+                            <td>
+                                <div class="has-chant-driver">
+                                    @policeMan.HasChantDriverCertificate
+                                </div>
+                             </td>
+                        } else
+                        {
+                            <td>
+                                <div class="has-not-chant-driver">
+                                    @policeMan.HasChantDriverCertificate
+                                </div>
+                            </td>
+
+                        }
+                        <td>@policeMan.Street</td>
+                        <td>@policeMan.Region</td>
+                        <td>@policeMan.City</td>
+                        <td>@policeMan.PhoneNumber</td>
+                    
+                        <td class="actions">
+
+                            <!-- Show -->
+                            <form asp-controller="PoliceMan" asp-action="Show" method="get" style="display:inline;">
+                                <input type="hidden" name="id" value="@policeMan.Id" />
+                                <button type="submit" class="btn btn-warning">عرض</button>
+                            </form>
+
+                            <!-- Edit -->
+                            <form asp-controller="PoliceMan" asp-action="Edit" method="get" style="display:inline;">
+                                <input type="hidden" name="id" value="@policeMan.Id" />
+                                <button type="submit" class="btn btn-edit">تعديل</button>
+                            </form>
+
+                            <!-- Delete -->
+                            <form asp-controller="PoliceMan" asp-action="Delete" method="post" style="display:inline;"
+                                  onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@policeMan.Id" />
+                                <button type="submit" class="btn btn-delete">حذف</button>
+                            </form>
+
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+        <div class="pagination-container">
+            @if ((int)ViewBag.PageNumber > 1)
+            {
+                <a class="btn-primary pagination-btn @(ViewBag.PageNumber == 1 ? "disabled" : "")"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(ViewBag.PageNumber - 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">
+                    السابق
+                </a>
+            }
+
+            <span>@ViewBag.PageNumber</span>
+
+            @if ((bool)ViewBag.HasNext)
+            {
+                <a class="btn-primary pagination-btn @(ViewBag.HasNext ? "" : "disabled")"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(ViewBag.PageNumber + 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">
+                    التالي
+                </a>
+            }
+
+        </div>
+
+
+    </div>
+</div>

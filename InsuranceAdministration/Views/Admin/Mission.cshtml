@@ -1,0 +1,78 @@
+﻿@model Mission
+
+<h1>إعدادات خدمات المسطح المائى</h1>
+
+<table class="table table-bordered text-center align-middle">
+    <thead>
+        <tr>
+            <th>م</th>
+            <th>كود الخدمة</th>
+            <th>اسم الخدمة</th>
+            <th>رقم اللنش</th>
+            <th>رقم الجهاز اللاسلكى</th>
+            <th>تحديث</th>
+            <th>حذف</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var missions = ViewBag.Missions as List<Mission> ?? new List<Mission>();
+            int counter = 1;
+        }
+
+        <!-- Existing missions -->
+        @foreach (var mission in missions)
+        {
+            <tr>
+                <td>@counter</td>
+
+                <td>
+                    <input name="CodeNumber" value="@mission.CodeNumber" class="form-control" form="update-@mission.Id" />
+                </td>
+                <td>
+                    <input name="Name" value="@mission.Name" class="form-control" form="update-@mission.Id" />
+                </td>
+                <td>
+                    <input name="BoatNumber" value="@mission.BoatNumber" class="form-control" form="update-@mission.Id" />
+                </td>
+                <td>
+                    <input name="WirelessCallSign" value="@mission.WirelessCallSign" class="form-control" form="update-@mission.Id" />
+                </td>
+
+                <!-- Update button -->
+                <td>
+                    <form id="update-@mission.Id" asp-action="UpdateMission" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Id" value="@mission.Id" />
+                        <button type="submit" class="btn btn-success btn-sm">تحديث</button>
+                    </form>
+                </td>
+
+                <!-- Delete button -->
+                <td>
+                    <form asp-action="DeleteMission" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@mission.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                    </form>
+                </td>
+            </tr>
+            counter++;
+        }
+
+        <!-- Row for adding a new mission -->
+        <tr>
+            <td>@counter</td>
+            <td><input name="CodeNumber" class="form-control" form="add-mission" /></td>
+            <td><input name="Name" class="form-control" form="add-mission" /></td>
+            <td><input name="BoatNumber" class="form-control" form="add-mission" /></td>
+            <td><input name="WirelessCallSign" class="form-control" form="add-mission" /></td>
+            <td colspan="2">
+                <form id="add-mission" asp-action="AddNewMission" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary btn-sm w-100">إضافة</button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>

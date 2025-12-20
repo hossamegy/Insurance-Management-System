@@ -1,0 +1,112 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-bottom: 100px;
+    margin:0px;
+}
+
+.container {
+    max-width: 100% !important;
+}
+
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.dropdown-menu {
+    text-align: right;
+}
+
+@media (min-width: 576px) {
+    .navbar-nav .dropdown:hover > .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+
+    .navbar-nav .dropdown > .dropdown-toggle:active {
+        pointer-events: none;
+    }
+}
+
+.dropdown-menu {
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+}
+.footer-d {
+    background-color: #f8f9fa;
+    padding: 0;
+    margin: 0;
+    position: fixed; /* لتثبيته في الأسفل */
+    bottom: 0; /* أسفل الصفحة */
+    width: 100%; /* يغطي كامل العرض */
+    display: flex; /* لتفعيل flexbox */
+    justify-content: center; /* توسيط المحتوى أفقياً */
+    align-items: center; /* توسيط المحتوى رأسياً */
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* ظل خفيف */
+    z-index: 1000;
+    padding: 25px;
+
+}
+
+
+.footer-content {
+    text-align: center;
+
+}
+
+.footer-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+
+}
+
+.footer-designer {
+    font-size: 0.9rem;
+    color: #6c757d;
+    padding: 0px;
+    margin: 10px;
+}
+
+.footer-copyright {
+    font-size: 0.85rem;
+    color: #6c757d;
+    border-top:  solid #dee2e6;
+}

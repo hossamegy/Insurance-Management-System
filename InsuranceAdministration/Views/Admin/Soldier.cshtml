@@ -1,0 +1,84 @@
+﻿@using InsuranceAdministration.Core.Entities.Settings
+
+<h1>إعدادات المجندين</h1>
+
+<!-- Assignment Options -->
+<form asp-action="AddAssignmentOption" method="post">
+    <label>التشغيل</label>
+    <input type="text" name="Name" required />
+    <button type="submit">إضافة</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>م</th>
+            <th>التشغيل</th>
+            <th>الاجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var counter = 0;
+        }
+        @foreach (AssignmentOptions option in ViewBag.AssignmentOptions)
+        {
+            counter++;
+            <tr>
+                <td>@counter</td>
+                <td>@option.Name</td>
+                <!-- Assignment Options -->
+                <td>
+                    <form asp-action="DeleteAssignmentOption" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@option.Id" />
+                        <button type="submit">حذف</button>
+                    </form>
+
+
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+
+<!-- Education Level Options -->
+<form asp-action="AddEducationLevelOption" method="post">
+    <label>المؤهل الدراسي</label>
+    <input type="text" name="Name" required />
+    <button type="submit">إضافة</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>م</th>
+            <th>المؤهل الدراسي</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            counter = 0;
+        }
+        @foreach (EducationLevelOptions option in ViewBag.EducationLevelOptions)
+        {
+            counter++;
+            <tr>
+                <td>@counter</td>
+                <td>@option.Name</td>
+                <td>
+           
+                    <form asp-action="DeleteEducationLevelOption" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@option.Id" />
+                        <button type="submit">حذف</button>
+                    </form>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

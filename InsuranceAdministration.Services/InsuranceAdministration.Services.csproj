@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InsuranceAdministration.Core\InsuranceAdministration.Core.csproj" />
+    <ProjectReference Include="..\InsuranceAdministration.Infrastructure\InsuranceAdministration.Infrastructure.csproj" />
+	  <FrameworkReference Include="Microsoft.AspNetCore.App" />
+
+  </ItemGroup>
+
+</Project>

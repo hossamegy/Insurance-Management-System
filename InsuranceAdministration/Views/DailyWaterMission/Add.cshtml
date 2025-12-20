@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "مهام المسطح المائي اليومية";
+    ViewData["SubTitle"] = "إدارة وتوزيع المهام اليومية";
+    Layout = "_Layout";   // Optional if you are using a shared layout
+}
+
+<head>
+    <title>@ViewData["Title"]</title>
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="~/css/DailyWaterMission/DailyWaterMissionView.css" asp-append-version="true" />
+
+    
+</head>
+@await Html.PartialAsync("_PageHeader")
+
+<body>
+
+    <div class="container m-0">
+        <div class="modern-card">
+
+            <!-- ===== BODY ===== -->
+            <div class="card-body p-4">
+                <div class="table-container">
+                    <table class="modern-table">
+                        <thead>
+                            <tr class="table-header-primary">
+                                <th class="sticky-col" rowspan="2">#</th>
+                                <th colspan="4">بيانات الخدمة</th>
+                                <th class="police-section" colspan="4">أفراد الشرطة</th>
+                                <th class="soldier-section" colspan="2">المجندين</th>
+                            </tr>
+                            <tr class="table-header-secondary">
+                                <th>كود الخدمة</th>
+                                <th>اسم الخدمة</th>
+                                <th>اللنش</th>
+                                <th>رقم الأسلكي</th>
+
+                                <th class="police-col">الاسم</th>
+                                <th class="police-col">رقم الهاتف</th>
+                                <th class="police-col">السلاح</th>
+
+                                <th class="soldier-col">الاسم</th>
+                                <th class="soldier-col">رقم الهاتف</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @{
+                                int counter = 0;
+                            }
+                            @foreach (var mission in ViewBag.Missions)
+                            {
+                                counter++;
+                                <tr>
+                                    <td class="sticky-col">
+                                        <span class="badge-number">@counter</span>
+                                    </td>
+
+                                    <td><span class="code-badge">@mission.CodeNumber</span></td>
+                                    <td class="fw-semibold">@mission.Name</td>
+                                    <td>@mission.BoatNumber</td>
+                                    <td>@mission.WirelessCallSign</td>
+
+                                    <!-- Police -->
+
+                                    <td class="police-cell">
+                                        <select class="modern-select police-select"
+                                                data-mission-id="@mission.Id">
+                                            <option value="">اختر فرد شرطة</option>
+                                            @foreach (var police in ViewBag.PoliceMen)
+                                            {
+                                                <option value="@police.Value"
+                                                        data-phone="@police.Text.Split('|')[1]">
+                                                    @police.Text.Split('|')[0]
+                                                </option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td class="police-cell">
+                                        <input class="modern-input police-phone"
+                                               id="policePhone_@mission.Id"
+                                               readonly />
+                                    </td>
+
+                                    <td class="police-cell">
+                                        <input class="modern-input" placeholder="رقم السلاح" />
+                                    </td>
+
+                                    <!-- Soldier -->
+                                    <td class="soldier-cell">
+                                        <select class="modern-select soldier-select"
+                                                data-mission-id="@mission.Id">
+                                            <option value="">اختر المجند</option>
+                                            @foreach (var soldier in ViewBag.Soldiers)
+                                            {
+                                                <option value="@soldier.Value"
+                                                        data-phone="@soldier.Text.Split('|')[1]">
+                                                    @soldier.Text.Split('|')[0]
+                                                </option>
+                                            }
+                                        </select>
+                                    </td>
+
+                                    <td class="soldier-cell">
+                                        <input class="modern-input soldier-phone"
+                                               id="soldierPhone_@mission.Id"
+                                               readonly />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== ACTIONS ===== -->
+                <div class="action-bar">
+                    <button class="btn-modern btn-primary-modern">
+                        <i class="fas fa-save"></i> حفظ المهام
+                    </button>
+                    <button class="btn-modern btn-secondary-modern">
+                        <i class="fas fa-redo"></i> إعادة تعيين
+                    </button>
+                    <button class="btn-modern btn-outline-modern">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+
+                $('.police-select').change(function () {
+                    let opt = $(this).find(':selected');
+                    let id = $(this).data('mission-id');
+
+                    $('#policePhone_' + id).val(opt.data('phone') || '').toggleClass('filled', opt.data('phone'));
+                });
+
+                $('.soldier-select').change(function () {
+                    let opt = $(this).find(':selected');
+                    let id = $(this).data('mission-id');
+
+                    $('#soldierPhone_' + id).val(opt.data('phone') || '').toggleClass('filled', opt.data('phone'));
+                });
+
+            });
+        </script>
+    }
+
+</body>
+

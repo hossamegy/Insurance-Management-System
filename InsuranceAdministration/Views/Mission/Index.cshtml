@@ -1,0 +1,36 @@
+﻿@model Mission
+
+@{
+    Layout = "_Layout";   // Optional if you are using a shared layout
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/Mission/Index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/InsuranceAdministration.styles.css" asp-append-version="true" />
+</head>
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <form asp-action="Create" asp-controller="Mission" method="post">
+        <div class="left-side-bar">
+            <ul>
+                <li>
+                    <input asp-for="Name" class="form-control" placeholder="Mission name" />
+                </li>
+
+                <li>
+                    <button type="submit" class="btn btn-primary mt-2">
+                        Save
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>

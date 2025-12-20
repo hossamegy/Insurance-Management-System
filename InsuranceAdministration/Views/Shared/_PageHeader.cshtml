@@ -1,0 +1,21 @@
+﻿@* PARTIAL VIEW – NO LAYOUT *@
+
+<link rel="stylesheet" href="~/css/Shared/pageHeader.css" asp-append-version="true" />
+
+<div class="card-header-modern">
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <div class="header-icon text-white fs-3">
+                <i class="fas fa-water"></i>
+            </div>
+            <div class="ms-3">
+                <h3 class="mb-0 text-white">
+                    @(ViewData["Title"] ?? "عنوان افتراضي")
+                </h3>
+                <small class="text-white-50">
+                    @(ViewData["SubTitle"] ?? "")
+                </small>
+            </div>
+        </div>
+    </div>
+</div>

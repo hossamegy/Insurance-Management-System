@@ -1,0 +1,93 @@
+﻿@using InsuranceAdministration.Core.Entities.SoldierEntities
+@model Soldier
+@{
+    ViewData["Title"] = "بيانات المجند";
+}
+<head>
+    <link rel="stylesheet" href="~/css/Shared/Show.css" asp-append-version="true" />
+</head>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header text-white">
+            <h3 class="mb-0">بيانات المجند</h3>
+        </div>
+        <div class="card-body">
+
+            @* البيانات الشخصية *@
+            <h5 class="text-primary mt-3 mb-3">البيانات الشخصية</h5>
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <strong>الاسم:</strong> @Model.Name
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>الرقم القومي:</strong> @Model.NationalId
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <strong>تاريخ الميلاد:</strong> @Model.BirthDate.ToString("dd/MM/yyyy")
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>المؤهل الدراسي:</strong> @Model.EducationLevel
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <strong>رقم الهاتف:</strong> @Model.PhoneNumber
+                </div>
+            </div>
+
+            <hr />
+
+            @* بيانات الخدمة العسكرية *@
+            <h5 class="text-primary mt-4 mb-3">بيانات الخدمة العسكرية</h5>
+
+            @* الأرقام العسكرية *@
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <strong>رقم الشرطة:</strong> @Model.PoliceNumber
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>الرقم الثلاثي:</strong> @Model.TripleNumber
+                </div>
+            </div>
+
+            @* التواريخ العسكرية *@
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <strong>تاريخ التجنيد:</strong> @Model.EnlistmentDate.ToString("dd/MM/yyyy")
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>تاريخ انتهاء الخدمة:</strong> @(Model.ServiceEndDate?.ToString("dd/MM/yyyy") ?? "غير محدد")
+                </div>
+            </div>
+
+            @* التشغيل *@
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <strong>التشغيل:</strong> @Model.Assignment
+                </div>
+            </div>
+
+            <hr />
+
+            @* بيانات العنوان *@
+            <h5 class="text-primary mt-4 mb-3">بيانات العنوان</h5>
+            <div class="row mb-3">
+                <div class="col-md-4 mb-2">
+                    <strong>المحافظة:</strong> @Model.City
+                </div>
+                <div class="col-md-4 mb-2">
+                    <strong>المركز:</strong> @Model.Region
+                </div>
+                <div class="col-md-4 mb-2">
+                    <strong>البلد:</strong> @Model.Street
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <a asp-action="Index" asp-controller="Soldier" class="btn btn-secondary">رجوع</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">تعديل</a>
+        </div>
+    </div>
+</div>
