@@ -111,6 +111,24 @@ namespace InsuranceAdministration.Services
             }
         }
 
+        public async ValueTask<IEnumerable<Mission>> GetAllMissionsByActive(bool IsActive)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Retrieving all missions with active status: {IsActive}",
+                    IsActive);
+                var missions = await _repository.GetAllMissionsByActive(IsActive);
+                return missions;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while retrieving missions by active status");
+                throw;
+            }
+        }
+
         /* ================= GET BY ID ================= */
 
         public async ValueTask<Mission> GetMission(int id)
@@ -178,6 +196,7 @@ namespace InsuranceAdministration.Services
                 existingMission.BoatNumber = mission.BoatNumber;
                 existingMission.CodeNumber = mission.CodeNumber;
                 existingMission.WirelessCallSign = mission.WirelessCallSign;
+                existingMission.IsActive = mission.IsActive;
                 existingMission.Policemen = mission.Policemen;
                 existingMission.Soldiers = mission.Soldiers;
 

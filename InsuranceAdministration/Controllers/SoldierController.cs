@@ -24,8 +24,7 @@ namespace InsuranceAdministration.Controllers
         // GET: List of soldiers with pagination
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
         {
-            var soldiers = (await _soldierService.GetPaginatedSoldiers(pageNumber, pageSize + 1)).ToList();
-
+            var soldiers = (await _soldierService.GetPaginatedSoldiersByActive(pageNumber, pageSize + 1, true)).ToList();
             ViewBag.PageNumber = pageNumber;
             ViewBag.PageSize = pageSize;
             ViewBag.HasNext = soldiers.Count > pageSize;

@@ -29,7 +29,7 @@ namespace InsuranceAdministration.Controllers
             var soldiers = await _soldierServices.GetSoldierByAssignment("مسطح مائى");
             var policeMen = await _policeManServices.GetAllPoliceMan();
 
-            ViewBag.Missions = await _missionServices.GetAllMissions();
+            ViewBag.Missions = await _missionServices.GetAllMissionsByActive(true);
 
             // Format: "Name|PhoneNumber"
             ViewBag.Soldiers = new SelectList(

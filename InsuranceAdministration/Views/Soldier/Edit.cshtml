@@ -11,7 +11,17 @@
 
     <form asp-action="Edit" asp-controller="Soldier" method="post" class="row g-3 p-0">
         <input type="hidden" asp-for="Id" />
+        @* رقم الشرطة *@
+        <div class="col-md-6">
+            <label class="form-label">الحالة</label>
+            <select asp-for="IsActive" class="form-control" maxlength="50">
+                <option value="">-- اختار ---</option>
+                <option value="true">فى الخدمة</option>
+                <option value="false">تم تسريحة</option>
 
+            </select> 
+            <span asp-validation-for="PoliceNumber" class="text-danger"></span>
+        </div>
         @* البيانات الشخصية *@
         <div class="col-12">
             <h5 class="text-primary mt-3">البيانات الشخصية</h5>

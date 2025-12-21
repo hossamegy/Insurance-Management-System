@@ -32,7 +32,7 @@ namespace InsuranceAdministration.Core.Entities.PoliceManEntities
 
             [Required(ErrorMessage = "ادخل اسم الدورية")]
             public string GroupName { get; set; }
-    
+            public string? Note { get; set; }
             // العلاقات
             public ICollection<Punishment>? Punishments { get; set; } = new List<Punishment>();
             public ICollection<Leave>? Leaves { get; set; } = new List<Leave>();

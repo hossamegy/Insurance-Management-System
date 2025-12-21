@@ -13,7 +13,7 @@ namespace InsuranceAdministration.Core.Interfaces.Repository
         ValueTask<IEnumerable<Soldier>> GetSoldierByAssignment(String SoldierAssignment);
         ValueTask<Soldier> UpdateCurrentSoldier(Soldier soldier);
         ValueTask<Soldier> DeleteSoldier(int id);
-        ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiers(int pageNumber, int pageSize);
+        ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiersByActive(int pageNumber, int pageSize, bool IsActive);
 
     }
 }

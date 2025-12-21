@@ -2,13 +2,19 @@
 @model PoliceMan
 @{
     ViewData["Title"] = "إضافة فرد شرطة";
+
+    ViewData["SubTitle"] = "إدارة وتوزيع افراد الشرطة";
+    Layout = "_Layout";
 }
 <head>
     <link rel="stylesheet" href="~/css/Shared/Add.css" asp-append-version="true" />
 </head>
+
+@await Html.PartialAsync("_PageHeader")
+
 <div class="form-container form-scroll">
-    <h2 class="form-title p-4">إضافة فرد شرطة</h2>
-    <form asp-action="AddNewPoliceManItem" asp-controller="PoliceMan" method="post" class="row g-3 p-0">
+
+    <form asp-action="UpdatePoliceMan" asp-controller="PoliceMan" method="post" class="row g-3 p-0">
 
         @* البيانات الأساسية *@
         <div class="col-12">
@@ -92,7 +98,7 @@
         <div class="col-12 mt-4">
             <hr />
             <a asp-action="Index" asp-controller="PoliceMan" class="btn btn-secondary">رجوع</a>
-            <button type="submit" class="btn btn-primary">حفظ البيانات</button>
+            <button type="submit" class="btn btn-primary">حفظ التعديل</button>
         </div>
     </form>
 </div>

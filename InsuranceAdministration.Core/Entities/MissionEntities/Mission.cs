@@ -14,9 +14,10 @@ public class Mission
 
     public string? BoatNumber { get; set; }
 
+    
     // رقم الجاهز اللاسلكي
     public string? WirelessCallSign { get; set; }
-
+    public bool IsActive { get; set; } = true;
     public int? DailyMissionId { get; set; }
     public DailyMission? DailyMission { get; set; }
 

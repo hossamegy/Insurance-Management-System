@@ -6,6 +6,8 @@ namespace InsuranceAdministration.Core.Interfaces.Services
     {
         ValueTask<Mission> AddNewMission(Mission mission);
         ValueTask<IEnumerable<Mission>> GetAllMissions();
+        ValueTask<IEnumerable<Mission>> GetAllMissionsByActive(bool IsActive);
+
         ValueTask<Mission> GetMission(int id);
         ValueTask<Mission> UpdateCurrentMission(Mission mission);
         ValueTask<Mission> DeleteMission(int id);

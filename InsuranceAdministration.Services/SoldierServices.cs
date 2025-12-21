@@ -165,14 +165,14 @@ namespace InsuranceAdministration.Services
         }
 
 
-        public async ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiers(int pageNumber, int pageSize)
+        public async ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiersByActive(int pageNumber, int pageSize, bool IsActive)
         {
             try
             {
                 _logger.LogInformation("Service: Retrieving paginated soldiers - Page: {PageNumber}, Size: {PageSize}",
                     pageNumber, pageSize);
 
-                var soldiers = await _repository.GetPaginatedSoldiers(pageNumber, pageSize);
+                var soldiers = await _repository.GetPaginatedSoldiersByActive(pageNumber, pageSize, true);
 
                 _logger.LogInformation("Service: Successfully retrieved paginated soldiers");
                 return soldiers;

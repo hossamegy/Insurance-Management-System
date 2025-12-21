@@ -2,11 +2,15 @@
 @using System.Globalization
 @model IEnumerable<PoliceMan>
 @{
+    ViewData["Title"] = "حصر افراد الشرطة";
+    ViewData["SubTitle"] = "إدارة وتوزيع افراد الشرطة";
+    Layout = "_Layout";
 }
 <head>
     <link rel="stylesheet" href="~/css/PoliceMan/Index.css" asp-append-version="true" />
 </head>
 
+@await Html.PartialAsync("_PageHeader")
 
 <div class="container">
     <div class="header-section">

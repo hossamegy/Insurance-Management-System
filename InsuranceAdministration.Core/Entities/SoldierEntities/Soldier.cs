@@ -63,6 +63,9 @@ namespace InsuranceAdministration.Core.Entities.SoldierEntities
             [StringLength(11, MinimumLength = 11, ErrorMessage = "رقم الهاتف يجب أن يكون 11 رقم")]
             public string? PhoneNumber { get; set; }
 
+            [Required(ErrorMessage = "هذا الحقل مطلوب")]
+            public bool IsActive { get; set; } = true;
+
             // تاريخ انتهاء الخدمة العسكرية
             [DataType(DataType.Date)]
             public DateTime? ServiceEndDate { get; set; }

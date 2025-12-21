@@ -56,5 +56,10 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             await _context.SaveChangesAsync();
             return mission;
         }
+
+        public async ValueTask<IEnumerable<Mission>> GetAllMissionsByActive(bool IsActive)
+        {
+           return await _entities.Where(m => m.IsActive == IsActive).ToListAsync();    
+        }
     }
 }

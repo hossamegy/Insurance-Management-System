@@ -61,5 +61,29 @@ namespace InsuranceAdministration.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        public async Task<IActionResult> Edit(int id)
+        {
+           
+            var policeMan = await _services.GetPoliceMan(id);
+            if (policeMan == null)
+                return NotFound();
+
+            return View(policeMan);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(PoliceMan policeMan)
+        {
+            if (!ModelState.IsValid)
+                return View(policeMan);
+
+            await _services.UpdateCurrentPoliceMan(policeMan);
+      
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

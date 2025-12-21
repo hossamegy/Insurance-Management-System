@@ -48,9 +48,10 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             return soldier;                    
         }
         
-        public async ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiers(int pageNumber, int pageSize)
+        public async ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiersByActive(int pageNumber, int pageSize, bool IsActive = true)
         {
             IEnumerable<Soldier> soldiers = await _entitiy
+                .Where(s => s.IsActive == IsActive)
                  .OrderBy(s => s.Id)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)

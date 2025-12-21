@@ -10,8 +10,8 @@
             <th>اسم الخدمة</th>
             <th>رقم اللنش</th>
             <th>رقم الجهاز اللاسلكى</th>
+            <th>حالة الخدمة</th>
             <th>تحديث</th>
-            <th>حذف</th>
         </tr>
     </thead>
     <tbody>
@@ -38,22 +38,31 @@
                 <td>
                     <input name="WirelessCallSign" value="@mission.WirelessCallSign" class="form-control" form="update-@mission.Id" />
                 </td>
+              
+                
+                <td class="d-flex raw">
+                    @if (mission.IsActive == true)
+                    {
+                        <label name="WirelessCallSign" value="@mission.WirelessCallSign" class="form-control bg-primary text-light">تعمل</label>
+                    }
+                    else
+                    {
+                        <label name="WirelessCallSign" value="@mission.WirelessCallSign" class="form-control bg-danger text-light">متوقفة</label>
 
+                    }
+                    <select name="IsActive" class="form-control" form="update-@mission.Id">
+                        <option value="">-- اختار حالة الخدمة --</option>
+                        <option value="true">تعمل</option>
+                        <option value="false">متوقفة</option>
+                    </select>
+
+                </td>
                 <!-- Update button -->
                 <td>
                     <form id="update-@mission.Id" asp-action="UpdateMission" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@mission.Id" />
                         <button type="submit" class="btn btn-success btn-sm">تحديث</button>
-                    </form>
-                </td>
-
-                <!-- Delete button -->
-                <td>
-                    <form asp-action="DeleteMission" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@mission.Id" />
-                        <button type="submit" class="btn btn-danger btn-sm">حذف</button>
                     </form>
                 </td>
             </tr>
@@ -67,6 +76,7 @@
             <td><input name="Name" class="form-control" form="add-mission" /></td>
             <td><input name="BoatNumber" class="form-control" form="add-mission" /></td>
             <td><input name="WirelessCallSign" class="form-control" form="add-mission" /></td>
+
             <td colspan="2">
                 <form id="add-mission" asp-action="AddNewMission" method="post">
                     @Html.AntiForgeryToken()

@@ -1,15 +1,25 @@
-﻿@using InsuranceAdministration.Core.Entities.SoldierEntities
-@model Soldier
+﻿@using InsuranceAdministration.Core.Entities.PoliceManEntities
+@model PoliceMan
 @{
+    ViewData["Title"] = "تعديل بيانات افراد الشرطة";
+    ViewData["SubTitle"] = "إدارة وتوزيع افراد الشرطة";
+    Layout = "_Layout";
 }
 <head>
-    <link rel="stylesheet" href="~/css/Shared/Edit.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Shared/Add.css" asp-append-version="true" />
 </head>
-<div class="form-container form-scroll">
-    <h2 class="form-title p-4">تعديل بيانات المجند</h2>
 
-    <form asp-action="Edit" asp-controller="Soldier" method="post" class="row g-3 p-0">
+@await Html.PartialAsync("_PageHeader")
+
+<div class="form-container form-scroll">
+
+    <form asp-action="Edit" asp-controller="PoliceMan" method="post" class="row g-3 p-0">
         <input type="hidden" asp-for="Id" />
+        @* البيانات الأساسية *@
+        <div class="col-12">
+            <h5 class="text-primary mt-3">البيانات الأساسية</h5>
+            <hr />
+        </div>
 
         @* الاسم *@
         <div class="col-md-6">
@@ -18,76 +28,7 @@
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
-        @* الرقم القومي *@
-        <div class="col-md-6">
-            <label class="form-label">الرقم القومي</label>
-            <input asp-for="NationalId" class="form-control" maxlength="14" />
-            <span asp-validation-for="NationalId" class="text-danger"></span>
-        </div>
 
-        @* تاريخ الميلاد *@
-        <div class="col-md-4">
-            <label class="form-label">تاريخ الميلاد</label>
-            <input asp-for="BirthDate" type="date" class="form-control" />
-            <span asp-validation-for="BirthDate" class="text-danger"></span>
-        </div>
-
-        @* تاريخ التجنيد *@
-        <div class="col-md-4">
-            <label class="form-label">تاريخ التجنيد</label>
-            <input asp-for="EnlistmentDate" type="date" class="form-control" />
-            <span asp-validation-for="EnlistmentDate" class="text-danger"></span>
-        </div>
-
-        @* تاريخ انتهاء الخدمة *@
-        <div class="col-md-4">
-            <label class="form-label">تاريخ انتهاء الخدمة</label>
-            <input asp-for="ServiceEndDate" type="date" class="form-control" />
-            <span asp-validation-for="ServiceEndDate" class="text-danger"></span>
-        </div>
-
-        @* رقم الشرطة *@
-        <div class="col-md-6">
-            <label class="form-label">رقم الشرطة</label>
-            <input asp-for="PoliceNumber" class="form-control" maxlength="50" />
-            <span asp-validation-for="PoliceNumber" class="text-danger"></span>
-        </div>
-
-        @* الرقم الثلاثي *@
-        <div class="col-md-6">
-            <label class="form-label">الرقم الثلاثي</label>
-            <input asp-for="TripleNumber" class="form-control" maxlength="50" />
-            <span asp-validation-for="TripleNumber" class="text-danger"></span>
-        </div>
-
-        @* التشغيل *@
-        <div class="col-md-6">
-            <label class="form-label">التشغيل</label>
-            <select asp-for="Assignment" class="form-control">
-                <option value="">-- اختر التشغيل --</option>
-                <option value="حراسات">حراسات</option>
-                <option value="مسطح مائى">مسطح مائى</option>
-                <option value="شئون مجندين">شئون مجندين</option>
-                <option value="سائق التشهيلات">سائق التشهيلات</option>
-                <option value="مراسلة">مراسلة</option>
-                <option value="سائق ضابط">سائق ضابط</option>
-                <option value="مطبخ">مطبخ</option>
-                <option value="كانتين">كانتین</option>
-            </select>
-            <span asp-validation-for="Assignment" class="text-danger"></span>
-        </div>
-
-        @* المؤهل الدراسي *@
-        <div class="col-md-6">
-            <label class="form-label">المؤهل الدراسي</label>
-            <select asp-for="EducationLevel" class="form-control">
-                <option value="">-- اختر المؤهل --</option>
-                <option value="عالى">عالى</option>
-                <option value="فوق متوسط">فوق متوسط</option>
-                <option value="متوسط">متوسط</option>
-            </select>
-            <span asp-validation-for="EducationLevel" class="text-danger"></span>
-        </div>
 
         @* رقم الهاتف *@
         <div class="col-md-6">
@@ -96,30 +37,67 @@
             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
 
-        @* العنوان *@
-        <div class="col-md-4">
-            <label class="form-label">البلد</label>
-            <input asp-for="Street" class="form-control" maxlength="50" />
-            <span asp-validation-for="Street" class="text-danger"></span>
+        @* بيانات العمل *@
+        <div class="col-12">
+            <h5 class="text-primary mt-4">بيانات العمل</h5>
+            <hr />
         </div>
 
-        <div class="col-md-4">
-            <label class="form-label">المركز</label>
-            <input asp-for="Region" class="form-control" maxlength="50" />
-            <span asp-validation-for="Region" class="text-danger"></span>
+        @* الدورية *@
+        <div class="col-md-6">
+            <label class="form-label">الدورية</label>
+            <select asp-for="GroupName" class="form-control">
+                <option value="">-- اختر  --</option>
+                <option value="الدورية الاول">الدورية الاول</option>
+                <option value="الدورية الثانية">الدورية الثانية</option>
+                <option value="الدورية الثالثة">الدورية الثالثة</option>
+            </select>
+            <span asp-validation-for="GroupName" class="text-danger"></span>
         </div>
 
+        @* فرقة القيادة *@
+        <div class="col-md-6">
+            <label class="form-label">فرقة القيادة</label>
+            <select asp-for="HasChantDriverCertificate" class="form-control">
+                <option value="">-- اختر  --</option>
+                <option value="حاصل على فرقة">حاصل على فرقة</option>
+                <option value="غير حاصل على فرقة">غير حاصل على فرقة</option>
+            </select>
+            <span asp-validation-for="HasChantDriverCertificate" class="text-danger"></span>
+        </div>
+
+        @* بيانات العنوان *@
+        <div class="col-12">
+            <h5 class="text-primary mt-4">بيانات العنوان</h5>
+            <hr />
+        </div>
+
+        @* المحافظة *@
         <div class="col-md-4">
             <label class="form-label">المحافظة</label>
             <input asp-for="City" class="form-control" maxlength="50" />
             <span asp-validation-for="City" class="text-danger"></span>
         </div>
 
-        @* زر الحفظ *@
-        <div class="col-12 mt-3">
-            <a asp-action="Index" asp-controller="Soldier" class="btn btn-secondary">رجوع</a>
+        @* المركز *@
+        <div class="col-md-4">
+            <label class="form-label">المركز</label>
+            <input asp-for="Region" class="form-control" maxlength="50" />
+            <span asp-validation-for="Region" class="text-danger"></span>
+        </div>
 
-            <button type="submit" class="btn btn-primary">تعديل البيانات</button>
+        @* البلد *@
+        <div class="col-md-4">
+            <label class="form-label">البلد</label>
+            <input asp-for="Street" class="form-control" maxlength="50" />
+            <span asp-validation-for="Street" class="text-danger"></span>
+        </div>
+
+        @* أزرار الحفظ والرجوع *@
+        <div class="col-12 mt-4">
+            <hr />
+            <a asp-action="Index" asp-controller="PoliceMan" class="btn btn-secondary">رجوع</a>
+            <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
         </div>
     </form>
 </div>
