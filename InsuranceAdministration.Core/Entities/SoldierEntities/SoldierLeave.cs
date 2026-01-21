@@ -1,0 +1,19 @@
+﻿
+
+namespace InsuranceAdministration.Core.Entities.SoldierEntities
+{
+    public class SoldierLeave
+    {
+        public int Id { set; get; }
+        public string? Type { set; get; }
+        public int? StartNum { set; get; }
+        public int? StartPage { set; get; }
+        public DateTime? Start { set; get; }
+
+        public int? EndNum { set; get; }
+        public int? EndPage { set; get; }
+        public DateTime? End { set; get; }
+        public int SoldierId { get; set; }
+        public Soldier Soldier { get; set; }
+    }
+}

@@ -3,6 +3,7 @@ using System;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuranceAdministration.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260113145320_t10")]
+    partial class t10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.21");
@@ -183,7 +186,7 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AcquaintanceDocumentId")
+                    b.Property<int?>("AcquaintanceDocumentId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Address")
@@ -220,34 +223,22 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AcquaintanceDocumentId")
+                    b.Property<int?>("AcquaintanceDocumentId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Address")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("Job")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Job")
+                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NationalId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Relationship")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SpouseAddress")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SpouseFullName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SpouseJob")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SpouseNationalId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -292,12 +283,9 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("CurrentIsLeave")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("EducationLevel")
                         .IsRequired()
-                        .HasMaxLength(250)
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EnlistmentDate")
@@ -305,15 +293,6 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Job")
-                        .HasMaxLength(250)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MaritalStatus")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -387,9 +366,6 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
                     b.Property<int?>("StartPage")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -503,24 +479,16 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance.BaseFamily", b =>
                 {
-                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.AcquaintanceDocument", "AcquaintanceDocument")
+                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.AcquaintanceDocument", null)
                         .WithMany("BaseFamily")
-                        .HasForeignKey("AcquaintanceDocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AcquaintanceDocument");
+                        .HasForeignKey("AcquaintanceDocumentId");
                 });
 
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance.Family", b =>
                 {
-                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.AcquaintanceDocument", "AcquaintanceDocument")
+                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.AcquaintanceDocument", null)
                         .WithMany("Family")
-                        .HasForeignKey("AcquaintanceDocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AcquaintanceDocument");
+                        .HasForeignKey("AcquaintanceDocumentId");
                 });
 
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.AcquaintanceDocument", b =>

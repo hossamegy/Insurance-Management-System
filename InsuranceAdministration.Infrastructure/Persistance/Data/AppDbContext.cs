@@ -2,6 +2,7 @@
 using InsuranceAdministration.Core.Entities.PoliceManEntities;
 using InsuranceAdministration.Core.Entities.Settings;
 using InsuranceAdministration.Core.Entities.SoldierEntities;
+using InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance;
 using Microsoft.EntityFrameworkCore;
 
 namespace InsuranceAdministration.Infrastructure.Persistance.Data
@@ -13,11 +14,18 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
             
         }
 
+        // PoliceMan related tables
         public DbSet<PoliceMan> Policemen { get; set; }
         public DbSet<Punishment> Punishments { get; set; }
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<Mission> Mission { get; set; }
+
+        // Soldier related tables
         public DbSet<Soldier> Soldier { get; set; }
+        public DbSet<AcquaintanceDocument> AcquaintanceDocument { get; set; }
+        public DbSet<BaseFamily> BaseFamily { get; set; }
+        public DbSet<Family> Family { get; set; }
+
         public DbSet<DailyMission> DailyMissions { get; set; }
 
 
@@ -80,6 +88,31 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
                           .HasForeignKey("MissionId")
                           .OnDelete(DeleteBehavior.Cascade)
                 );
+
+            modelBuilder.Entity<Soldier>()
+                .HasOne(s => s.AcquaintanceDocument)
+                .WithOne(a => a.Soldier)
+                .HasForeignKey<AcquaintanceDocument>(a => a.SoldierId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BaseFamily>()
+                .HasOne(b => b.AcquaintanceDocument)
+                .WithMany(a => a.BaseFamily)
+                .HasForeignKey(b => b.AcquaintanceDocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Family>()
+                .HasOne(f => f.AcquaintanceDocument)
+                .WithMany(a => a.Family)
+                .HasForeignKey(f => f.AcquaintanceDocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // Soldier - SoldierLeave (One-to-One)
+            modelBuilder.Entity<Soldier>()
+                .HasOne(s => s.Leave)
+                .WithOne(l => l.Soldier)
+                .HasForeignKey<SoldierLeave>(l => l.SoldierId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             // Optional: Add indexes for better query performance
             modelBuilder.Entity<Mission>()

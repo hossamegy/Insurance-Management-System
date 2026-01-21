@@ -1,0 +1,420 @@
+﻿@model InsuranceAdministration.Core.Entities.SoldierEntities.Soldier
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>أورنيك 114 شرطة</title>
+    <style>
+        @@media print {
+            @@page {
+                size: A4;
+                margin: 1.5cm;
+            }
+
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Traditional Arabic', 'Simplified Arabic', 'Arial', sans-serif;
+            background: #ffffff;
+            padding: 10px;
+            direction: rtl;
+            line-height: 1.4;
+        }
+
+        .document-container {
+            max-width: 21cm;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #000;
+        }
+
+        .header-right {
+            text-align: right;
+            flex: 1;
+            line-height: 1.6;
+        }
+
+            .header-right div {
+                font-size: 12px;
+                font-weight: bold;
+                color: #000;
+            }
+
+        .header-center {
+            text-align: center;
+            flex: 1;
+        }
+
+            .header-center div {
+                font-size: 16px;
+                font-weight: bold;
+                padding: 8px;
+            }
+
+        .header-left {
+            text-align: left;
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .document-title {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #000;
+            margin: 12px 0;
+            padding: 10px;
+            text-decoration: underline;
+        }
+
+        .soldier-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            gap: 15px;
+        }
+
+            .soldier-info div {
+                flex: 1;
+                font-size: 13px;
+                font-weight: bold;
+                padding: 8px;
+                text-align: center;
+            }
+
+        .main-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+        }
+
+            .main-table th,
+            .main-table td {
+                border: 2px solid #000;
+                padding: 6px 8px;
+                text-align: right;
+                font-size: 11px;
+                line-height: 1.5;
+            }
+
+            .main-table th {
+                color: #000;
+                font-weight: bold;
+                text-align: center;
+                background: #fff;
+            }
+
+            .main-table td {
+                background: #fff;
+            }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #000;
+            margin: 8px 0 6px 0;
+            padding: 6px;
+            text-align: center;
+            background: #fff;
+        }
+
+        .committee-members {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin: 6px 0;
+        }
+
+        .member-card {
+            padding: 8px 4px;
+            text-align: center;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+            .member-card div {
+                margin-bottom: 3px;
+                font-size: 10px;
+                line-height: 1.3;
+            }
+
+        .member-title {
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .member-rank {
+            font-weight: bold;
+        }
+
+        .approval-section {
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 8px 0;
+            padding: 10px;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 6px 0;
+        }
+
+            .details-table td {
+                border: 2px solid #000;
+                padding: 6px;
+                font-size: 10px;
+                line-height: 1.4;
+            }
+
+        .signature-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .signature-box {
+            padding: 12px 8px;
+            text-align: center;
+            min-height: 60px;
+        }
+
+            .signature-box div:first-child {
+                margin-bottom: 8px;
+                font-size: 12px;
+                font-weight: bold;
+                text-decoration: underline;
+            }
+
+            .signature-box div:last-child {
+                font-size: 11px;
+                padding-top: 10px;
+                margin-top: 5px;
+            }
+
+        .print-button {
+            margin: 15px 0 0 0;
+            text-align: center;
+        }
+
+        .btn-print {
+            padding: 10px 25px;
+            background: #000;
+            color: white;
+            border: 2px solid #000;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+
+            .btn-print:hover {
+                background: #333;
+            }
+
+            .btn-print.secondary {
+                background: #fff;
+                color: #000;
+            }
+
+                .btn-print.secondary:hover {
+                    background: #f0f0f0;
+                }
+
+        @@media print {
+            .document-container {
+                border: none;
+                padding: 15px;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="document-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="header-right">
+                <div>وزارة الداخلية</div>
+                <div>قطاع الشرطة المتخصصة</div>
+                <div>الإدارة العامة لشرطة البيئة والمسطحات</div>
+                <div>إدارة التأمين</div>
+            </div>
+            <div class="header-center">
+                <div>أورنيك 114 شرطة</div>
+            </div>
+            <div class="header-left">
+                <div class="logo-placeholder">شعار جمهورية مصر العربية</div>
+            </div>
+        </div>
+
+        <!-- Document Title -->
+        <div class="document-title">
+            طلب تحرير شهادة إنهاء خدمة عسكرية "رديف دفعة" 1/3/2026م
+        </div>
+
+        <!-- Soldier Info -->
+        <div class="soldier-info">
+            <div>اسم المجند / @Model?.Name</div>
+            <div>رقم الشرطة / @Model?.PoliceNumber</div>
+        </div>
+
+        <!-- Main Table -->
+        <table class="main-table">
+            <thead>
+                <tr>
+                    <th style="width: 50%">محل الإقامة بالتفصيل بعد انتهاء الخدمة</th>
+                    <th style="width: 50%">بيانات مدة الخدمة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>العنوان / @Model?.Street</td>
+                    <td>تاريخ إنهاء الخدمة: @Model?.ServiceEndDate?.ToString("dd/MM/yyyy")</td>
+                </tr>
+                <tr>
+                    <td>قسم / @Model?.Region</td>
+                    <td>تاريخ التجنيد: @Model?.EnlistmentDate.ToString("dd/MM/yyyy")</td>
+                </tr>
+                <tr>
+                    <td>المحافظة / @Model?.City</td>
+                    <td>مدة الخدمة: _______________</td>
+                </tr>
+                <tr>
+                    <td>الرقم القومي: @Model?.NationalId</td>
+                    <td>المدة الفاقدة: _______________</td>
+                </tr>
+                <tr>
+                    <td>الدرجة: جندي 2</td>
+                    <td>صافي مدة الخدمة: _______________</td>
+                </tr>
+                <tr>
+                    <td>مهنة المجند أثناء فترة التجنيد: @Model?.Job</td>
+                    <td>تاريخ الاحتياط: _______________</td>
+                </tr>
+                <tr>
+                    <td colspan="2">درجة الأخلاق: _______________</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Committee Members -->
+        <div class="section-title">أعضاء لجنة المراجعة</div>
+        <div class="committee-members">
+            <div class="member-card">
+                <div class="member-title">بلوكامين السجلات</div>
+                <div class="member-rank">أ.ش</div>
+                <div class="member-name">محمد الصعيدي</div>
+            </div>
+         
+            <div class="member-card">
+                <div class="member-title">بلوكامين السجلات</div>
+                <div class="member-rank">مقدم</div>
+                <div class="member-name">عمرو عبدالوهاب</div>
+            </div>
+            <div class="member-card">
+                <div class="member-title">مدير إدارة التأمين</div>
+                <div class="member-rank">عميد</div>
+                <div class="member-name">عمرو تركي</div>
+            </div>
+        </div>
+
+        <!-- Approval Section -->
+        <div class="approval-section">
+            إعتماد الإدارة العامة لشئون المجندين
+        </div>
+
+        <!-- Details Table -->
+        <table class="details-table">
+            <tbody>
+                <tr>
+                    <td style="width: 33%">تاريخ التجنيد: @Model?.EnlistmentDate.ToString("dd/MM/yyyy")</td>
+                    <td style="width: 33%">إجمالي عدد الجزاءات بالحبس: _______________</td>
+                    <td style="width: 34%">إجمالى عدد المحاكمات بالغياب: _______________</td>
+                </tr>
+                <tr>
+                    <td>بيانات الشهادة: _______________</td>
+                    <td>تاريخ آخر جزاء بالحبس: _______________</td>
+                    <td>مدة الغياب: _______________</td>
+                </tr>
+                <tr>
+                    <td>ملاحظات أخرى: _______________</td>
+                    <td>مدة العقوبة: _______________</td>
+                    <td>إجمالى عدد المحاكمات الأخرى: _______________</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="signature-box">
+                <div>المراجع</div>
+                <div>_______________</div>
+            </div>
+            <div class="signature-box">
+                <div>التوقيع</div>
+                <div>_______________</div>
+            </div>
+            <div class="signature-box">
+                <div>تاريخ المراجعة</div>
+                <div>_______________</div>
+            </div>
+        </div>
+
+        <!-- Print Button -->
+        <div class="print-button no-print">
+            <button onclick="window.print()" class="btn-print">طباعة النموذج</button>
+            <button onclick="window.close()" class="btn-print secondary">إغلاق</button>
+        </div>
+    </div>
+</body>
+</html>

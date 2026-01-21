@@ -1,0 +1,355 @@
+﻿@model InsuranceAdministration.Core.Entities.SoldierEntities.AcquaintanceDocument
+
+@{
+    ViewData["Title"] = "إضافة مستند تعارف";
+    var soldierId = Model?.SoldierId ?? 0;
+}
+
+@await Html.PartialAsync("_PageHeader")
+
+<head>
+    <link rel="stylesheet" href="~/css/Shared/Add.css" asp-append-version="true" />
+    <style>
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .add-btn-container {
+            margin-bottom: 15px;
+        }
+
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .spouse-row {
+            background-color: #e3f2fd;
+        }
+    </style>
+</head>
+
+<div class="container">
+    <h4 class="mb-4">إضافة مستند تعارف للمجند: @ViewBag.SoldierName</h4>
+
+    <form asp-action="AddAcquaintanceDocument" asp-controller="SoldierAcquaintance" method="post" class="row g-3 p-0" id="soldierForm">
+        <input type="hidden" asp-for="SoldierId" />
+
+        @* بيانات الوالد والوالدة *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الوالدين</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>صلة القرابة</th>
+                            <th>الاسم</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>الهاتف</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="hidden" name="BaseFamily[0].Relationship" value="والد" />
+                                والد
+                            </td>
+                            <td><input name="BaseFamily[0].Name" class="form-control" /></td>
+                            <td><input name="BaseFamily[0].NationalId" class="form-control" maxlength="14" /></td>
+                            <td><input name="BaseFamily[0].Job" class="form-control" /></td>
+                            <td><input name="BaseFamily[0].Address" class="form-control" /></td>
+                            <td><input type="date" name="BaseFamily[0].BirthDate" class="form-control" /></td>
+                            <td><input name="BaseFamily[0].PhoneNumber" class="form-control" maxlength="11" /></td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <input type="hidden" name="BaseFamily[1].Relationship" value="والدة" />
+                                والدة
+                            </td>
+                            <td><input name="BaseFamily[1].Name" class="form-control" /></td>
+                            <td><input name="BaseFamily[1].NationalId" class="form-control" maxlength="14" /></td>
+                            <td><input name="BaseFamily[1].Job" class="form-control" /></td>
+                            <td><input name="BaseFamily[1].Address" class="form-control" /></td>
+                            <td><input type="date" name="BaseFamily[1].BirthDate" class="form-control" /></td>
+                            <td><input name="BaseFamily[1].PhoneNumber" class="form-control" maxlength="11" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الزوجة *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الزوجة</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>صلة القرابة</th>
+                            <th>الاسم</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>رقم الهاتف</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="hidden" name="BaseFamily[2].Relationship" value="زوجة" />
+                                زوجة
+                            </td>
+                            <td><input name="BaseFamily[2].Name" class="form-control form-control-sm" /></td>
+                            <td><input name="BaseFamily[2].NationalId" class="form-control form-control-sm" maxlength="14" /></td>
+                            <td><input name="BaseFamily[2].Job" class="form-control form-control-sm" /></td>
+                            <td><input name="BaseFamily[2].Address" class="form-control form-control-sm" /></td>
+                            <td><input type="date" name="BaseFamily[2].BirthDate" class="form-control form-control-sm" /></td>
+                            <td><input name="BaseFamily[2].PhoneNumber" class="form-control form-control-sm" maxlength="11" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الأخوة والأخوات *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الأخوة والأخوات</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="add-btn-container">
+                <button type="button" class="btn btn-success btn-sm" id="addSibling">
+                    <i class="bi bi-plus-circle"></i> إضافة أخ/أخت
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">إجراء</th>
+                            <th>صلة القرابة</th>
+                            <th colspan="4">بيانات الفرد</th>
+                            <th colspan="4">بيانات الزوج/الزوجة</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siblingsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الأبناء *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الأبناء</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="add-btn-container">
+                <button type="button" class="btn btn-success btn-sm" id="addChild">
+                    <i class="bi bi-plus-circle"></i> إضافة ابن/ابنة
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">إجراء</th>
+                            <th>صلة القرابة</th>
+                            <th>الاسم</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>رقم الهاتف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="childrenTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الأعمام والعمات والأخوال والخالات *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الأعمام والعمات والأخوال والخالات</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="add-btn-container">
+                <button type="button" class="btn btn-success btn-sm" id="addExtendedFamily">
+                    <i class="bi bi-plus-circle"></i> إضافة فرد
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">إجراء</th>
+                            <th>صلة القرابة</th>
+                            <th colspan="4">بيانات الفرد</th>
+                            <th colspan="4">بيانات الزوج/الزوجة</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                        </tr>
+                    </thead>
+                    <tbody id="extendedFamilyTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* أزرار الحفظ والرجوع *@
+        <div class="col-12 mt-4">
+            <hr />
+            <a asp-action="Index" asp-controller="SoldierAcquaintance" class="btn btn-secondary">رجوع</a>
+            <button type="submit" class="btn btn-primary">حفظ البيانات</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Counter for BaseFamily items (starting from 3 because father=0, mother=1, wife=2)
+        let baseFamilyIndex = 3;
+        // Counter for Family items
+        let familyIndex = 0;
+
+        // Add Sibling
+        document.getElementById('addSibling').addEventListener('click', function() {
+            const tbody = document.getElementById('siblingsTableBody');
+            const tr = createFamilyRowWithSpouse(familyIndex, ['أخ', 'أخت']);
+            tbody.appendChild(tr);
+            familyIndex++;
+        });
+
+        // Add Child
+        document.getElementById('addChild').addEventListener('click', function() {
+            const tbody = document.getElementById('childrenTableBody');
+            const tr = createBaseFamilyRow(baseFamilyIndex, '', ['ابن', 'ابنة']);
+            tbody.appendChild(tr);
+            baseFamilyIndex++;
+        });
+
+        // Add Extended Family Member
+        document.getElementById('addExtendedFamily').addEventListener('click', function() {
+            const tbody = document.getElementById('extendedFamilyTableBody');
+            const tr = createFamilyRowWithSpouse(familyIndex, ['عم', 'عمة', 'خال', 'خالة']);
+            tbody.appendChild(tr);
+            familyIndex++;
+        });
+
+        // Create BaseFamily Row (for children)
+        function createBaseFamilyRow(index, relationshipValue = '', relationships = []) {
+            const tr = document.createElement('tr');
+
+            let relationshipCell = '';
+            if (relationships.length > 0) {
+                relationshipCell = `
+                    <td>
+                        <select name="BaseFamily[${index}].Relationship" class="form-control form-control-sm">
+                            <option value="">-- اختر --</option>
+                            ${relationships.map(r => `<option value="${r}">${r}</option>`).join('')}
+                        </select>
+                    </td>`;
+            } else {
+                relationshipCell = `
+                    <td>
+                        <input type="hidden" name="BaseFamily[${index}].Relationship" value="${relationshipValue}" />
+                        ${relationshipValue}
+                    </td>`;
+            }
+
+            tr.innerHTML = `
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+                ${relationshipCell}
+                <td><input type="text" name="BaseFamily[${index}].Name" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="BaseFamily[${index}].NationalId" class="form-control form-control-sm" maxlength="14" /></td>
+                <td><input type="text" name="BaseFamily[${index}].Job" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="BaseFamily[${index}].Address" class="form-control form-control-sm" /></td>
+                <td><input type="date" name="BaseFamily[${index}].BirthDate" class="form-control form-control-sm" /></td>
+                <td><input type="tel" name="BaseFamily[${index}].PhoneNumber" class="form-control form-control-sm" maxlength="11" /></td>
+            `;
+
+            tr.querySelector('.remove-row').addEventListener('click', function() {
+                tr.remove();
+            });
+
+            return tr;
+        }
+
+        // Create Family Row with Spouse (for siblings and extended family)
+        function createFamilyRowWithSpouse(index, relationships = []) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+                <td>
+                    <select name="Family[${index}].Relationship" class="form-control form-control-sm">
+                        <option value="">-- اختر --</option>
+                        ${relationships.map(r => `<option value="${r}">${r}</option>`).join('')}
+                    </select>
+                </td>
+                <td><input type="text" name="Family[${index}].FullName" class="form-control form-control-sm" placeholder="اسم الفرد" /></td>
+                <td><input type="text" name="Family[${index}].NationalId" class="form-control form-control-sm" maxlength="14" /></td>
+                <td><input type="text" name="Family[${index}].Job" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="Family[${index}].Address" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="Family[${index}].SpouseFullName" class="form-control form-control-sm" placeholder="اسم الزوج/الزوجة" /></td>
+                <td><input type="text" name="Family[${index}].SpouseNationalId" class="form-control form-control-sm" maxlength="14" /></td>
+                <td><input type="text" name="Family[${index}].SpouseJob" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="Family[${index}].SpouseAddress" class="form-control form-control-sm" /></td>
+            `;
+
+            tr.querySelector('.remove-row').addEventListener('click', function() {
+                tr.remove();
+            });
+
+            return tr;
+        }
+    </script>
+}

@@ -1,0 +1,526 @@
+﻿@model Soldier
+
+@using InsuranceAdministration.Core.Entities.SoldierEntities
+
+@{
+    ViewData["Title"] = "تفاصيل المجند";
+    ViewData["SubTitle"] = "عرض البيانات الكاملة";
+}
+
+@await Html.PartialAsync("_PageHeader")
+
+<head>
+    <style>
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .info-row:last-child {
+                border-bottom: none;
+            }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .section-title {
+            color: #0d6efd;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d6efd;
+        }
+
+        .action-buttons {
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .family-table {
+            margin-bottom: 30px;
+        }
+
+        .spouse-cell {
+            background-color: #e3f2fd;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<div class="container-fluid">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> رجوع للقائمة
+        </a>
+
+        @if (Model.AcquaintanceDocument == null)
+        {
+            <a asp-action="Add" asp-route-id="@Model.Id" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> إضافة بيانات المعارف
+            </a>
+        }
+        else
+        {
+            <a asp-action="Edit" asp-route-soldierId="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> تعديل بيانات المعارف
+            </a>
+        }
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash"></i> حذف
+        </button>
+    </div>
+
+    <!-- Personal Information -->
+    <div class="info-card">
+        <div class="section-title">البيانات الشخصية</div>
+
+        <div class="info-row">
+            <div class="info-label">الحالة:</div>
+            <div class="info-value">
+                <span class="status-badge @(Model.IsActive ? "status-active" : "status-inactive")">
+                    @(Model.IsActive ? "نشط" : "غير نشط")
+                </span>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">الاسم رباعى:</div>
+            <div class="info-value">@Model.Name</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">تاريخ الميلاد:</div>
+            <div class="info-value">@Model.BirthDate.ToString("dd/MM/yyyy")</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">الحالة الاجتماعية:</div>
+            <div class="info-value">@Model.MaritalStatus</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">الرقم القومي:</div>
+            <div class="info-value">@Model.NationalId</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">رقم الهاتف:</div>
+            <div class="info-value">@Model.PhoneNumber</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">المؤهل الدراسي:</div>
+            <div class="info-value">@Model.EducationLevel</div>
+        </div>
+    </div>
+
+    <!-- Address Information -->
+    <div class="info-card">
+        <div class="section-title">بيانات العنوان</div>
+
+        <div class="info-row">
+            <div class="info-label">المحافظة:</div>
+            <div class="info-value">@Model.City</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">المركز:</div>
+            <div class="info-value">@Model.Region</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">البلد:</div>
+            <div class="info-value">@Model.Street</div>
+        </div>
+    </div>
+
+    <!-- Military Information -->
+    <div class="info-card">
+        <div class="section-title">البيانات العسكرية</div>
+
+        <div class="info-row">
+            <div class="info-label">تاريخ التجنيد:</div>
+            <div class="info-value">@Model.EnlistmentDate.ToString("dd/MM/yyyy")</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">رقم الشرطة:</div>
+            <div class="info-value">@Model.PoliceNumber</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">الرقم الثلاثي:</div>
+            <div class="info-value">@Model.TripleNumber</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">التشغيل:</div>
+            <div class="info-value">@Model.Assignment</div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">الاعمال الملحقة:</div>
+            <div class="info-value">@Model.Job</div>
+        </div>
+
+        @if (Model.ServiceEndDate.HasValue)
+        {
+            <div class="info-row">
+                <div class="info-label">تاريخ انتهاء الخدمة:</div>
+                <div class="info-value">@Model.ServiceEndDate.Value.ToString("dd/MM/yyyy")</div>
+            </div>
+        }
+    </div>
+
+    <!-- Acquaintance Document -->
+    @if (Model.AcquaintanceDocument != null)
+    {
+        <div class="info-card">
+            <div class="section-title">بيانات المعارف والعائلة</div>
+
+            <!-- Parents -->
+            @{
+                var parents = Model.AcquaintanceDocument.BaseFamily?
+                .Where(f => f.Relationship == "والد" || f.Relationship == "والدة")
+                .ToList();
+            }
+
+            @if (parents != null && parents.Any())
+            {
+                <div class="family-table">
+                    <div class="table-title">بيانات الوالدين</div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>صلة القرابة</th>
+                                    <th>الاسم</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الوظيفة</th>
+                                    <th>العنوان</th>
+                                    <th>تاريخ الميلاد</th>
+                                    <th>رقم الهاتف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var parent in parents)
+                                {
+                                    <tr>
+                                        <td>@parent.Relationship</td>
+                                        <td>@parent.Name</td>
+                                        <td>@parent.NationalId</td>
+                                        <td>@parent.Job</td>
+                                        <td>@parent.Address</td>
+                                        <td>@(parent.BirthDate?.ToString("dd/MM/yyyy"))</td>
+                                        <td>@parent.PhoneNumber</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Wife -->
+            @{
+                var wife = Model.AcquaintanceDocument.BaseFamily?
+                .FirstOrDefault(f => f.Relationship == "زوجة");
+            }
+
+            @if (wife != null)
+            {
+                <div class="family-table">
+                    <div class="table-title">بيانات الزوجة</div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>صلة القرابة</th>
+                                    <th>الاسم</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الوظيفة</th>
+                                    <th>العنوان</th>
+                                    <th>تاريخ الميلاد</th>
+                                    <th>رقم الهاتف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@wife.Relationship</td>
+                                    <td>@wife.Name</td>
+                                    <td>@wife.NationalId</td>
+                                    <td>@wife.Job</td>
+                                    <td>@wife.Address</td>
+                                    <td>@(wife.BirthDate?.ToString("dd/MM/yyyy"))</td>
+                                    <td>@wife.PhoneNumber</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Children -->
+            @{
+                var children = Model.AcquaintanceDocument.BaseFamily?
+                .Where(f => f.Relationship == "ابن" || f.Relationship == "ابنة")
+                .ToList();
+            }
+
+            @if (children != null && children.Any())
+            {
+                <div class="family-table">
+                    <div class="table-title">بيانات الأبناء</div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>صلة القرابة</th>
+                                    <th>الاسم</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الوظيفة</th>
+                                    <th>العنوان</th>
+                                    <th>تاريخ الميلاد</th>
+                                    <th>رقم الهاتف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var child in children)
+                                {
+                                    <tr>
+                                        <td>@child.Relationship</td>
+                                        <td>@child.Name</td>
+                                        <td>@child.NationalId</td>
+                                        <td>@child.Job</td>
+                                        <td>@child.Address</td>
+                                        <td>@(child.BirthDate?.ToString("dd/MM/yyyy"))</td>
+                                        <td>@child.PhoneNumber</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Siblings -->
+            @{
+                var siblings = Model.AcquaintanceDocument.Family?
+                .Where(f => f.Relationship == "أخ" || f.Relationship == "أخت")
+                .ToList();
+            }
+
+            @if (siblings != null && siblings.Any())
+            {
+                <div class="family-table">
+                    <div class="table-title">بيانات الأخوة والأخوات</div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th rowspan="2">صلة القرابة</th>
+                                    <th colspan="4">بيانات الفرد</th>
+                                    <th colspan="4">بيانات الزوج/الزوجة</th>
+                                </tr>
+                                <tr>
+                                    <th>الاسم الكامل</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الوظيفة</th>
+                                    <th>العنوان</th>
+                                    <th>الاسم الكامل</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الوظيفة</th>
+                                    <th>العنوان</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sibling in siblings)
+                                {
+                                    <tr>
+                                        <td>@sibling.Relationship</td>
+                                        <td>@sibling.FullName</td>
+                                        <td>@sibling.NationalId</td>
+                                        <td>@sibling.Job</td>
+                                        <td>@sibling.Address</td>
+                                        <td class="spouse-cell">@sibling.SpouseFullName</td>
+                                        <td class="spouse-cell">@sibling.SpouseNationalId</td>
+                                        <td class="spouse-cell">@sibling.SpouseJob</td>
+                                        <td class="spouse-cell">@sibling.SpouseAddress</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Extended Family -->
+            @{
+                var extendedFamily = Model.AcquaintanceDocument.Family?
+                .Where(f => f.Relationship == "عم" || f.Relationship == "عمة" ||
+                f.Relationship == "خال" || f.Relationship == "خالة")
+                .ToList();
+            }
+
+            @if (extendedFamily != null && extendedFamily.Any())
+            {
+                <div class="family-table">
+                    <div class="table-title">بيانات الأعمام والعمات والأخوال والخالات</div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th rowspan="2">صلة القرابة</th>
+                                    <th colspan="4">بيانات الفرد</th>
+                                    <th colspan="4">بيانات الزوج/الزوجة</th>
+                                </tr>
+                                <tr>
+                                    <th>الاسم الكامل</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الوظيفة</th>
+                                    <th>العنوان</th>
+                                    <th>الاسم الكامل</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الوظيفة</th>
+                                    <th>العنوان</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var relative in extendedFamily)
+                                {
+                                    <tr>
+                                        <td>@relative.Relationship</td>
+                                        <td>@relative.FullName</td>
+                                        <td>@relative.NationalId</td>
+                                        <td>@relative.Job</td>
+                                        <td>@relative.Address</td>
+                                        <td class="spouse-cell">@relative.SpouseFullName</td>
+                                        <td class="spouse-cell">@relative.SpouseNationalId</td>
+                                        <td class="spouse-cell">@relative.SpouseJob</td>
+                                        <td class="spouse-cell">@relative.SpouseAddress</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="info-card">
+            <div class="section-title">بيانات المعارف والعائلة</div>
+            <div class="no-data">
+                لا توجد بيانات معارف لهذا المجند
+                <br />
+                <a asp-action="AddAcquaintanceDocumentView" asp-route-id="@Model.Id" class="btn btn-primary mt-3">
+                    <i class="bi bi-plus-circle"></i> إضافة بيانات المعارف
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تأكيد الحذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد من حذف المجند <strong>@Model.Name</strong>؟
+                <br />
+                <small class="text-danger">لا يمكن التراجع عن هذا الإجراء</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">حذف</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+}

@@ -1,0 +1,509 @@
+﻿@model InsuranceAdministration.Core.Entities.SoldierEntities.AcquaintanceDocument
+
+@{
+    ViewData["Title"] = "تعديل مستند تعارف";
+}
+
+@await Html.PartialAsync("_PageHeader")
+
+<head>
+    <link rel="stylesheet" href="~/css/Shared/Add.css" asp-append-version="true" />
+    <style>
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .add-btn-container {
+            margin-bottom: 15px;
+        }
+
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .spouse-row {
+            background-color: #e3f2fd;
+        }
+
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<div class="container">
+    <h4 class="mb-4">تعديل مستند تعارف للمجند: @ViewBag.SoldierName</h4>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="EditAcquaintanceDocument" asp-controller="SoldierAcquaintance" method="post" class="row g-3 p-0" id="soldierForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="SoldierId" />
+
+        @* بيانات الوالد والوالدة *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الوالدين</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>صلة القرابة</th>
+                            <th>الاسم</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>الهاتف</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var father = Model.BaseFamily?.FirstOrDefault(f => f.Relationship == "والد");
+                            var fatherIndex = 0;
+                        }
+                        <tr>
+                            <td>
+                                <input type="hidden" name="BaseFamily[@fatherIndex].Id" value="@(father?.Id ?? 0)" />
+                                <input type="hidden" name="BaseFamily[@fatherIndex].Relationship" value="والد" />
+                                والد
+                            </td>
+                            <td><input name="BaseFamily[@fatherIndex].Name" class="form-control" value="@father?.Name" /></td>
+                            <td><input name="BaseFamily[@fatherIndex].NationalId" class="form-control" maxlength="14" value="@father?.NationalId" /></td>
+                            <td><input name="BaseFamily[@fatherIndex].Job" class="form-control" value="@father?.Job" /></td>
+                            <td><input name="BaseFamily[@fatherIndex].Address" class="form-control" value="@father?.Address" /></td>
+                            <td><input type="date" name="BaseFamily[@fatherIndex].BirthDate" class="form-control" value="@father?.BirthDate?.ToString("yyyy-MM-dd")" /></td>
+                            <td><input name="BaseFamily[@fatherIndex].PhoneNumber" class="form-control" maxlength="11" value="@father?.PhoneNumber" /></td>
+                        </tr>
+
+                        @{
+                            var mother = Model.BaseFamily?.FirstOrDefault(f => f.Relationship == "والدة");
+                            var motherIndex = 1;
+                        }
+                        <tr>
+                            <td>
+                                <input type="hidden" name="BaseFamily[@motherIndex].Id" value="@(mother?.Id ?? 0)" />
+                                <input type="hidden" name="BaseFamily[@motherIndex].Relationship" value="والدة" />
+                                والدة
+                            </td>
+                            <td><input name="BaseFamily[@motherIndex].Name" class="form-control" value="@mother?.Name" /></td>
+                            <td><input name="BaseFamily[@motherIndex].NationalId" class="form-control" maxlength="14" value="@mother?.NationalId" /></td>
+                            <td><input name="BaseFamily[@motherIndex].Job" class="form-control" value="@mother?.Job" /></td>
+                            <td><input name="BaseFamily[@motherIndex].Address" class="form-control" value="@mother?.Address" /></td>
+                            <td><input type="date" name="BaseFamily[@motherIndex].BirthDate" class="form-control" value="@mother?.BirthDate?.ToString("yyyy-MM-dd")" /></td>
+                            <td><input name="BaseFamily[@motherIndex].PhoneNumber" class="form-control" maxlength="11" value="@mother?.PhoneNumber" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الزوجة *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الزوجة</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>صلة القرابة</th>
+                            <th>الاسم</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>رقم الهاتف</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var wife = Model.BaseFamily?.FirstOrDefault(f => f.Relationship == "زوجة");
+                            var wifeIndex = 2;
+                        }
+                        <tr>
+                            <td>
+                                <input type="hidden" name="BaseFamily[@wifeIndex].Id" value="@(wife?.Id ?? 0)" />
+                                <input type="hidden" name="BaseFamily[@wifeIndex].Relationship" value="زوجة" />
+                                زوجة
+                            </td>
+                            <td><input name="BaseFamily[@wifeIndex].Name" class="form-control form-control-sm" value="@wife?.Name" /></td>
+                            <td><input name="BaseFamily[@wifeIndex].NationalId" class="form-control form-control-sm" maxlength="14" value="@wife?.NationalId" /></td>
+                            <td><input name="BaseFamily[@wifeIndex].Job" class="form-control form-control-sm" value="@wife?.Job" /></td>
+                            <td><input name="BaseFamily[@wifeIndex].Address" class="form-control form-control-sm" value="@wife?.Address" /></td>
+                            <td><input type="date" name="BaseFamily[@wifeIndex].BirthDate" class="form-control form-control-sm" value="@wife?.BirthDate?.ToString("yyyy-MM-dd")" /></td>
+                            <td><input name="BaseFamily[@wifeIndex].PhoneNumber" class="form-control form-control-sm" maxlength="11" value="@wife?.PhoneNumber" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الأبناء *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الأبناء</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="add-btn-container">
+                <button type="button" class="btn btn-success btn-sm" id="addChild">
+                    <i class="bi bi-plus-circle"></i> إضافة ابن/ابنة
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">إجراء</th>
+                            <th>صلة القرابة</th>
+                            <th>الاسم</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>رقم الهاتف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="childrenTableBody">
+                        @{
+                            var children = Model.BaseFamily?.Where(f => f.Relationship == "ابن" || f.Relationship == "ابنة").ToList();
+                            if (children != null)
+                            {
+                                for (int i = 0; i < children.Count; i++)
+                                {
+                                    var child = children[i];
+                                    var childIndex = i + 3; // Starting after father, mother, wife
+                                                            <tr data-index="@childIndex">
+                                                                <td>
+                                                                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                    <input type="hidden" name="BaseFamily[@childIndex].Id" value="@child.Id" />
+                                                                </td>
+                                                                <td>
+                                                                    <select name="BaseFamily[@childIndex].Relationship" class="form-control form-control-sm">
+                                                                        <option value="">-- اختر --</option>
+                                                                        <option value="ابن" selected="@(child.Relationship == "ابن")">ابن</option>
+                                                                        <option value="ابنة" selected="@(child.Relationship == "ابنة")">ابنة</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td><input type="text" name="BaseFamily[@childIndex].Name" class="form-control form-control-sm" value="@child.Name" /></td>
+                                                                <td><input type="text" name="BaseFamily[@childIndex].NationalId" class="form-control form-control-sm" maxlength="14" value="@child.NationalId" /></td>
+                                                                <td><input type="text" name="BaseFamily[@childIndex].Job" class="form-control form-control-sm" value="@child.Job" /></td>
+                                                                <td><input type="text" name="BaseFamily[@childIndex].Address" class="form-control form-control-sm" value="@child.Address" /></td>
+                                                                <td><input type="date" name="BaseFamily[@childIndex].BirthDate" class="form-control form-control-sm" value="@child.BirthDate?.ToString("yyyy-MM-dd")" /></td>
+                                                                <td><input type="tel" name="BaseFamily[@childIndex].PhoneNumber" class="form-control form-control-sm" maxlength="11" value="@child.PhoneNumber" /></td>
+                                                            </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الأخوة والأخوات *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الأخوة والأخوات</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="add-btn-container">
+                <button type="button" class="btn btn-success btn-sm" id="addSibling">
+                    <i class="bi bi-plus-circle"></i> إضافة أخ/أخت
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">إجراء</th>
+                            <th>صلة القرابة</th>
+                            <th colspan="4">بيانات الفرد</th>
+                            <th colspan="4">بيانات الزوج/الزوجة</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siblingsTableBody">
+                        @{
+                            var siblings = Model.Family?.Where(f => f.Relationship == "أخ" || f.Relationship == "أخت").ToList();
+                            if (siblings != null)
+                            {
+                                for (int i = 0; i < siblings.Count; i++)
+                                {
+                                    var sibling = siblings[i];
+                                    <tr data-index="@i">
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <input type="hidden" name="Family[@i].Id" value="@sibling.Id" />
+                                        </td>
+                                        <td>
+                                            <select name="Family[@i].Relationship" class="form-control form-control-sm">
+                                                <option value="">-- اختر --</option>
+                                                <option value="أخ" selected="@(sibling.Relationship == "أخ")">أخ</option>
+                                                <option value="أخت" selected="@(sibling.Relationship == "أخت")">أخت</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" name="Family[@i].FullName" class="form-control form-control-sm" value="@sibling.FullName" /></td>
+                                        <td><input type="text" name="Family[@i].NationalId" class="form-control form-control-sm" maxlength="14" value="@sibling.NationalId" /></td>
+                                        <td><input type="text" name="Family[@i].Job" class="form-control form-control-sm" value="@sibling.Job" /></td>
+                                        <td><input type="text" name="Family[@i].Address" class="form-control form-control-sm" value="@sibling.Address" /></td>
+                                        <td><input type="text" name="Family[@i].SpouseFullName" class="form-control form-control-sm" value="@sibling.SpouseFullName" /></td>
+                                        <td><input type="text" name="Family[@i].SpouseNationalId" class="form-control form-control-sm" maxlength="14" value="@sibling.SpouseNationalId" /></td>
+                                        <td><input type="text" name="Family[@i].SpouseJob" class="form-control form-control-sm" value="@sibling.SpouseJob" /></td>
+                                        <td><input type="text" name="Family[@i].SpouseAddress" class="form-control form-control-sm" value="@sibling.SpouseAddress" /></td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* بيانات الأعمام والعمات والأخوال والخالات *@
+        <div class="col-12 mt-4">
+            <h5 class="text-primary">بيانات الأعمام والعمات والأخوال والخالات</h5>
+            <hr />
+        </div>
+
+        <div class="col-12 table-section">
+            <div class="add-btn-container">
+                <button type="button" class="btn btn-success btn-sm" id="addExtendedFamily">
+                    <i class="bi bi-plus-circle"></i> إضافة فرد
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">إجراء</th>
+                            <th>صلة القرابة</th>
+                            <th colspan="4">بيانات الفرد</th>
+                            <th colspan="4">بيانات الزوج/الزوجة</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                            <th>الاسم الكامل</th>
+                            <th>الرقم القومي</th>
+                            <th>الوظيفة</th>
+                            <th>العنوان</th>
+                        </tr>
+                    </thead>
+                    <tbody id="extendedFamilyTableBody">
+                        @{
+                            var extendedFamily = Model.Family?.Where(f =>
+                            f.Relationship == "عم" || f.Relationship == "عمة" ||
+                            f.Relationship == "خال" || f.Relationship == "خالة").ToList();
+
+                            var familyStartIndex = (siblings?.Count ?? 0);
+
+                            if (extendedFamily != null)
+                            {
+                                for (int i = 0; i < extendedFamily.Count; i++)
+                                {
+                                    var relative = extendedFamily[i];
+                                    var relativeIndex = familyStartIndex + i;
+                                    <tr data-index="@relativeIndex">
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <input type="hidden" name="Family[@relativeIndex].Id" value="@relative.Id" />
+                                        </td>
+                                        <td>
+                                            <select name="Family[@relativeIndex].Relationship" class="form-control form-control-sm">
+                                                <option value="">-- اختر --</option>
+                                                <option value="عم" selected="@(relative.Relationship == "عم")">عم</option>
+                                                <option value="عمة" selected="@(relative.Relationship == "عمة")">عمة</option>
+                                                <option value="خال" selected="@(relative.Relationship == "خال")">خال</option>
+                                                <option value="خالة" selected="@(relative.Relationship == "خالة")">خالة</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" name="Family[@relativeIndex].FullName" class="form-control form-control-sm" value="@relative.FullName" /></td>
+                                        <td><input type="text" name="Family[@relativeIndex].NationalId" class="form-control form-control-sm" maxlength="14" value="@relative.NationalId" /></td>
+                                        <td><input type="text" name="Family[@relativeIndex].Job" class="form-control form-control-sm" value="@relative.Job" /></td>
+                                        <td><input type="text" name="Family[@relativeIndex].Address" class="form-control form-control-sm" value="@relative.Address" /></td>
+                                        <td><input type="text" name="Family[@relativeIndex].SpouseFullName" class="form-control form-control-sm" value="@relative.SpouseFullName" /></td>
+                                        <td><input type="text" name="Family[@relativeIndex].SpouseNationalId" class="form-control form-control-sm" maxlength="14" value="@relative.SpouseNationalId" /></td>
+                                        <td><input type="text" name="Family[@relativeIndex].SpouseJob" class="form-control form-control-sm" value="@relative.SpouseJob" /></td>
+                                        <td><input type="text" name="Family[@relativeIndex].SpouseAddress" class="form-control form-control-sm" value="@relative.SpouseAddress" /></td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* أزرار الحفظ والرجوع *@
+        <div class="col-12 mt-4">
+            <hr />
+            <a asp-action="Index" class="btn btn-secondary">رجوع</a>
+            <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Counter for BaseFamily items (starting from 3 because father=0, mother=1, wife=2)
+        let baseFamilyIndex = @((Model.BaseFamily?.Count(f => f.Relationship == "ابن" || f.Relationship == "ابنة") ?? 0) + 3);
+
+        // Counter for Family items
+        let familyIndex = @(Model.Family?.Count ?? 0);
+
+        // Add Child
+        document.getElementById('addChild').addEventListener('click', function() {
+            const tbody = document.getElementById('childrenTableBody');
+            const tr = createBaseFamilyRow(baseFamilyIndex, '', ['ابن', 'ابنة']);
+            tbody.appendChild(tr);
+            baseFamilyIndex++;
+        });
+
+        // Add Sibling
+        document.getElementById('addSibling').addEventListener('click', function() {
+            const tbody = document.getElementById('siblingsTableBody');
+            const tr = createFamilyRowWithSpouse(familyIndex, ['أخ', 'أخت']);
+            tbody.appendChild(tr);
+            familyIndex++;
+        });
+
+        // Add Extended Family Member
+        document.getElementById('addExtendedFamily').addEventListener('click', function() {
+            const tbody = document.getElementById('extendedFamilyTableBody');
+            const tr = createFamilyRowWithSpouse(familyIndex, ['عم', 'عمة', 'خال', 'خالة']);
+            tbody.appendChild(tr);
+            familyIndex++;
+        });
+
+        // Create BaseFamily Row (for children)
+        function createBaseFamilyRow(index, relationshipValue = '', relationships = []) {
+            const tr = document.createElement('tr');
+
+            let relationshipCell = '';
+            if (relationships.length > 0) {
+                relationshipCell = `
+                    <td>
+                        <select name="BaseFamily[${index}].Relationship" class="form-control form-control-sm">
+                            <option value="">-- اختر --</option>
+                            ${relationships.map(r => `<option value="${r}">${r}</option>`).join('')}
+                        </select>
+                    </td>`;
+            } else {
+                relationshipCell = `
+                    <td>
+                        <input type="hidden" name="BaseFamily[${index}].Relationship" value="${relationshipValue}" />
+                        ${relationshipValue}
+                    </td>`;
+            }
+
+            tr.innerHTML = `
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                    <input type="hidden" name="BaseFamily[${index}].Id" value="0" />
+                </td>
+                ${relationshipCell}
+                <td><input type="text" name="BaseFamily[${index}].Name" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="BaseFamily[${index}].NationalId" class="form-control form-control-sm" maxlength="14" /></td>
+                <td><input type="text" name="BaseFamily[${index}].Job" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="BaseFamily[${index}].Address" class="form-control form-control-sm" /></td>
+                <td><input type="date" name="BaseFamily[${index}].BirthDate" class="form-control form-control-sm" /></td>
+                <td><input type="tel" name="BaseFamily[${index}].PhoneNumber" class="form-control form-control-sm" maxlength="11" /></td>
+            `;
+
+            tr.querySelector('.remove-row').addEventListener('click', function() {
+                tr.remove();
+            });
+
+            return tr;
+        }
+
+        // Create Family Row with Spouse (for siblings and extended family)
+        function createFamilyRowWithSpouse(index, relationships = []) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                    <input type="hidden" name="Family[${index}].Id" value="0" />
+                </td>
+                <td>
+                    <select name="Family[${index}].Relationship" class="form-control form-control-sm">
+                        <option value="">-- اختر --</option>
+                        ${relationships.map(r => `<option value="${r}">${r}</option>`).join('')}
+                    </select>
+                </td>
+                <td><input type="text" name="Family[${index}].FullName" class="form-control form-control-sm" placeholder="اسم الفرد" /></td>
+                <td><input type="text" name="Family[${index}].NationalId" class="form-control form-control-sm" maxlength="14" /></td>
+                <td><input type="text" name="Family[${index}].Job" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="Family[${index}].Address" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="Family[${index}].SpouseFullName" class="form-control form-control-sm" placeholder="اسم الزوج/الزوجة" /></td>
+                <td><input type="text" name="Family[${index}].SpouseNationalId" class="form-control form-control-sm" maxlength="14" /></td>
+                <td><input type="text" name="Family[${index}].SpouseJob" class="form-control form-control-sm" /></td>
+                <td><input type="text" name="Family[${index}].SpouseAddress" class="form-control form-control-sm" /></td>
+            `;
+
+            tr.querySelector('.remove-row').addEventListener('click', function() {
+                tr.remove();
+            });
+
+            return tr;
+        }
+
+        // Remove existing rows
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.remove-row').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('tr').remove();
+                });
+            });
+        });
+    </script>
+}

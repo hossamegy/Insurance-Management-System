@@ -1,0 +1,93 @@
+﻿@using InsuranceAdministration.Core.Entities.SoldierEntities
+@using System.Globalization
+@model IEnumerable<Soldier>
+@{
+    ViewData["Title"] = "حصر حضور واجازات المجندين";
+    ViewData["SubTitle"] = "إدارة وتوزيع المجندين";
+    Layout = "_Layout";
+}
+<head>
+    <link rel="stylesheet" href="~/css/Shared/Index.css" asp-append-version="true" />
+</head>
+
+@await Html.PartialAsync("_PageHeader")
+
+<div class="container">
+    <div class="header-section">
+        <input type="text" class="search-input" placeholder="بحث عن مجند...">
+    </div>
+    <div class="table-wrapper">
+        <table class="soldiers-table m-2">
+            <thead>
+                <tr class="table-header">
+                    <th>م</th>
+                    <th>الاسم</th>
+                    <th>التشغيل</th>
+                    <th>رقم التليفون</th>
+                    <th>عدد ايام الحضور</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rowNumber = ((int)ViewBag.PageNumber - 1) * (int)ViewBag.PageSize;
+                }
+                @foreach (var soldier in Model)
+                {
+                    rowNumber++;
+                    <tr>
+                        <td>@rowNumber</td>
+                        <td>@soldier.Name</td>
+                        <td>@soldier.Assignment</td>
+                        <td>@soldier.PhoneNumber</td>
+                        <td></td>
+                        <td class="actions">
+                            <a asp-action="Leave" asp-route-actionType="قيام" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">قيام</a>
+                            <a asp-action="Leave" asp-route-actionType="حضور" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">حضور</a>
+                            <a asp-action="Leave" asp-route-actionType="غياب" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">غياب</a>
+                            <a asp-action="Leave" asp-route-actionType="مد الاجازة" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">مد الاجازة</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="pagination-container">
+            @if ((int)ViewBag.PageNumber > 1)
+            {
+                <a class="btn-primary pagination-btn @(ViewBag.PageNumber == 1 ? "disabled" : "")"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(ViewBag.PageNumber - 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">
+                    السابق
+                </a>
+            }
+            <span>@ViewBag.PageNumber</span>
+            @if ((bool)ViewBag.HasNext)
+            {
+                <a class="btn-primary pagination-btn @(ViewBag.HasNext ? "" : "disabled")"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(ViewBag.PageNumber + 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">
+                    التالي
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function openSmallWindow(url) {
+        // Open a small popup window
+        const width = 800;
+        const height = 700;
+        const left = (screen.width - width) / 2;
+        const top = (screen.height - height) / 2;
+        
+        const windowFeatures = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no,status=no`;
+        
+        window.open(url, '_blank', windowFeatures);
+        
+        // Prevent default link behavior
+        return false;
+    }
+</script>

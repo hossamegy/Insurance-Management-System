@@ -1,0 +1,125 @@
+﻿@using InsuranceAdministration.Core.Entities.SoldierEntities
+@using System.Globalization
+@model IEnumerable<Soldier>
+@{
+
+    ViewData["Title"] = "حصر قوة المجندين";
+    ViewData["SubTitle"] = "إدارة وتوزيع المجندين";
+    Layout = "_Layout";
+
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Shared/Index.css" asp-append-version="true" />
+</head>
+
+@await Html.PartialAsync("_PageHeader")
+
+
+<div class="container">
+    <div class="header-section">
+        <input type="text" class="search-input" placeholder="بحث عن مجند...">
+        <a class="btn-primary add-button" asp-area="" asp-controller="Soldier" asp-action="Add">اضافة مجند جديد +</a>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="soldiers-table m-2">
+            <thead>
+
+                <tr class="table-header">
+                    <th>م</th>
+                    <th>الاسم</th>
+                    <th>تاريخ التجنيد</th>
+                    <th>رقم الشرطة</th>
+                    <th>الرقم الثلاثى</th>
+                    <th>الرقم القومى</th>            
+                    <th>البلد</th>
+                    <th>المركز</th>
+                    <th>المحافظة</th>
+                    <th>التشغيل</th>
+                    <th>تاريخ انتهاء الخدمة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rowNumber = ((int)ViewBag.PageNumber - 1) * (int)ViewBag.PageSize;
+                }
+
+                @foreach (var soldier in Model)
+                {
+                    rowNumber++;
+                    <tr>
+                        <td>@rowNumber</td>
+                        <td>@soldier.Name</td>
+                        <td>@soldier.EnlistmentDate.ToString("dd/MM/yyyy")</td>
+                        <td>@soldier.PoliceNumber</td>
+                        <td>@soldier.TripleNumber</td>
+                        <td>@soldier.NationalId</td>
+                        <td>@soldier.BirthDate.ToString("dd/MM/yyyy")</td>
+                        <td>@soldier.Street</td>
+                        <td>@soldier.Region</td>
+                        <td>@soldier.City</td>
+                        <td>@soldier.ServiceEndDate?.ToString("dd/MM/yyyy")</td>
+                        <td class="actions">
+
+                            <!-- Show -->
+                            <form asp-controller="Soldier" asp-action="Show" method="get" style="display:inline;">
+                                <input type="hidden" name="id" value="@soldier.Id" />
+                                <button type="submit" class="btn btn-warning">عرض</button>
+                            </form>
+
+                            <!-- Edit -->
+                            <form asp-controller="Soldier" asp-action="Edit" method="get" style="display:inline;">
+                                <input type="hidden" name="id" value="@soldier.Id" />
+                                <button type="submit" class="btn btn-edit">تعديل</button>
+                            </form>
+
+                            <!-- Delete -->
+                            <form asp-controller="Soldier" asp-action="Delete" method="post" style="display:inline;"
+                                  onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@soldier.Id" />
+                                <button type="submit" class="btn btn-delete">حذف</button>
+                            </form>
+                            <!-- Show -->
+                            <form asp-controller="Soldier" asp-action="PrintOrnik114" method="get" style="display:inline;">
+                                <input type="hidden" name="id" value="@soldier.Id" />
+                                <button type="submit" class="btn btn-warning">طباعة اورنيك 114</button>
+                            </form>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+        <div class="pagination-container">
+            @if ((int)ViewBag.PageNumber > 1)
+            {
+                <a class="btn-primary pagination-btn @(ViewBag.PageNumber == 1 ? "disabled" : "")"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(ViewBag.PageNumber - 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">
+                    السابق
+                </a>
+            }
+
+            <span>@ViewBag.PageNumber</span>
+
+            @if ((bool)ViewBag.HasNext)
+            {
+                <a class="btn-primary pagination-btn @(ViewBag.HasNext ? "" : "disabled")"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(ViewBag.PageNumber + 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">
+                    التالي
+                </a>
+            }
+
+        </div>
+
+
+    </div>
+</div>

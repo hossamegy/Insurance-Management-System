@@ -2,19 +2,60 @@
 @using InsuranceAdministration.Core.Entities.SoldierEntities
 
 @{
-
     ViewData["Title"] = "إضافة مجند جديد";
     ViewData["SubTitle"] = "إدارة وتوزيع المجندين";
-    ViewData["Title"] = "إضافة مجند جديد";
-
 }
 @await Html.PartialAsync("_PageHeader")
 <head>
     <link rel="stylesheet" href="~/css/Shared/Add.css" asp-append-version="true" />
+    <style>
+        .validation-summary {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+            .validation-summary h4 {
+                color: #721c24;
+                margin-bottom: 10px;
+            }
+
+            .validation-summary ul {
+                margin-bottom: 0;
+                color: #721c24;
+            }
+
+        .field-validation-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        .input-validation-error {
+            border-color: #dc3545 !important;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
 </head>
 
 <div>
-    <form asp-action="AddNewSoldierItem" asp-controller="Soldier" method="post" class="row g-3 p-0">
+    @* Display validation summary if there are errors *@
+    <div asp-validation-summary="ModelOnly" class="validation-summary" style="@(ViewData.ModelState.IsValid ? "display:none;" : "")">
+        <h4>⚠️ يرجى تصحيح الأخطاء التالية:</h4>
+    </div>
+
+    <form asp-action="AddNewSoldierItem" asp-controller="Soldier" method="post" class="row g-3 p-0" id="soldierForm">
+        @Html.AntiForgeryToken()
+
+        @* Hidden field for IsActive *@
+        <input type="hidden" asp-for="IsActive" value="true" />
 
         @* البيانات الشخصية *@
         <div class="col-12">
@@ -24,39 +65,66 @@
 
         @* الاسم *@
         <div class="col-md-6">
-            <label class="form-label">الاسم</label>
-            <input asp-for="Name" class="form-control" maxlength="150" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+            <label class="form-label required-field">الاسم</label>
+            <input asp-for="Name" class="form-control" maxlength="150" placeholder="أدخل الاسم الرباعي" />
+            <span asp-validation-for="Name" class="field-validation-error"></span>
+        </div>
+
+        @* الحالة الاجتماعية *@
+        <div class="col-md-6">
+            <label class="form-label required-field">الحالة الاجتماعية</label>
+            <select asp-for="MaritalStatus" class="form-control">
+                <option value="">-- اختر الحالة الاجتماعية --</option>
+                <option value="اعزب">اعزب</option>
+                <option value="متزوج">متزوج</option>
+            </select>
+            <span asp-validation-for="MaritalStatus" class="field-validation-error"></span>
+        </div>
+
+        @* الوظيفة *@
+        <div class="col-md-6">
+            <label class="form-label">الاعمال الملحقة الحالية والسابقة</label>
+            <input asp-for="Job" class="form-control" maxlength="100" placeholder="أدخل الوظيفة (اختياري)" />
+            <span asp-validation-for="Job" class="field-validation-error"></span>
         </div>
 
         @* الرقم القومي *@
         <div class="col-md-6">
-            <label class="form-label">الرقم القومي</label>
-            <input asp-for="NationalId" class="form-control" maxlength="14" />
-            <span asp-validation-for="NationalId" class="text-danger"></span>
+            <label class="form-label required-field">الرقم القومي</label>
+            <input asp-for="NationalId" class="form-control" maxlength="14" minlength="14"
+                   pattern="[0-9]{14}" placeholder="14 رقم بدون مسافات"
+                   title="يجب إدخال 14 رقم فقط" />
+            <span asp-validation-for="NationalId" class="field-validation-error"></span>
+            <small class="text-muted">مثال: 29912011234567</small>
         </div>
 
         @* تاريخ الميلاد *@
         <div class="col-md-6">
-            <label class="form-label">تاريخ الميلاد</label>
-            <input asp-for="BirthDate" type="date" class="form-control" />
-            <span asp-validation-for="BirthDate" class="text-danger"></span>
+            <label class="form-label required-field">تاريخ الميلاد</label>
+            <input asp-for="BirthDate" type="date" class="form-control"
+                   max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="BirthDate" class="field-validation-error"></span>
         </div>
 
         @* المؤهل الدراسي *@
         <div class="col-md-6">
-            <label class="form-label">المؤهل الدراسي</label>
-            <select asp-for="EducationLevel" class="form-control" asp-items="ViewBag.educationLevelOptions">
+            <label class="form-label required-field">المؤهل الدراسي</label>
+            <select asp-for="EducationLevel" class="form-control" asp-items="ViewBag.EducationLevelOptions">
                 <option value="">-- اختر المؤهل --</option>
             </select>
-            <span asp-validation-for="EducationLevel" class="text-danger"></span>
+            <span asp-validation-for="EducationLevel" class="field-validation-error"></span>
         </div>
 
         @* رقم الهاتف *@
         <div class="col-md-6">
             <label class="form-label">رقم الهاتف</label>
-            <input asp-for="PhoneNumber" type="tel" class="form-control" maxlength="20" />
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            <input asp-for="PhoneNumber" type="text" class="form-control"
+                   maxlength="11" minlength="11"
+                   pattern="(010|011|012|015)[0-9]{8}"
+                   placeholder="01xxxxxxxxx (اختياري)"
+                   title="يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015" />
+            <span asp-validation-for="PhoneNumber" class="field-validation-error"></span>
+            <small class="text-muted">مثال: 01012345678</small>
         </div>
 
         @* بيانات الخدمة العسكرية *@
@@ -67,30 +135,32 @@
 
         @* رقم الشرطة *@
         <div class="col-md-6">
-            <label class="form-label">رقم الشرطة</label>
-            <input asp-for="PoliceNumber" class="form-control" maxlength="50" />
-            <span asp-validation-for="PoliceNumber" class="text-danger"></span>
+            <label class="form-label required-field">رقم الشرطة</label>
+            <input asp-for="PoliceNumber" class="form-control" maxlength="50" placeholder="أدخل رقم الشرطة" />
+            <span asp-validation-for="PoliceNumber" class="field-validation-error"></span>
         </div>
 
         @* الرقم الثلاثي *@
         <div class="col-md-6">
-            <label class="form-label">الرقم الثلاثي</label>
-            <input asp-for="TripleNumber" class="form-control" maxlength="50" />
-            <span asp-validation-for="TripleNumber" class="text-danger"></span>
+            <label class="form-label required-field">الرقم الثلاثي</label>
+            <input asp-for="TripleNumber" class="form-control" maxlength="50" placeholder="أدخل الرقم الثلاثي" />
+            <span asp-validation-for="TripleNumber" class="field-validation-error"></span>
         </div>
 
         @* تاريخ التجنيد *@
         <div class="col-md-4">
-            <label class="form-label">تاريخ التجنيد</label>
-            <input asp-for="EnlistmentDate" type="date" class="form-control" />
-            <span asp-validation-for="EnlistmentDate" class="text-danger"></span>
+            <label class="form-label required-field">تاريخ التجنيد</label>
+            <input asp-for="EnlistmentDate" type="date" class="form-control"
+                   max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="EnlistmentDate" class="field-validation-error"></span>
         </div>
 
         @* تاريخ انتهاء الخدمة *@
         <div class="col-md-4">
             <label class="form-label">تاريخ انتهاء الخدمة</label>
             <input asp-for="ServiceEndDate" type="date" class="form-control" />
-            <span asp-validation-for="ServiceEndDate" class="text-danger"></span>
+            <span asp-validation-for="ServiceEndDate" class="field-validation-error"></span>
+            <small class="text-muted">(اختياري)</small>
         </div>
 
         @* التشغيل *@
@@ -99,7 +169,8 @@
             <select asp-for="Assignment" class="form-control" asp-items="ViewBag.AssignmentOptions">
                 <option value="">-- اختر التشغيل --</option>
             </select>
-            <span asp-validation-for="Assignment" class="text-danger"></span>
+            <span asp-validation-for="Assignment" class="field-validation-error"></span>
+            <small class="text-muted">(اختياري)</small>
         </div>
 
         @* بيانات العنوان *@
@@ -110,34 +181,86 @@
 
         @* المحافظة *@
         <div class="col-md-4">
-            <label class="form-label">المحافظة</label>
-            <input asp-for="City" class="form-control" maxlength="50" />
-            <span asp-validation-for="City" class="text-danger"></span>
+            <label class="form-label required-field">المحافظة</label>
+            <input asp-for="City" class="form-control" maxlength="50" placeholder="أدخل المحافظة" />
+            <span asp-validation-for="City" class="field-validation-error"></span>
         </div>
 
         @* المركز *@
         <div class="col-md-4">
-            <label class="form-label">المركز</label>
-            <input asp-for="Region" class="form-control" maxlength="50" />
-            <span asp-validation-for="Region" class="text-danger"></span>
+            <label class="form-label required-field">المركز</label>
+            <input asp-for="Region" class="form-control" maxlength="50" placeholder="أدخل المركز" />
+            <span asp-validation-for="Region" class="field-validation-error"></span>
         </div>
 
         @* البلد *@
         <div class="col-md-4">
             <label class="form-label">البلد</label>
-            <input asp-for="Street" class="form-control" maxlength="50" />
-            <span asp-validation-for="Street" class="text-danger"></span>
+            <input asp-for="Street" class="form-control" maxlength="50" placeholder="أدخل البلد (اختياري)" />
+            <span asp-validation-for="Street" class="field-validation-error"></span>
         </div>
 
         @* أزرار الحفظ والرجوع *@
         <div class="col-12 mt-4">
             <hr />
             <a asp-action="Index" asp-controller="Soldier" class="btn btn-secondary">رجوع</a>
-            <button type="submit" class="btn btn-primary">حفظ البيانات</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                حفظ البيانات
+            </button>
         </div>
     </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Client-side validation enhancement
+        $(document).ready(function() {
+            // Add validation to the form
+            $('#soldierForm').on('submit', function(e) {
+                // Show loading state
+                $('#submitBtn').prop('disabled', true);
+                $('#submitBtn .spinner-border').removeClass('d-none');
+
+                // If validation fails, re-enable button
+                if (!$(this).valid()) {
+                    $('#submitBtn').prop('disabled', false);
+                    $('#submitBtn .spinner-border').addClass('d-none');
+
+                    // Scroll to first error
+                    $('html, body').animate({
+                        scrollTop: $('.field-validation-error:visible:first').offset().top - 100
+                    }, 500);
+
+                    return false;
+                }
+            });
+
+            // National ID validation - only numbers
+            $('#NationalId').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            // Phone number validation - only numbers
+            $('#PhoneNumber').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            // Real-time validation feedback
+            $('input[required], select[required]').on('blur', function() {
+                if ($(this).val() === '') {
+                    $(this).addClass('input-validation-error');
+                } else {
+                    $(this).removeClass('input-validation-error');
+                }
+            });
+
+            // Remove error class on input
+            $('input, select').on('input change', function() {
+                $(this).removeClass('input-validation-error');
+            });
+        });
+    </script>
 }

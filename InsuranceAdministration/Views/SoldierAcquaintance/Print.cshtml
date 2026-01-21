@@ -1,0 +1,577 @@
+﻿@model Soldier
+@using InsuranceAdministration.Core.Entities.SoldierEntities
+@{
+    ViewData["Title"] = "تفاصيل المجند";
+    ViewData["SubTitle"] = "عرض البيانات الكاملة";
+    Layout = "";
+
+    // Get family members by relationship
+    var father = Model.AcquaintanceDocument?.BaseFamily?.FirstOrDefault(f => f.Relationship == "والد" || f.Relationship == "الأب");
+    var mother = Model.AcquaintanceDocument?.BaseFamily?.FirstOrDefault(f => f.Relationship == "والدة" || f.Relationship == "الأم");
+    var wife = Model.AcquaintanceDocument?.BaseFamily?.FirstOrDefault(f => f.Relationship == "زوجة" || f.Relationship == "الزوجة");
+
+    // Helper function to convert to Arabic numerals
+    string ToArabicNumerals(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return input;
+
+        return input
+            .Replace('0', '٠')
+            .Replace('1', '١')
+            .Replace('2', '٢')
+            .Replace('3', '٣')
+            .Replace('4', '٤')
+            .Replace('5', '٥')
+            .Replace('6', '٦')
+            .Replace('7', '٧')
+            .Replace('8', '٨')
+            .Replace('9', '٩');
+    }
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<style>
+    @@media print {
+        @@page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+
+        body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+
+    * {
+        margin: 0;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+
+    .document-container {
+        max-width: 35.7cm;
+        margin: 10px auto;
+        padding: 20px 40px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        font-family: 'Traditional Arabic', 'Arial', sans-serif;
+        line-height: 1.4;
+    }
+
+    .header-section {
+        text-align: right;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+    }
+
+        .header-section p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+    .document-title {
+        text-align: center;
+        margin: 15px 0;
+        font-size: 30px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .section-container {
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 15px;
+    }
+
+        .section-container:last-of-type {
+            border-bottom: none;
+        }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        direction: rtl;
+        gap: 60px;
+    }
+
+    .info-left {
+        flex: 1;
+        text-align: right;
+    }
+
+    .info-right {
+        flex: 1;
+        text-align: right;
+    }
+
+    .section-title-right {
+        text-align: right;
+        font-weight: bold;
+        font-size: 20px;
+        color: #000;
+        margin-bottom: 4px;
+        line-height: 1.6;
+    }
+
+    .table-section-title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 20px 0 5px 0;
+        color: #000;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 5px;
+        font-size: 20px;
+    }
+
+    .table-bordered {
+        border: 1px solid #000;
+    }
+
+        .table-bordered th,
+        .table-bordered td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+            min-height: 30px;
+        }
+
+        .table-bordered th {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+    .table-raw {
+        font-size: 14px;
+        font-family: bold;
+    }
+
+        .table-raw td {
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .table-raw tr:first-child td {
+            border-top: 1px solid #000;
+        }
+
+        .table-raw tr:last-child td {
+            border-bottom: 1px solid #000;
+        }
+
+    .table-light th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+
+    .declaration-section {
+        margin-top: 0px;
+        text-align: right;
+       
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+        .declaration-section p {
+            text-align: justify;
+            margin-bottom: 0px;
+            font-size: 18px;
+        }
+
+    .signature-section {
+        display: flex;
+        justify-content: space-between;
+        direction: rtl;
+    }
+
+        .signature-section > div {
+            flex: 1;
+        }
+
+        .signature-section .signature-box {
+           
+        }
+
+    .footer-note {
+        text-align: center;
+        font-size: 12px;
+        margin-top: 20px;
+        color: #666;
+    }
+
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .document-container {
+            box-shadow: none;
+            margin: 0;
+            padding: 15px 30px;
+            max-width: 100%;
+        }
+
+        .section-container {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+        }
+
+        .section-title-right {
+            margin-bottom: 3px;
+            font-size: 16px;
+        }
+
+        .header-section {
+            margin-bottom: 10px;
+        }
+
+        .document-title {
+            margin: 10px 0;
+            font-size: 20px;
+        }
+
+        .table {
+            font-size: 16px;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            padding: 5px;
+        }
+    }
+</style>
+
+<div class="document-container" dir="rtl">
+    <div class="header-section">
+        <div>وزارة الداخلية</div>
+        <div>الإدارة العامة لشرطة البيئة والمسطحات</div>
+    </div>
+
+    <h4 class="document-title">(وثيـقــة تعــارف)</h4>
+
+    <!-- بيانات المجند -->
+    <div class="section-container">
+        <div class="info-row">
+            <div class="info-left">
+                <div class="section-title-right">الاسم رباعى / @Model.Name</div>
+                <div class="section-title-right">محل الإقامة والإقامات السابقة / @Model.Street - @Model.Region - @Model.City</div>
+                <div class="section-title-right">الأعمال الملحقة الحالية والسابقة / @Model.Job</div>
+                <div class="section-title-right">الرقم القومى / @ToArabicNumerals(Model.NationalId)</div>
+            </div>
+            <div class="info-right">
+                <div class="section-title-right">تاريخ ومحل الميلاد / @ToArabicNumerals(Model.BirthDate.ToString("yyyy/MM/dd"))</div>
+                <div class="section-title-right">تاريخ الالتحاق بالعمل / @ToArabicNumerals(Model.EnlistmentDate.ToString("yyyy/MM/dd"))</div>
+                <div class="section-title-right">الحالة الاجتماعية / @Model.MaritalStatus</div>
+                <div class="section-title-right">رقم المحمول / @ToArabicNumerals(Model.PhoneNumber)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بيانات الوالد -->
+    <div class="section-container">
+        <div class="info-row">
+            <div class="info-left">
+                <div class="section-title-right">الوالد / @father?.Name</div>
+                <div class="section-title-right">الوظيفة / @father?.Job</div>
+                <div class="section-title-right">الرقم القومى / @ToArabicNumerals(father?.NationalId)</div>
+            </div>
+            <div class="info-right">
+                <div class="section-title-right">تاريخ ومحل الميلاد / @ToArabicNumerals(father?.BirthDate?.ToString("yyyy/MM/dd"))</div>
+                <div class="section-title-right">محل الإقامة / @father?.Address</div>
+                <div class="section-title-right">رقم المحمول / @ToArabicNumerals(father?.PhoneNumber)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بيانات الوالدة -->
+    <div class="section-container">
+        <div class="info-row">
+            <div class="info-left">
+                <div class="section-title-right">الوالدة / @mother?.Name</div>
+                <div class="section-title-right">الوظيفة / @mother?.Job</div>
+                <div class="section-title-right">الرقم القومى / @ToArabicNumerals(mother?.NationalId)</div>
+            </div>
+            <div class="info-right">
+                <div class="section-title-right">تاريخ ومحل الميلاد / @ToArabicNumerals(mother?.BirthDate?.ToString("yyyy/MM/dd"))</div>
+                <div class="section-title-right">محل الإقامة / @mother?.Address</div>
+                <div class="section-title-right">رقم المحمول / @ToArabicNumerals(mother?.PhoneNumber)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بيانات الزوجة -->
+    <div class="section-container">
+        <div class="info-row">
+            <div class="info-left">
+                <div class="section-title-right">الزوجة / @wife?.Name</div>
+                <div class="section-title-right">الوظيفة / @wife?.Job</div>
+                <div class="section-title-right">الرقم القومى / @ToArabicNumerals(wife?.NationalId)</div>
+            </div>
+            <div class="info-right">
+                <div class="section-title-right">تاريخ ومحل الميلاد / @ToArabicNumerals(wife?.BirthDate?.ToString("yyyy/MM/dd"))</div>
+                <div class="section-title-right">محل الإقامة / @wife?.Address</div>
+                <div class="section-title-right">رقم المحمول / @ToArabicNumerals(wife?.PhoneNumber)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Break for next page -->
+    <div class="page-break"></div>
+
+    <!-- الإخوة والأخوات -->
+    <div class="table-section-title">(الإخوة والأخوات)</div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>الاسم رباعي</th>
+                <th>الرقم القومي</th>
+                <th>الوظيفة</th>
+                <th>محل الإقامة</th>
+                <th>الزوجة/الزوج</th>
+                <th>الرقم القومي</th>
+                <th>الوظيفة</th>
+                <th>العنوان</th>
+            </tr>
+        </thead>
+        <tbody class="table-raw">
+            @{
+                var siblings = Model.AcquaintanceDocument?.Family?.Where(f => f.Relationship == "أخ" || f.Relationship == "أخت").ToList() ?? new List<InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance.Family>();
+                var siblingsCount = siblings.Count;
+            }
+            @for (int i = 0; i < 11; i++)
+            {
+                if (i < siblingsCount)
+                {
+                    var member = siblings[i];
+                    <tr>
+                        <td>@member.FullName</td>
+                        <td>@ToArabicNumerals(member.NationalId)</td>
+                        <td>@member.Job</td>
+                        <td>@member.Address</td>
+                        <td>@member.SpouseFullName</td>
+                        <td>@ToArabicNumerals(member.SpouseNationalId)</td>
+                        <td>@member.SpouseJob</td>
+                        <td>@member.SpouseAddress</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- الأبناء -->
+    <div class="table-section-title">(الأبناء)</div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>الاسم رباعي</th>
+                <th>الرقم القومي</th>
+                <th>الوظيفة</th>
+                <th>محل الإقامة</th>
+                <th>الزوجة/الزوج</th>
+                <th>الرقم القومي</th>
+                <th>الوظيفة</th>
+                <th>العنوان</th>
+            </tr>
+        </thead>
+        <tbody class="table-raw">
+            @{
+                var children = Model.AcquaintanceDocument?.Family?.Where(f => f.Relationship == "ابن" || f.Relationship == "ابنة").ToList() ?? new List<InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance.Family>();
+                var childrenCount = children.Count;
+            }
+            @for (int i = 0; i < 6; i++)
+            {
+                if (i < childrenCount)
+                {
+                    var member = children[i];
+                    <tr>
+                        <td>@member.FullName</td>
+                        <td>@ToArabicNumerals(member.NationalId)</td>
+                        <td>@member.Job</td>
+                        <td>@member.Address</td>
+                        <td>@member.SpouseFullName</td>
+                        <td>@ToArabicNumerals(member.SpouseNationalId)</td>
+                        <td>@member.SpouseJob</td>
+                        <td>@member.SpouseAddress</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- Page Break for next page -->
+    <div class="page-break"></div>
+
+    <!-- الأعمام والعمات والأخوال والخالات -->
+    <div class="table-section-title">(الأعمام والعمات والأخوال والخالات)</div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>الاسم رباعي</th>
+                <th>الرقم القومي</th>
+                <th>الوظيفة</th>
+                <th>محل الإقامة</th>
+                <th>الزوجة/الزوج</th>
+                <th>الرقم القومي</th>
+                <th>الوظيفة</th>
+                <th>العنوان</th>
+            </tr>
+        </thead>
+        <tbody class="table-raw">
+            @{
+                var extendedFamily = Model.AcquaintanceDocument?.Family?.Where(f => f.Relationship == "عم" || f.Relationship == "عمة" || f.Relationship == "خال" || f.Relationship == "خالة").ToList() ?? new List<InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance.Family>();
+                var extendedFamilyCount = extendedFamily.Count;
+            }
+            @for (int i = 0; i < 9; i++)
+            {
+                if (i < extendedFamilyCount)
+                {
+                    var member = extendedFamily[i];
+                    <tr>
+                        <td>@member.FullName</td>
+                        <td>@ToArabicNumerals(member.NationalId)</td>
+                        <td>@member.Job</td>
+                        <td>@member.Address</td>
+                        <td>@member.SpouseFullName</td>
+                        <td>@ToArabicNumerals(member.SpouseNationalId)</td>
+                        <td>@member.SpouseJob</td>
+                        <td>@member.SpouseAddress</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- أقرباء الزوجة -->
+    <div class="table-section-title">أقرباء الزوجة وهم (والد الزوجة - والدتها)</div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>الاسم رباعي</th>
+                <th>الرقم القومي</th>
+                <th>الوظيفة</th>
+                <th>محل الإقامة</th>
+            </tr>
+        </thead>
+        <tbody class="table-raw">
+            @{
+                var wifeRelatives = Model.AcquaintanceDocument?.BaseFamily?.Where(f => f.Relationship == "والد الزوجة" || f.Relationship == "والدة الزوجة").ToList() ?? new List<InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance.BaseFamily>();
+                var wifeRelativesCount = wifeRelatives.Count;
+            }
+            @for (int i = 0; i < 3; i++)
+            {
+                if (i < wifeRelativesCount)
+                {
+                    var member = wifeRelatives[i];
+                    <tr>
+                        <td>@member.Name</td>
+                        <td>@ToArabicNumerals(member.NationalId)</td>
+                        <td>@member.Job</td>
+                        <td>@member.Address</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- الإقرار -->
+    <div class="declaration-section">
+        <div class="table-section-title">(إقرار)</div>
+        <p>
+            أقر أنا / &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            بأن هذه البيانات صحيحة ومطابقة للواقع وتحت مسئوليتي الشخصية وأنني سأقوم بالإخطار
+            عن كل ما يطرأ من تغيير على حالتي كما أقر بأنه لم يسبق اتهامي
+            أو أي من أقاربي حتى الدرجة الرابعة في قضايا سياسية أو جنائية
+            وإذا قمت بإخفائي لبيانات مخالفة للحقيقة اعتبر مقصراً.
+        </p>
+
+        <div class="signature-section">
+            <div>
+                <div>
+                    <div>المقر /</div>
+                </div>
+            </div>
+            <div>
+                <div style="text-align:center;">
+                    <div>يعتمد</div>
+                    <div>الرئيس المباشر</div>
+                </div>
+            </div>
+            <div>
+                <div style="text-align:center;">
+                    <div>ختم الجهة</div>
+                    <div>أو شعار الجمهورية</div>
+                </div>
+            </div>
+        </div>
+        <strong>ملحوظة: -</strong>
+        <p>
+            &nbsp&nbsp&nbsp يراعي عدم إغفال أي من الأقارب وكتابة الأسماء رباعية والرقم القومي وكذا ذكر المتوفين
+        </p>
+    </div>
+
+    <div class="no-print" style="text-align: center; margin-top: 20px;">
+        <button onclick="window.print()" class="btn btn-primary">طباعة الوثيقة</button>
+        <a asp-action="Index" class="btn btn-secondary">رجوع للقائمة</a>
+    </div>
+</div>

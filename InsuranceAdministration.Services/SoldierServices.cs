@@ -27,9 +27,7 @@ namespace InsuranceAdministration.Services
 
             try
             {
-                _logger.LogInformation("Service: Adding new soldier");
-
-             
+                _logger.LogInformation("Service: Adding new soldier with name: {Name}", soldier.Name);
 
                 var result = await _repository.AddNewSoldier(soldier);
 
@@ -38,11 +36,12 @@ namespace InsuranceAdministration.Services
             }
             catch (ValidationException)
             {
+                _logger.LogWarning("Service: Validation failed for soldier: {Name}", soldier.Name);
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Service: Error occurred while adding soldier");
+                _logger.LogError(ex, "Service: Error occurred while adding soldier: {Name}", soldier.Name);
                 throw;
             }
         }
@@ -58,7 +57,7 @@ namespace InsuranceAdministration.Services
                 _logger.LogInformation("Service: Successfully deleted soldier with ID: {SoldierId}", id);
                 return soldier;
             }
-            catch (EntityNotFoundException ex)
+            catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Service: Soldier with ID: {SoldierId} not found", id);
                 throw;
@@ -78,7 +77,7 @@ namespace InsuranceAdministration.Services
 
                 var soldiers = await _repository.GetAllSoldier();
 
-                _logger.LogInformation("Service: Successfully retrieved soldiers");
+                _logger.LogInformation("Service: Successfully retrieved {Count} soldiers", soldiers.Count());
                 return soldiers;
             }
             catch (Exception ex)
@@ -99,7 +98,7 @@ namespace InsuranceAdministration.Services
                 _logger.LogInformation("Service: Successfully retrieved soldier with ID: {SoldierId}", id);
                 return soldier;
             }
-            catch (EntityNotFoundException ex)
+            catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Service: Soldier with ID: {SoldierId} not found", id);
                 throw;
@@ -111,7 +110,6 @@ namespace InsuranceAdministration.Services
             }
         }
 
-       
         public async ValueTask<Soldier> UpdateCurrentSoldier(Soldier soldier)
         {
             if (soldier == null)
@@ -130,6 +128,8 @@ namespace InsuranceAdministration.Services
                 // Update all relevant properties
                 existingSoldier.Name = soldier.Name;
                 existingSoldier.BirthDate = soldier.BirthDate;
+                existingSoldier.Job = soldier.Job;
+                existingSoldier.MaritalStatus = soldier.MaritalStatus;
                 existingSoldier.EnlistmentDate = soldier.EnlistmentDate;
                 existingSoldier.PoliceNumber = soldier.PoliceNumber;
                 existingSoldier.Street = soldier.Street;
@@ -141,20 +141,31 @@ namespace InsuranceAdministration.Services
                 existingSoldier.EducationLevel = soldier.EducationLevel;
                 existingSoldier.PhoneNumber = soldier.PhoneNumber;
                 existingSoldier.ServiceEndDate = soldier.ServiceEndDate;
-                existingSoldier.Missions = soldier.Missions;
+                existingSoldier.IsActive = soldier.IsActive;
+                existingSoldier.AcquaintanceDocument = soldier.AcquaintanceDocument;
+                existingSoldier.CurrentIsLeave = soldier.CurrentIsLeave;
+                existingSoldier.Leave = soldier.Leave;
 
-                // Save the updated entity
+
+                // Update missions if provided
+                if (soldier.Missions != null && soldier.Missions.Any())
+                {
+                    existingSoldier.Missions = soldier.Missions;
+                }
+
                 var updatedSoldier = await _repository.UpdateCurrentSoldier(existingSoldier);
 
                 _logger.LogInformation("Service: Successfully updated soldier with ID: {SoldierId}", updatedSoldier.Id);
                 return updatedSoldier;
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
+                _logger.LogWarning(ex, "Service: Validation failed for soldier ID: {SoldierId}", soldier.Id);
                 throw;
             }
-            catch (EntityNotFoundException)
+            catch (KeyNotFoundException ex)
             {
+                _logger.LogWarning(ex, "Service: Soldier with ID: {SoldierId} not found", soldier.Id);
                 throw;
             }
             catch (Exception ex)
@@ -164,22 +175,23 @@ namespace InsuranceAdministration.Services
             }
         }
 
-
-        public async ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiersByActive(int pageNumber, int pageSize, bool IsActive)
+        public async ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiersByActive(int pageNumber, int pageSize, bool isActive)
         {
             try
             {
-                _logger.LogInformation("Service: Retrieving paginated soldiers - Page: {PageNumber}, Size: {PageSize}",
-                    pageNumber, pageSize);
+                _logger.LogInformation(
+                    "Service: Retrieving paginated soldiers - Page: {PageNumber}, Size: {PageSize}, Active: {IsActive}",
+                    pageNumber, pageSize, isActive);
 
-                var soldiers = await _repository.GetPaginatedSoldiersByActive(pageNumber, pageSize, true);
+                var soldiers = await _repository.GetPaginatedSoldiersByActive(pageNumber, pageSize, isActive);
 
-                _logger.LogInformation("Service: Successfully retrieved paginated soldiers");
+                _logger.LogInformation("Service: Successfully retrieved {Count} paginated soldiers", soldiers.Count());
                 return soldiers;
             }
             catch (ArgumentException ex)
             {
-                _logger.LogWarning(ex, "Service: Invalid pagination parameters - Page: {PageNumber}, Size: {PageSize}",
+                _logger.LogWarning(ex,
+                    "Service: Invalid pagination parameters - Page: {PageNumber}, Size: {PageSize}",
                     pageNumber, pageSize);
                 throw;
             }
@@ -189,36 +201,266 @@ namespace InsuranceAdministration.Services
                 throw;
             }
         }
-        public async ValueTask<IEnumerable<Soldier>> GetSoldierByAssignment(string SoldierAssignment)
+
+        public async ValueTask<IEnumerable<Soldier>> GetSoldierByAssignment(string soldierAssignment)
         {
-            if (string.IsNullOrWhiteSpace(SoldierAssignment))
+            if (string.IsNullOrWhiteSpace(soldierAssignment))
             {
                 _logger.LogWarning("Service: SoldierAssignment is null or empty");
-                return Enumerable.Empty<Soldier>();
+                throw new ArgumentException("Assignment cannot be null or empty", nameof(soldierAssignment));
             }
 
             try
             {
-                _logger.LogInformation("Service: Retrieving soldiers with assignment: {Assignment}", SoldierAssignment);
+                _logger.LogInformation("Service: Retrieving soldiers with assignment: {Assignment}", soldierAssignment);
 
-                var soldiers = await _repository.GetSoldierByAssignment(SoldierAssignment);
+                var soldiers = await _repository.GetSoldierByAssignment(soldierAssignment);
 
-                _logger.LogInformation("Service: Successfully retrieved {Count} soldiers with assignment: {Assignment}",
-                    soldiers?.Count() ?? 0, SoldierAssignment);
+                _logger.LogInformation(
+                    "Service: Successfully retrieved {Count} soldiers with assignment: {Assignment}",
+                    soldiers.Count(), soldierAssignment);
 
                 return soldiers;
             }
-            catch (EntityNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "Service: No soldiers found with assignment: {Assignment}", SoldierAssignment);
-                return Enumerable.Empty<Soldier>();
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Service: Error occurred while retrieving soldiers with assignment: {Assignment}", SoldierAssignment);
+                _logger.LogError(ex,
+                    "Service: Error occurred while retrieving soldiers with assignment: {Assignment}",
+                    soldierAssignment);
                 throw;
             }
         }
 
+        // AcquaintanceDocument Methods
+        public async ValueTask<AcquaintanceDocument> AddAcquaintanceDocument(int SoldierId, AcquaintanceDocument acquaintanceDocument)
+        {
+            if (acquaintanceDocument == null)
+            {
+                _logger.LogError("Service: Attempted to add null acquaintance document");
+                throw new ArgumentNullException(nameof(acquaintanceDocument));
+            }
+
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Adding acquaintance document for soldier ID: {SoldierId}",
+                    acquaintanceDocument.SoldierId);
+
+                var result = await _repository.AddAcquaintanceDocument(SoldierId, acquaintanceDocument);
+
+                _logger.LogInformation(
+                    "Service: Successfully added acquaintance document with ID: {DocumentId}",
+                    result.Id);
+
+                return result;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Soldier with ID: {SoldierId} not found",
+                    acquaintanceDocument.SoldierId);
+                throw;
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Acquaintance document already exists for soldier ID: {SoldierId}",
+                    acquaintanceDocument.SoldierId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Service: Error occurred while adding acquaintance document for soldier ID: {SoldierId}",
+                    acquaintanceDocument.SoldierId);
+                throw;
+            }
+        }
+
+        public async ValueTask<AcquaintanceDocument> GetAcquaintanceDocument(int soldierId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Retrieving acquaintance document for soldier ID: {SoldierId}",
+                    soldierId);
+
+                var document = await _repository.GetAcquaintanceDocument(soldierId);
+
+                _logger.LogInformation(
+                    "Service: Successfully retrieved acquaintance document for soldier ID: {SoldierId}",
+                    soldierId);
+
+                return document;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Acquaintance document for soldier ID: {SoldierId} not found",
+                    soldierId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Service: Error occurred while retrieving acquaintance document for soldier ID: {SoldierId}",
+                    soldierId);
+                throw;
+            }
+        }
+
+        public async ValueTask<AcquaintanceDocument> UpdateAcquaintanceDocument(AcquaintanceDocument acquaintanceDocument)
+        {
+            if (acquaintanceDocument == null)
+            {
+                _logger.LogError("Service: Attempted to update null acquaintance document");
+                throw new ArgumentNullException(nameof(acquaintanceDocument));
+            }
+
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Updating acquaintance document for soldier ID: {SoldierId}",
+                    acquaintanceDocument.SoldierId);
+
+                var result = await _repository.UpdateAcquaintanceDocument(acquaintanceDocument);
+
+                _logger.LogInformation(
+                    "Service: Successfully updated acquaintance document for soldier ID: {SoldierId}",
+                    acquaintanceDocument.SoldierId);
+
+                return result;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Acquaintance document for soldier ID: {SoldierId} not found",
+                    acquaintanceDocument.SoldierId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Service: Error occurred while updating acquaintance document for soldier ID: {SoldierId}",
+                    acquaintanceDocument.SoldierId);
+                throw;
+            }
+        }
+
+        // SoldierLeave Methods
+        public async ValueTask<SoldierLeave> AddSoldierLeave(SoldierLeave soldierLeave)
+        {
+            if (soldierLeave == null)
+            {
+                _logger.LogError("Service: Attempted to add null soldier leave");
+                throw new ArgumentNullException(nameof(soldierLeave));
+            }
+
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Adding leave record for soldier ID: {SoldierId}",
+                    soldierLeave.SoldierId);
+
+                var result = await _repository.AddSoldierLeave(soldierLeave);
+
+                _logger.LogInformation(
+                    "Service: Successfully added leave record with ID: {LeaveId}",
+                    result.Id);
+
+                return result;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Soldier with ID: {SoldierId} not found",
+                    soldierLeave.SoldierId);
+                throw;
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Leave record already exists for soldier ID: {SoldierId}",
+                    soldierLeave.SoldierId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Service: Error occurred while adding leave record for soldier ID: {SoldierId}",
+                    soldierLeave.SoldierId);
+                throw;
+            }
+        }
+
+        public async ValueTask<SoldierLeave> GetSoldierLeave(int soldierId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Retrieving leave record for soldier ID: {SoldierId}",
+                    soldierId);
+
+                var leave = await _repository.GetSoldierLeave(soldierId);
+
+                _logger.LogInformation(
+                    "Service: Successfully retrieved leave record for soldier ID: {SoldierId}",
+                    soldierId);
+
+                return leave;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Leave record for soldier ID: {SoldierId} not found",
+                    soldierId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Service: Error occurred while retrieving leave record for soldier ID: {SoldierId}",
+                    soldierId);
+                throw;
+            }
+        }
+
+        public async ValueTask<SoldierLeave> UpdateSoldierLeave(SoldierLeave soldierLeave)
+        {
+            if (soldierLeave == null)
+            {
+                _logger.LogError("Service: Attempted to update null soldier leave");
+                throw new ArgumentNullException(nameof(soldierLeave));
+            }
+
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Updating leave record for soldier ID: {SoldierId}",
+                    soldierLeave.SoldierId);
+
+                var result = await _repository.UpdateSoldierLeave(soldierLeave);
+
+                _logger.LogInformation(
+                    "Service: Successfully updated leave record for soldier ID: {SoldierId}",
+                    soldierLeave.SoldierId);
+
+                return result;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Service: Leave record for soldier ID: {SoldierId} not found",
+                    soldierLeave.SoldierId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Service: Error occurred while updating leave record for soldier ID: {SoldierId}",
+                    soldierLeave.SoldierId);
+                throw;
+            }
+        }
     }
 }
