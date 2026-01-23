@@ -77,14 +77,14 @@ namespace InsuranceAdministration.Core.Entities.SoldierEntities
         public bool IsActive { get; set; } = true;
 
         public bool CurrentIsLeave { get; set; } = false;
-        public SoldierLeave? Leave { get; set; }
+      
         public AcquaintanceDocument? AcquaintanceDocument { get; set; }
 
         // تاريخ انتهاء الخدمة العسكرية
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? ServiceEndDate { get; set; }
-
+        public ICollection<SoldierLeave>? Leaves { get; set; }
         public ICollection<Mission>? Missions { get; set; } = new List<Mission>();
     }
 }

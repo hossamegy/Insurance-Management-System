@@ -3,6 +3,7 @@ using System;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuranceAdministration.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260122042804_t23")]
+    partial class t23
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.21");
@@ -420,7 +423,8 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SoldierId");
+                    b.HasIndex("SoldierId")
+                        .IsUnique();
 
                     b.ToTable("SoldierLeave");
                 });
@@ -563,8 +567,8 @@ namespace InsuranceAdministration.Infrastructure.Migrations
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.SoldierLeave", b =>
                 {
                     b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", "Soldier")
-                        .WithMany("Leaves")
-                        .HasForeignKey("SoldierId")
+                        .WithOne("Leave")
+                        .HasForeignKey("InsuranceAdministration.Core.Entities.SoldierEntities.SoldierLeave", "SoldierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -634,7 +638,7 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                 {
                     b.Navigation("AcquaintanceDocument");
 
-                    b.Navigation("Leaves");
+                    b.Navigation("Leave");
                 });
 #pragma warning restore 612, 618
         }

@@ -55,7 +55,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+/**
 // ===== AUTO-OPEN BROWSER =====
 var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
 lifetime.ApplicationStarted.Register(() =>
@@ -74,5 +74,5 @@ lifetime.ApplicationStarted.Register(() =>
     {
         Console.WriteLine($"Could not open browser: {ex.Message}");
     }
-});
+});**/
 app.Run();

@@ -30,6 +30,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
 
 
         // Settings Options tables
+        public DbSet<MainSettings> MainSettings { get; set; }
         public DbSet<EducationLevelOptions> EducationLevelOptions { get; set; }
         public DbSet<AssignmentOptions> AssignmentOptions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -106,11 +107,12 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
                 .WithMany(a => a.Family)
                 .HasForeignKey(f => f.AcquaintanceDocumentId)
                 .OnDelete(DeleteBehavior.Cascade);
-            // Soldier - SoldierLeave (One-to-One)
+
+            // Soldier - SoldierLeave (One-to-Many)
             modelBuilder.Entity<Soldier>()
-                .HasOne(s => s.Leave)
+                .HasMany(s => s.Leaves)  
                 .WithOne(l => l.Soldier)
-                .HasForeignKey<SoldierLeave>(l => l.SoldierId)
+                .HasForeignKey(l => l.SoldierId)
                 .OnDelete(DeleteBehavior.Cascade);
 
 

@@ -1,0 +1,375 @@
+﻿@*
+    يومية التعيين اليومية
+*@
+
+@{
+    ViewData["Title"] = "يومية التعيين";
+    var today = DateTime.Now;
+    var hijriDate = ""; // يمكنك إضافة تحويل التاريخ الهجري هنا
+}
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Traditional Arabic', 'Arial', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .report-container {
+            background: white;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #0090b0;
+            padding-bottom: 20px;
+        }
+
+        .department-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0090b0;
+            margin-bottom: 15px;
+        }
+
+        .report-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .date-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .date-label {
+            font-weight: bold;
+            color: #0090b0;
+        }
+
+        .day-name {
+            font-weight: bold;
+            color: #0090b0;
+        }
+
+        .main-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 15px;
+        }
+
+            .main-table thead tr:first-child {
+
+                color: black;
+            }
+
+                .main-table thead tr:first-child td {
+                    padding: 15px 10px;
+                    font-weight: bold;
+                    font-size: 16px;
+                    text-align: center;
+                    border: 1px solid;
+                }
+
+            .main-table thead tr:nth-child(2) {
+      
+            }
+
+                .main-table thead tr:nth-child(2) td {
+                    padding: 12px 8px;
+                    font-weight: bold;
+                    text-align: center;
+                   
+                    border: 1px solid;
+                }
+
+            .main-table thead tr:nth-child(3) {
+                border: 1px solid;
+            }
+
+                .main-table thead tr:nth-child(3) td {
+                    padding: 12px 8px;
+                    font-weight: bold;
+                    text-align: center;
+                    border: 1px solid;
+                    color: #0090b0;
+                }
+
+            .main-table tbody tr {
+                background: white;
+            }
+
+                .main-table tbody tr:hover {
+                    background: #f8f9fa;
+                }
+
+            .main-table tbody td {
+                padding: 10px 8px;
+                text-align: center;
+                border: 1px solid;
+            }
+
+        .total-row {
+            background: #fff3cd !important;
+            font-weight: bold;
+        }
+
+            .total-row td {
+                color: #856404;
+                border: 1px solid #ffc107 !important;
+            }
+
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-print {
+            background: #0090b0;
+            color: white;
+        }
+
+            .btn-print:hover {
+                background: #006080;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 144, 176, 0.4);
+            }
+
+        .btn-export {
+            background: #28a745;
+            color: white;
+        }
+
+            .btn-export:hover {
+                background: #218838;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+            .btn-back:hover {
+                background: #5a6268;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+            }
+
+        .notes-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-right: 4px solid #0090b0;
+        }
+
+        .notes-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0090b0;
+            margin-bottom: 10px;
+        }
+
+        .notes-content {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .committee-members {
+            display: flex;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            min-height: 70px;
+            gap: 50px;
+        }
+
+        .member-card {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .member-card div {
+                margin-bottom: 3px;
+                font-size: 18px;
+            }
+
+        .member-title {
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .member-rank {
+            font-weight: bold;
+        }
+
+        .member-section {
+            line-height: 2.5;
+        }
+
+        @@media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .action-buttons {
+                display: none;
+            }
+
+            .report-container {
+                box-shadow: none;
+                padding: 0;
+            }
+
+            .notes-section {
+                page-break-before: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <div class="report-header">
+            <div class="department-name">
+                @ViewBag.DepartmentName
+            </div>
+
+            <div class="report-title">
+                يومية التعيين عن
+            </div>
+
+            <div class="date-info">
+                <span class="date-label">الموافق</span>
+                <span class="day-name">@today.ToString("dddd", new System.Globalization.CultureInfo("ar-EG"))</span>
+                <span>@today.ToString("dd / MM / yyyy")</span>
+            </div>
+        </div>
+
+        <table class="main-table">
+            <thead>
+                <tr>
+                    <td rowspan="2">أصل القوة</td>
+                    <td colspan="10">ملاحظات خارج التعيين</td>
+                    <td rowspan="2">مستحقين التعيين عن اليوم</td>
+                </tr>
+                <tr>
+                    <td>إجازة</td>
+                    <td>مأمورية</td>
+                    <td>فرقة</td>
+                    <td>مرضى</td>
+                    <td>بدل تعيين</td>
+                    <td>غياب</td>
+                    <td>سجن خارجي</td>
+                    <td>شطب</td>
+                    <td>اجمالى الخارج</td>
+                    <td>اجمالى الموجود</td>
+                </tr>
+             
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>مجندين من قوة @ViewBag.DepartmentName</td>
+                </tr>
+                
+               
+
+               
+               
+            </tbody>
+        </table>
+
+        @if (Model?.Notes != null && !string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="notes-section">
+                <div class="notes-title">ملاحظات:</div>
+                <div class="notes-content">
+                    @Html.Raw(Model.Notes.Replace("\n", "<br>"))
+                </div>
+            </div>
+        }
+        <!-- Committee Members -->
+            <div class="member-card">
+                <div class="member-rank">عميد/</div>
+                <div class="member-section">
+                    <div class="member-title">مدير @ViewBag.DepartmentName</div>
+                    <div class="member-title">"@ViewBag.DepartmentDirectorName"</div>
+                </div>
+
+            </div>
+        
+
+        <div class="action-buttons">
+            <button class="btn btn-print" onclick="window.print()">
+                طباعة التقرير
+            </button>
+            <button class="btn btn-export" onclick="exportToExcel()">
+                تصدير إلى Excel
+            </button>
+            <button class="btn btn-back" onclick="window.history.back()">
+                رجوع
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function exportToExcel() {
+            // يمكنك إضافة كود التصدير إلى Excel هنا
+            alert('سيتم تصدير التقرير إلى Excel');
+        }
+    </script>
+</body>
+</html>

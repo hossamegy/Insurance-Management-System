@@ -4,6 +4,7 @@
 using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance;
 using InsuranceAdministration.Core.Interfaces.Services;
+using InsuranceAdministration.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -109,6 +110,7 @@ namespace InsuranceAdministration.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Ornik114(int pageNumber = 1, int pageSize = 10)
         {
             var soldiers = (await _soldierService.GetPaginatedSoldiersByActive(pageNumber, pageSize + 1, true)).ToList();
@@ -117,11 +119,23 @@ namespace InsuranceAdministration.Controllers
             ViewBag.HasNext = soldiers.Count > pageSize;
             return View(soldiers.Take(pageSize));
         }
-        
 
-        public async Task<IActionResult> PrintOrnik114()
+        [HttpGet]
+        public async Task<IActionResult> PrintOrnik114(int id)
         {
-        
+            var soldier = await _soldierService.GetSoldier(id);
+
+            ViewBag.DepartmentName = await _settingsOptionsService.GetMainSettingsByDepartmentName();
+            ViewBag.DepartmentDirectorName = await _settingsOptionsService.GetMainSettingsByDepartmentDirectorName();
+            ViewBag.ConscriptsAffairsPoliceManName = await _settingsOptionsService.GetMainSettingsByConscriptsAffairsPoliceManName();
+            ViewBag.ConscriptsAffairsOfficerName = await _settingsOptionsService.GetMainSettingsByConscriptsAffairsOfficerName();
+            return View(soldier);
+        }
+        [HttpGet]
+        public async Task<IActionResult> DailyMeal(int id)
+        {
+            ViewBag.DepartmentName = await _settingsOptionsService.GetMainSettingsByDepartmentName();
+            ViewBag.DepartmentDirectorName = await _settingsOptionsService.GetMainSettingsByDepartmentDirectorName();
             return View();
         }
     }

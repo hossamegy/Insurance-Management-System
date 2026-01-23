@@ -11,12 +11,14 @@ namespace InsuranceAdministration.Infrastructure.Persistance
 
         private readonly DbSet<AssignmentOptions> _assignment;
         private readonly DbSet<EducationLevelOptions> _education;
+        private readonly DbSet<MainSettings> _main;
 
         public SettingsRepository(AppDbContext context)
         {
             _context = context;
             _assignment = _context.Set<AssignmentOptions>();
             _education = _context.Set<EducationLevelOptions>();
+            _main = _context.Set<MainSettings>();
         }
 
         /* ================= Assignment ================= */
@@ -81,5 +83,63 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             return entity;
         }
 
+        public async ValueTask<MainSettings> AddNewMainSettings(MainSettings entity)
+        {
+            await _main.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async ValueTask<IEnumerable<MainSettings>> GetAllMainSettings()
+        {
+            return await _main.ToListAsync();
+        }
+
+        public async ValueTask<MainSettings> UpdateMainSettings(MainSettings entity)
+        {
+            _main.Update(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async ValueTask<MainSettings> DeleteMainSettings(int id)
+        {
+            var entity = await _main.FindAsync(id);
+            if (entity == null) return null;
+
+            _main.Remove(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async ValueTask<MainSettings> GetMainSettings(int id)
+        {
+             var entity = await _main.FindAsync(id);
+             return entity;
+        }
+
+        public async ValueTask<string> GetMainSettingsByDepartmentName()
+        {
+            var entity = await _main.FirstOrDefaultAsync();
+            return entity?.DepartmentName;
+        }
+
+        public async ValueTask<string> GetMainSettingsByDepartmentDirectorName()
+        {
+            var entity = await _main.FirstOrDefaultAsync();
+            return entity?.DepartmentDirectorName;
+        }
+
+        public async ValueTask<string> GetMainSettingsByConscriptsAffairsOfficerName()
+        {
+            var entity = await _main.FirstOrDefaultAsync();
+            return entity?.ConscriptsAffairsOfficerName;
+        }
+
+        public async ValueTask<string> GetMainSettingsByConscriptsAffairsPoliceManName()
+        {
+            var entity = await _main.FirstOrDefaultAsync();
+            return entity?.ConscriptsAffairsPoliceManName;
+        }
     }
 }

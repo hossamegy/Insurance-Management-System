@@ -144,7 +144,7 @@ namespace InsuranceAdministration.Services
                 existingSoldier.IsActive = soldier.IsActive;
                 existingSoldier.AcquaintanceDocument = soldier.AcquaintanceDocument;
                 existingSoldier.CurrentIsLeave = soldier.CurrentIsLeave;
-                existingSoldier.Leave = soldier.Leave;
+                existingSoldier.Leaves = soldier.Leaves;
 
 
                 // Update missions if provided
@@ -393,7 +393,7 @@ namespace InsuranceAdministration.Services
             }
         }
 
-        public async ValueTask<SoldierLeave> GetSoldierLeave(int soldierId)
+        public async ValueTask<IEnumerable<SoldierLeave>> GetSoldierLeave(int soldierId)
         {
             try
             {
@@ -401,13 +401,13 @@ namespace InsuranceAdministration.Services
                     "Service: Retrieving leave record for soldier ID: {SoldierId}",
                     soldierId);
 
-                var leave = await _repository.GetSoldierLeave(soldierId);
+                var leaves = await _repository.GetSoldierLeave(soldierId);
 
                 _logger.LogInformation(
                     "Service: Successfully retrieved leave record for soldier ID: {SoldierId}",
                     soldierId);
 
-                return leave;
+                return leaves;
             }
             catch (KeyNotFoundException ex)
             {
@@ -461,6 +461,12 @@ namespace InsuranceAdministration.Services
                     soldierLeave.SoldierId);
                 throw;
             }
+        }
+
+        public async ValueTask<SoldierLeave> GetLastSoldierLeave(int soldierId)
+        {
+            var leave = await _repository.GetLastSoldierLeave(soldierId);
+            return leave;
         }
     }
 }

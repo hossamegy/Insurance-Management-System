@@ -46,7 +46,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                     .ThenInclude(a => a.BaseFamily)
                 .Include(s => s.AcquaintanceDocument)
                     .ThenInclude(a => a.Family)
-                .Include(s => s.Leave)
+                .Include(s => s.Leaves)
                 .Include(s => s.Missions)
                 .ToListAsync();
         }
@@ -58,7 +58,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                     .ThenInclude(a => a.BaseFamily)
                 .Include(s => s.AcquaintanceDocument)
                     .ThenInclude(a => a.Family)
-                .Include(s => s.Leave)
+                .Include(s => s.Leaves)
                 .Include(s => s.Missions)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
@@ -92,7 +92,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Include(s => s.AcquaintanceDocument)
-                .Include(s => s.Leave)
+                .Include(s => s.Leaves)
                 .Include(s => s.Missions)
                 .ToListAsync();
         }
@@ -105,7 +105,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             return await _entity
                 .Where(s => s.Assignment == soldierAssignment)
                 .Include(s => s.AcquaintanceDocument)
-                .Include(s => s.Leave)
+                .Include(s => s.Leaves)
                 .Include(s => s.Missions)
                 .ToListAsync();
         }
@@ -213,53 +213,73 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 throw new ArgumentNullException(nameof(soldierLeave));
 
             var soldier = await _entity
-                .Include(s => s.Leave)
+                .Include(s => s.Leaves)
                 .FirstOrDefaultAsync(s => s.Id == soldierLeave.SoldierId);
 
             if (soldier == null)
                 throw new KeyNotFoundException($"Soldier with ID {soldierLeave.SoldierId} not found.");
 
-            if (soldier.Leave != null)
-                throw new InvalidOperationException($"Soldier with ID {soldierLeave.SoldierId} already has a leave record.");
+            // إزالة الشرط الخاطئ - المجند يمكن أن يكون لديه عدة إجازات
+            // Initialize the collection if null (في حالات نادرة)
+            if (soldier.Leaves == null)
+                soldier.Leaves = new List<SoldierLeave>();
 
-            soldier.Leave = soldierLeave;
+            // ببساطة أضف الإجازة الجديدة
+            soldier.Leaves.Add(soldierLeave);
             await _context.SaveChangesAsync();
 
             return soldierLeave;
         }
 
-        public async ValueTask<SoldierLeave> GetSoldierLeave(int soldierId)
+        public async ValueTask<IEnumerable<SoldierLeave>> GetSoldierLeave(int soldierId)
         {
-            var soldierLeave = await _context.Set<SoldierLeave>()
-                .FirstOrDefaultAsync(l => l.SoldierId == soldierId);
+            var soldier = await _entity
+                .Include(s => s.Leaves)
+                .FirstOrDefaultAsync(s => s.Id == soldierId);
 
-            if (soldierLeave == null)
-                throw new KeyNotFoundException($"Leave record for soldier ID {soldierId} not found.");
-
-            return soldierLeave;
+            if (soldier == null)
+                throw new KeyNotFoundException($"Soldier with ID {soldierId} not found.");
+            var soldierLeaves = soldier.Leaves?.OrderByDescending(l => l.Start);
+            return soldierLeaves;
         }
 
         public async ValueTask<SoldierLeave> UpdateSoldierLeave(SoldierLeave soldierLeave)
         {
-            if (soldierLeave == null)
-                throw new ArgumentNullException(nameof(soldierLeave));
+            var soldier = await _entity
+                .Include(s => s.Leaves)
+                .FirstOrDefaultAsync(l => l.Id == soldierLeave.SoldierId);
 
-            var existingLeave = await _context.Set<SoldierLeave>()
-                .FirstOrDefaultAsync(l => l.SoldierId == soldierLeave.SoldierId);
+            if (soldier == null)
+                throw new KeyNotFoundException($"Soldier with ID {soldierLeave.SoldierId} not found.");
+
+            var existingLeave = soldier.Leaves?
+                .OrderByDescending(l => l.Start)
+                .LastOrDefault();
 
             if (existingLeave == null)
-                throw new KeyNotFoundException($"Leave record for soldier ID {soldierLeave.SoldierId} not found.");
+                throw new KeyNotFoundException($"No leave found for soldier ID {soldierLeave.SoldierId}");
 
             // Update properties
-            existingLeave.StartNum = soldierLeave.StartNum;
-            existingLeave.StartPage = soldierLeave.StartPage;
-            existingLeave.Start = soldierLeave.Start;
             existingLeave.EndNum = soldierLeave.EndNum;
             existingLeave.EndPage = soldierLeave.EndPage;
             existingLeave.End = soldierLeave.End;
 
             await _context.SaveChangesAsync();
             return existingLeave;
+        }
+
+
+        public async ValueTask<SoldierLeave> GetLastSoldierLeave(int soldierId)
+        {
+            var soldier = await _entity
+                .Where(l => l.Id == soldierId)
+                .FirstOrDefaultAsync();
+
+            var lastLeave = soldier?.Leaves?
+                .OrderByDescending(l => l.Start)
+                .LastOrDefault();
+
+            return lastLeave;
         }
     }
 }

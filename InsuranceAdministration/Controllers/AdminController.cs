@@ -23,6 +23,46 @@ namespace InsuranceAdministration.Controllers
 
         /* ===================== Soldier ===================== */
 
+        public async Task<IActionResult> Main()
+        {
+            var mainSettings = await _settingsOptionsService.GetAllMainSettings();
+            var model = mainSettings?.FirstOrDefault();
+
+            if (model == null)
+            {
+                // Create new settings if none exist
+                model = new MainSettings();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateMainSettings(MainSettings mainSetting)
+        {
+            if (!ModelState.IsValid)
+                return View("Main", mainSetting);
+
+            var existingSettings = await _settingsOptionsService.GetAllMainSettings();
+
+            if (existingSettings == null || !existingSettings.Any())
+            {
+                // Add new settings if none exist
+                await _settingsOptionsService.AddNewMainSettings(mainSetting);
+            }
+            else
+            {
+                // Update existing settings
+                await _settingsOptionsService.UpdateMainSettings(mainSetting);
+            }
+
+            TempData["SuccessMessage"] = "تم حفظ التعديلات بنجاح";
+            return RedirectToAction(nameof(Main));
+        }
+
+        /* ===================== Soldier ===================== */
+
         public async Task<IActionResult> Soldier()
         {
             ViewBag.AssignmentOptions =

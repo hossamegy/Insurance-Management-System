@@ -1,5 +1,7 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations;
+
 namespace InsuranceAdministration.Core.Entities.SoldierEntities
 {
     public class SoldierLeave
@@ -13,7 +15,11 @@ namespace InsuranceAdministration.Core.Entities.SoldierEntities
         public int? EndNum { set; get; }
         public int? EndPage { set; get; }
         public DateTime? End { set; get; }
+        [Required(ErrorMessage = "معرف المجند مطلوب")]
         public int SoldierId { get; set; }
-        public Soldier Soldier { get; set; }
+
+        // Make navigation property nullable
+        public Soldier? Soldier { get; set; }
+
     }
 }

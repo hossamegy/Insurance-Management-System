@@ -20,8 +20,11 @@ namespace InsuranceAdministration.Core.Interfaces.Repository
         ValueTask<AcquaintanceDocument>UpdateAcquaintanceDocument(AcquaintanceDocument acquaintanceDocument);
 
         ValueTask<SoldierLeave> AddSoldierLeave(SoldierLeave SoldierLeave);
-        ValueTask<SoldierLeave> GetSoldierLeave(int SoldierId);
+        ValueTask<IEnumerable<SoldierLeave>> GetSoldierLeave(int SoldierId);
+        ValueTask<SoldierLeave> GetLastSoldierLeave(int soldierId);
+
         ValueTask<SoldierLeave> UpdateSoldierLeave(SoldierLeave SoldierLeave);
+        
 
 
     }

@@ -9,11 +9,17 @@
     <link rel="stylesheet" href="~/InsuranceAdministration.styles.css" asp-append-version="true" />
   
 </head>
+
+ @inject InsuranceAdministration.Core.Interfaces.Services.ISettingsServices SettingsService    
+@{
+    var departmentName = await SettingsService.GetMainSettingsByDepartmentName();
+}
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ادارة الـتأمين</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@departmentName</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -28,10 +34,11 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Soldier" asp-action="Index">حصر القوة</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="SoldierAcquaintance" asp-action="Index">وثائق التعارف</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="SoldierLeave" asp-action="Index">الحضور والاجازات (43)</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Soldier" asp-action="DailyMeal">يومية التعيين</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Index">عرض يومية الخدمات</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Index">عرض جميع اليوميات السابقة</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Soldier" asp-action="Ornik114">اورنيك (114)</a></li>
-
+                                
                             </ul>
                         </li>
                           <li class="nav-item dropdown">
@@ -69,6 +76,11 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Main">
+                                        التحكم فى الاعدادات الاساسية
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Soldier">
                                         التحكم فى اعدادات المجندين
                                     </a>
@@ -83,7 +95,7 @@
                                         التحكم فى خدمات المسطح المائى
                                     </a>
                                 </li>
-                                                                <li>
+                                <li>
                                     <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Index">
                                         التحكم فى خدمات تأمين الادارة
                                     </a>

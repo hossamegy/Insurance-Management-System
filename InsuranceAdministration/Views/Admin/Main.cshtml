@@ -1,0 +1,35 @@
+﻿@using InsuranceAdministration.Core.Entities.Settings
+@model MainSettings
+
+@if (Model != null)
+{
+    <form asp-action="UpdateMainSettings" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div>
+            <label asp-for="DepartmentName">ادخل اسم الادارة</label>
+            <input asp-for="DepartmentName" class="form-control" />
+        </div>
+
+        <div>
+            <label asp-for="DepartmentDirectorName">ادخل اسم مدير الادارة</label>
+            <input asp-for="DepartmentDirectorName" class="form-control" />
+        </div>
+
+        <div>
+            <label asp-for="ConscriptsAffairsPoliceManName">ادخل اسم الضابط المسئول عن شئون المجندين</label>
+            <input asp-for="ConscriptsAffairsPoliceManName" class="form-control" />
+        </div>
+        
+        <div>
+            <label asp-for="ConscriptsAffairsOfficerName">ادخل أمين الشرطة المسئول عن شئون المجندين</label>
+            <input asp-for="ConscriptsAffairsOfficerName" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">حفظ التعديل</button>
+    </form>
+}
+else
+{
+    <p>لا توجد بيانات</p>
+}

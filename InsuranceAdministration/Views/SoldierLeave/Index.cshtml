@@ -8,86 +8,375 @@
 }
 <head>
     <link rel="stylesheet" href="~/css/Shared/Index.css" asp-append-version="true" />
+    <style>
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-button {
+            padding: 12px 30px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+            .tab-button:hover {
+                color: #333;
+                background-color: #f5f5f5;
+            }
+
+            .tab-button.active {
+                color: #007bff;
+                border-bottom-color: #007bff;
+            }
+
+        .tab-content {
+            display: none;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        .assignment-group {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .assignment-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .assignment-header:hover {
+                background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            }
+
+            .assignment-header .count-badge {
+                background: rgba(255, 255, 255, 0.3);
+                padding: 5px 15px;
+                border-radius: 20px;
+                font-size: 14px;
+            }
+
+        .assignment-content {
+            display: block;
+        }
+
+            .assignment-content.collapsed {
+                display: none;
+            }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+            .toggle-icon.collapsed {
+                transform: rotate(-90deg);
+            }
+
+        .attendance-count {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .leave-count {
+            background: #ffc107;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
 </head>
 
 @await Html.PartialAsync("_PageHeader")
 
 <div class="container">
     <div class="header-section">
-        <input type="text" class="search-input" placeholder="بحث عن مجند...">
+        <input type="text" id="searchInput" class="search-input" placeholder="بحث عن مجند...">
     </div>
-    <div class="table-wrapper">
-        <table class="soldiers-table m-2">
-            <thead>
-                <tr class="table-header">
-                    <th>م</th>
-                    <th>الاسم</th>
-                    <th>التشغيل</th>
-                    <th>رقم التليفون</th>
-                    <th>عدد ايام الحضور</th>
-                    <th>الإجراءات</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int rowNumber = ((int)ViewBag.PageNumber - 1) * (int)ViewBag.PageSize;
-                }
-                @foreach (var soldier in Model)
-                {
-                    rowNumber++;
-                    <tr>
-                        <td>@rowNumber</td>
-                        <td>@soldier.Name</td>
-                        <td>@soldier.Assignment</td>
-                        <td>@soldier.PhoneNumber</td>
-                        <td></td>
-                        <td class="actions">
-                            <a asp-action="Leave" asp-route-actionType="قيام" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">قيام</a>
-                            <a asp-action="Leave" asp-route-actionType="حضور" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">حضور</a>
-                            <a asp-action="Leave" asp-route-actionType="غياب" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">غياب</a>
-                            <a asp-action="Leave" asp-route-actionType="مد الاجازة" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">مد الاجازة</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="pagination-container">
-            @if ((int)ViewBag.PageNumber > 1)
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <button class="tab-button active" onclick="switchTab('attendance')">
+            الحضور
+        </button>
+        <button class="tab-button" onclick="switchTab('leaves')">
+            الإجازات
+        </button>
+    </div>
+
+    <!-- Attendance Tab Content -->
+    <div id="attendance-tab" class="tab-content active">
+        @{
+            var presentSoldiers = Model.Where(s => !s.CurrentIsLeave).ToList();
+            var attendanceGroups = presentSoldiers
+            .GroupBy(s => s.Assignment ?? "غير محدد")
+            .OrderBy(g => g.Key);
+        }
+
+        @if (!presentSoldiers.Any())
+        {
+            <div class="no-data-message">
+                لا توجد مجندين حاضرين حالياً
+            </div>
+        }
+        else
+        {
+            @foreach (var group in attendanceGroups)
             {
-                <a class="btn-primary pagination-btn @(ViewBag.PageNumber == 1 ? "disabled" : "")"
-                   asp-action="Index"
-                   asp-route-pageNumber="@(ViewBag.PageNumber - 1)"
-                   asp-route-pageSize="@ViewBag.PageSize">
-                    السابق
-                </a>
+                <div class="assignment-group">
+                    <div class="assignment-header" onclick="toggleGroup(this)">
+                        <div>
+                            <span class="toggle-icon">▼</span>
+                            <span style="margin-right: 10px;">@group.Key</span>
+                        </div>
+                        <span class="count-badge">@group.Count() مجند</span>
+                    </div>
+                    <div class="assignment-content">
+                        <table class="soldiers-table">
+                            <thead>
+                                <tr class="table-header">
+                                    <th>م</th>
+                                    <th>الاسم</th>
+                                    <th>رقم التليفون</th>
+                                    <th>عدد ايام الحضور</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int rowNum = 0;
+                                }
+                                @foreach (var soldier in group)
+                                {
+                                    rowNum++;
+                                    var attendanceDays = soldier.Leaves?
+                                    .Where(l => l.Type == "حضور")
+                                    .Count() ?? 0;
+
+                                    <tr class="soldier-row" data-name="@soldier.Name.ToLower()" data-assignment="@group.Key.ToLower()">
+                                        <td>@rowNum</td>
+                                        <td>@soldier.Name</td>
+                                        <td>@soldier.PhoneNumber</td>
+                                        <td><span class="attendance-count">@attendanceDays</span></td>
+                                        <td class="actions">
+                                            <a asp-action="ShowSoldierLeaves" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary">عرض الاجازات</a>
+                                            <a asp-action="Leave" asp-route-actionType="قيام" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">قيام</a>
+                                            <a asp-action="Leave" asp-route-actionType="حضور" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">حضور</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             }
-            <span>@ViewBag.PageNumber</span>
-            @if ((bool)ViewBag.HasNext)
+        }
+    </div>
+
+    <!-- Leaves Tab Content -->
+    <div id="leaves-tab" class="tab-content">
+        @{
+            var onLeaveSoldiers = Model.Where(s => s.CurrentIsLeave).ToList();
+            var leaveGroups = onLeaveSoldiers
+            .GroupBy(s => s.Assignment ?? "غير محدد")
+            .OrderBy(g => g.Key);
+        }
+
+        @if (!onLeaveSoldiers.Any())
+        {
+            <div class="no-data-message">
+                لا توجد مجندين في إجازة حالياً
+            </div>
+        }
+        else
+        {
+            @foreach (var group in leaveGroups)
             {
-                <a class="btn-primary pagination-btn @(ViewBag.HasNext ? "" : "disabled")"
-                   asp-action="Index"
-                   asp-route-pageNumber="@(ViewBag.PageNumber + 1)"
-                   asp-route-pageSize="@ViewBag.PageSize">
-                    التالي
-                </a>
+                <div class="assignment-group">
+                    <div class="assignment-header" onclick="toggleGroup(this)">
+                        <div>
+                            <span class="toggle-icon">▼</span>
+                            <span style="margin-right: 10px;">@group.Key</span>
+                        </div>
+                        <span class="count-badge">@group.Count() مجند</span>
+                    </div>
+                    <div class="assignment-content">
+                        <table class="soldiers-table">
+                            <thead>
+                                <tr class="table-header">
+                                    <th>م</th>
+                                    <th>الاسم</th>
+                                    <th>رقم التليفون</th>
+                                    <th>عدد الإجازات</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int leaveRowNum = 0;
+                                }
+                                @foreach (var soldier in group)
+                                {
+                                    leaveRowNum++;
+                                    var leaveCount = soldier.Leaves?
+                                    .Where(l => l.Type == "قيام" || l.Type == "مد الاجازة")
+                                    .Count() ?? 0;
+
+                                    <tr class="soldier-row" data-name="@soldier.Name.ToLower()" data-assignment="@group.Key.ToLower()">
+                                        <td>@leaveRowNum</td>
+                                        <td>@soldier.Name</td>
+                                        <td>@soldier.PhoneNumber</td>
+                                        <td><span class="leave-count">@leaveCount</span></td>
+                                        <td class="actions">
+                                            <a asp-action="ShowSoldierLeaves" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary">عرض الاجازات</a>
+                                            <a asp-action="Attendance" asp-route-actionType="حضور" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">حضور</a>
+                                            <a asp-action="Leave" asp-route-actionType="غياب" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">غياب</a>
+                                            <a asp-action="Leave" asp-route-actionType="مد الاجازة" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">مد الاجازة</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             }
-        </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        @if ((int)ViewBag.PageNumber > 1)
+        {
+            <a class="btn-primary pagination-btn"
+               asp-action="Index"
+               asp-route-pageNumber="@(ViewBag.PageNumber - 1)"
+               asp-route-pageSize="@ViewBag.PageSize">
+                السابق
+            </a>
+        }
+        <span>صفحة @ViewBag.PageNumber</span>
+        @if ((bool)ViewBag.HasNext)
+        {
+            <a class="btn-primary pagination-btn"
+               asp-action="Index"
+               asp-route-pageNumber="@(ViewBag.PageNumber + 1)"
+               asp-route-pageSize="@ViewBag.PageSize">
+                التالي
+            </a>
+        }
     </div>
 </div>
 
 <script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+
+        // Show selected tab
+        if (tabName === 'attendance') {
+            document.getElementById('attendance-tab').classList.add('active');
+            document.querySelectorAll('.tab-button')[0].classList.add('active');
+        } else {
+            document.getElementById('leaves-tab').classList.add('active');
+            document.querySelectorAll('.tab-button')[1].classList.add('active');
+        }
+
+        // Save tab preference
+        localStorage.setItem('selectedTab', tabName);
+    }
+
+    function toggleGroup(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('.toggle-icon');
+
+        content.classList.toggle('collapsed');
+        icon.classList.toggle('collapsed');
+    }
+
     function openSmallWindow(url) {
-        // Open a small popup window
         const width = 800;
         const height = 700;
         const left = (screen.width - width) / 2;
         const top = (screen.height - height) / 2;
-        
+
         const windowFeatures = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no,status=no`;
-        
+
         window.open(url, '_blank', windowFeatures);
-        
-        // Prevent default link behavior
         return false;
     }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const activeTab = document.querySelector('.tab-content.active');
+        const groups = activeTab.querySelectorAll('.assignment-group');
+
+        groups.forEach(group => {
+            const rows = group.querySelectorAll('.soldier-row');
+            let hasVisibleRows = false;
+
+            rows.forEach(row => {
+                const name = row.getAttribute('data-name');
+                if (name.includes(searchValue)) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Hide/show entire group based on if it has visible rows
+            if (hasVisibleRows) {
+                group.style.display = '';
+            } else {
+                group.style.display = 'none';
+            }
+        });
+    });
+
+    // Restore last selected tab on page load
+    window.addEventListener('DOMContentLoaded', function() {
+        const savedTab = localStorage.getItem('selectedTab');
+        if (savedTab) {
+            switchTab(savedTab);
+        }
+    });
 </script>
