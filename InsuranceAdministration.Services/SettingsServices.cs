@@ -179,5 +179,25 @@ namespace InsuranceAdministration.Services
             return await _repository.GetMainSettingsByConscriptsAffairsOfficerName();
 
         }
+
+        public async ValueTask<SoldierLeaveOptions> AddNewSoldierLeaveOptions(SoldierLeaveOptions entity)
+        {
+            return await _repository.AddNewSoldierLeaveOptions(entity);
+        }
+
+        public async ValueTask<IEnumerable<SoldierLeaveOptions>> GetAllSoldierLeaveOptions()
+        {
+            return await _repository.GetAllSoldierLeaveOptions();
+        }
+
+        public async ValueTask<SoldierLeaveOptions> UpdateCurrentSoldierLeaveOptions(SoldierLeaveOptions entity)
+        {
+            return await _repository.UpdateCurrentSoldierLeaveOptions(entity);
+        }
+
+        public async ValueTask<SoldierLeaveOptions> DeleteSoldierLeaveOptions(int id)
+        {
+            return await _repository.DeleteSoldierLeaveOptions(id);
+        }
     }
 }

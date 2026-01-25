@@ -3,6 +3,7 @@ using System;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuranceAdministration.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260125095106_t27")]
+    partial class t27
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.21");
@@ -321,29 +324,6 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.ToTable("AcquaintanceDocument");
                 });
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.PoliticalAndCriminal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CriminalRecord")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PoliticalStatus")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SoldierId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SoldierId")
-                        .IsUnique();
-
-                    b.ToTable("PoliticalAndCriminal");
-                });
-
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", b =>
                 {
                     b.Property<int>("Id")
@@ -466,34 +446,6 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.HasIndex("SoldierId");
 
                     b.ToTable("SoldierLeave");
-                });
-
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.Training", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("CompletionDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Institution")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SoldierId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TraingName")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SoldierId");
-
-                    b.ToTable("Training");
                 });
 
             modelBuilder.Entity("Mission", b =>
@@ -640,32 +592,10 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.Navigation("Soldier");
                 });
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.PoliticalAndCriminal", b =>
-                {
-                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", "Soldier")
-                        .WithOne("PoliticalAndCriminal")
-                        .HasForeignKey("InsuranceAdministration.Core.Entities.SoldierEntities.PoliticalAndCriminal", "SoldierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Soldier");
-                });
-
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.SoldierLeave", b =>
                 {
                     b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", "Soldier")
                         .WithMany("Leaves")
-                        .HasForeignKey("SoldierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Soldier");
-                });
-
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.Training", b =>
-                {
-                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", "Soldier")
-                        .WithMany("Trainings")
                         .HasForeignKey("SoldierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -737,10 +667,6 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.Navigation("AcquaintanceDocument");
 
                     b.Navigation("Leaves");
-
-                    b.Navigation("PoliticalAndCriminal");
-
-                    b.Navigation("Trainings");
                 });
 #pragma warning restore 612, 618
         }

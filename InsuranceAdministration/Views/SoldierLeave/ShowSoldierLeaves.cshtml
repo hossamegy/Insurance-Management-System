@@ -1,450 +1,443 @@
-﻿@model InsuranceAdministration.Core.Entities.SoldierEntities.Soldier
-@{
-   
-}
-<style>
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 30px;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #0090b0;
-            background: linear-gradient(135deg, #0090b0 0%, #0070a0 100%);
-            margin: -30px -30px 30px -30px;
-            padding: 25px 30px;
-            border-radius: 12px 12px 0 0;
-        }
-
-            .page-header h2 {
-                font-size: 28px;
-                font-weight: bold;
-                color: white;
-                margin-bottom: 10px;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .page-header p {
-                color: #f0f8ff;
-                font-size: 16px;
-                font-weight: 500;
-            }
-
-        .info-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .info-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 15px;
-            border-radius: 8px;
-            border-right: 4px solid #0090b0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-            .info-card .label {
-                font-size: 13px;
-                color: #6c757d;
-                margin-bottom: 5px;
-                font-weight: 600;
-            }
-
-            .info-card .value {
-                font-size: 18px;
-                color: #0090b0;
-                font-weight: bold;
-            }
-
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            gap: 15px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .btn-primary {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #0090b0 0%, #0070a0 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(0, 144, 176, 0.3);
-        }
-
-            .btn-primary:hover {
-                background: linear-gradient(135deg, #0070a0 0%, #005080 100%);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 144, 176, 0.4);
-            }
-
-        .btn-secondary {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-        }
-
-            .btn-secondary:hover {
-                background: linear-gradient(135deg, #5a6268 0%, #4a5158 100%);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-            }
-
-        .table-wrapper {
-            overflow-x: auto;
-            margin-bottom: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .soldiers-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1200px;
-            background: white;
-        }
-
-        .table-header {
-            background: linear-gradient(135deg, #0090b0 0%, #0070a0 100%);
-            color: white;
-        }
-
-            .table-header th {
-                padding: 12px 10px;
-                text-align: center;
-                font-weight: bold;
-                font-size: 14px;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-        .header-depart {
-            background: linear-gradient(135deg, #28a745 0%, #20923b 100%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        }
-
-        .header-return {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        }
-
-        .soldiers-table tbody tr {
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-            .soldiers-table tbody tr:nth-child(even) {
-                background: #f8f9fa;
-            }
-
-            .soldiers-table tbody tr:hover {
-                background: linear-gradient(90deg, rgba(0, 144, 176, 0.1) 0%, rgba(0, 144, 176, 0.05) 100%);
-                transform: scale(1.005);
-                box-shadow: 0 2px 8px rgba(0, 144, 176, 0.15);
-            }
-
-        .soldiers-table td {
-            padding: 12px 10px;
-            text-align: center;
-            font-size: 14px;
-            border: 1px solid #dee2e6;
-            vertical-align: middle;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-            color: white;
-            box-shadow: 0 2px 6px rgba(23, 162, 184, 0.3);
-        }
-
-        .actions {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-edit,
-        .btn-delete {
-            padding: 7px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-edit {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
-        }
-
-            .btn-edit:hover {
-                background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
-            }
-
-        .btn-delete {
-            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
-            color: white;
-            box-shadow: 0 2px 6px rgba(244, 67, 54, 0.3);
-        }
-
-            .btn-delete:hover {
-                background: linear-gradient(135deg, #da190b 0%, #c41700 100%);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 10px rgba(244, 67, 54, 0.4);
-            }
-
-        .alert {
-            padding: 20px 25px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 16px;
-            border-right: 5px solid #17a2b8;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .alert-info {
-            background: linear-gradient(135deg, #d1ecf1 0%, #c3e6ec 100%);
-            border-color: #17a2b8;
-            color: #0c5460;
-            font-weight: 500;
-        }
-
-        .table-footer {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            font-weight: bold;
-            font-size: 15px;
-        }
-
-        .table-footer-total {
-            background: linear-gradient(135deg, #e7f3ff 0%, #d4ebff 100%);
-            border-right: 4px solid #0090b0;
-        }
-
-        .table-footer-days {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
-            border-right: 4px solid #ffc107;
-        }
-
-        .table-footer td {
-            padding: 14px 10px;
-        }
-
-      
-    </style>
-
+﻿@model InsuranceAdministration.Core.DTOs.Soldier.SoldierLeavesDto
 @{
     ViewData["Title"] = "📋 سجل الإجازات والتصاريح";
     ViewData["SubTitle"] = "إدارة وتوزيع المجندين";
 }
+
+<style>
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 30px;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #0090b0;
+        background: linear-gradient(135deg, #0090b0 0%, #0070a0 100%);
+        margin: -30px -30px 30px -30px;
+        padding: 25px 30px;
+        border-radius: 12px 12px 0 0;
+    }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header p {
+            color: #f0f8ff;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 15px;
+        border-radius: 8px;
+        border-right: 4px solid #0090b0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+        .info-card .label {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .info-card .value {
+            font-size: 18px;
+            color: #0090b0;
+            font-weight: bold;
+        }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        gap: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .btn-primary {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #0090b0 0%, #0070a0 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(0, 144, 176, 0.3);
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0070a0 0%, #005080 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 144, 176, 0.4);
+        }
+
+    .btn-secondary {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+    }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #4a5158 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        }
+
+    .table-wrapper {
+        overflow-x: auto;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .soldiers-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1200px;
+        background: white;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #0090b0 0%, #0070a0 100%);
+        color: white;
+    }
+
+        .table-header th {
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+    .header-depart {
+        background: linear-gradient(135deg, #28a745 0%, #20923b 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .header-return {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .soldiers-table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+        .soldiers-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .soldiers-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(0, 144, 176, 0.1) 0%, rgba(0, 144, 176, 0.05) 100%);
+            transform: scale(1.005);
+            box-shadow: 0 2px 8px rgba(0, 144, 176, 0.15);
+        }
+
+    .soldiers-table td {
+        padding: 12px 10px;
+        text-align: center;
+        font-size: 14px;
+        border: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+        box-shadow: 0 2px 6px rgba(23, 162, 184, 0.3);
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        padding: 7px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+    }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+        }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+        color: white;
+        box-shadow: 0 2px 6px rgba(244, 67, 54, 0.3);
+    }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #da190b 0%, #c41700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(244, 67, 54, 0.4);
+        }
+
+    .alert {
+        padding: 20px 25px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        text-align: center;
+        font-size: 16px;
+        border-right: 5px solid #17a2b8;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #d1ecf1 0%, #c3e6ec 100%);
+        border-color: #17a2b8;
+        color: #0c5460;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border-color: #28a745;
+        color: #155724;
+        font-weight: 500;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border-color: #dc3545;
+        color: #721c24;
+        font-weight: 500;
+    }
+
+    .table-footer {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .table-footer-total {
+        background: linear-gradient(135deg, #e7f3ff 0%, #d4ebff 100%);
+        border-right: 4px solid #0090b0;
+    }
+
+    .table-footer-days {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+        border-right: 4px solid #ffc107;
+    }
+
+    .table-footer td {
+        padding: 14px 10px;
+    }
+</style>
+
 @await Html.PartialAsync("_PageHeader")
+
 <body>
-        <div class="info-cards">
-            <div class="info-card">
-                <div class="label">اسم المجند</div>
-                <div class="value">@Model.Name</div>
-            </div>
-            <div class="info-card">
-                <div class="label">التشغيل</div>
-                <div class="value">@Model.Assignment</div>
-            </div>
-            @if (Model.Leaves != null && Model.Leaves.Any())
-            {
-                <div class="info-card">
-                    <div class="label">عدد الإجازات المسجلة</div>
-                    <div class="value">@Model.Leaves.Count() إجازة</div>
-                </div>
-                <div class="info-card">
-                    <div class="label">إجمالي الأيام</div>
-                    <div class="value">
-                        @{
-                            var totalDaysInfo = Model.Leaves
-                            .Where(l => l.Start.HasValue && l.End.HasValue)
-                            .Sum(l => (l.End.Value - l.Start.Value).Days);
-                        }
-                        @totalDaysInfo يوم
-                    </div>
-                </div>
-            }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <strong>✅ نجح:</strong> @TempData["SuccessMessage"]
         </div>
-
-        <div class="header-section">
-            <a asp-action="Index" class="btn-secondary">
-                <span>←</span>
-                <span>العودة إلى القائمة الرئيسية</span>
-            </a>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            <strong>❌ خطأ:</strong> @TempData["ErrorMessage"]
         </div>
+    }
 
+    <div class="info-cards">
+        <div class="info-card">
+            <div class="label">اسم المجند</div>
+            <div class="value">@Model.SoldierName</div>
+        </div>
+        <div class="info-card">
+            <div class="label">التشغيل</div>
+            <div class="value">@Model.Assignment</div>
+        </div>
         @if (Model.Leaves != null && Model.Leaves.Any())
         {
-            <div class="table-wrapper">
-                <table class="soldiers-table">
-                    <thead class="table-header">
-                        <tr>
-                            <th colspan="3" class="header-depart">بيانات القيام</th>
-                            <th colspan="3" class="header-return">بيانات العودة</th>
-                            <th rowspan="2" style="vertical-align: middle;">عدد الأيام</th>
-                            <th rowspan="2" style="vertical-align: middle;">نوع الإجازة</th>
-                            <th rowspan="2" style="vertical-align: middle;">الإجراءات</th>
-                        </tr>
-                        <tr>
-                            <th class="header-depart">البند</th>
-                            <th class="header-depart">الصحيفة</th>
-                            <th class="header-depart">التاريخ</th>
-                            <th class="header-return">البند</th>
-                            <th class="header-return">الصحيفة</th>
-                            <th class="header-return">التاريخ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var leave in Model.Leaves)
-                        {
-                            var leaveDays = leave.Start.HasValue && leave.End.HasValue
-                            ? (leave.End.Value - leave.Start.Value).Days
-                            : 0;
-
-                            <tr>
-                                <td>@(leave.StartNum?.ToString() ?? "-")</td>
-                                <td>@(leave.StartPage?.ToString() ?? "-")</td>
-                                <td>
-                                    @if (leave.Start.HasValue)
-                                    {
-                                        @leave.Start.Value.ToString("dd/MM/yyyy")
-                                    }
-                                    else
-                                    {
-                                        <span style="color: #999;">-</span>
-                                    }
-                                </td>
-                                <td>@(leave.EndNum?.ToString() ?? "-")</td>
-                                <td>@(leave.EndPage?.ToString() ?? "-")</td>
-                                <td>
-                                    @if (leave.End.HasValue)
-                                    {
-                                        @leave.End.Value.ToString("dd/MM/yyyy")
-                                    }
-                                    else
-                                    {
-                                        <span style="color: #999;">-</span>
-                                    }
-                                </td>
-                                <td>
-                                    <span class="badge">@leaveDays يوم</span>
-                                </td>
-                                <td><strong>@leave.Type</strong></td>
-                                <td>
-                                    <div class="actions">
-                                        <a href="@Url.Action("EditLeave", "SoldierLeave", new { id = leave.Id })"
-                                           class="btn-edit" title="تعديل البيانات">
-                                            <span>✏️</span>
-                                            <span>تعديل</span>
-                                        </a>
-                                        <button type="button"
-                                                class="btn-delete"
-                                                onclick="confirmDelete(@leave.Id)"
-                                                title="حذف السجل">
-                                            <span>🗑️</span>
-                                            <span>حذف</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                   
-                </table>
+            <div class="info-card">
+                <div class="label">عدد الإجازات المسجلة</div>
+                <div class="value">@Model.Leaves.Count() إجازة</div>
             </div>
-        }
-        else
-        {
-            <div class="alert alert-info">
-                <strong>ℹ️ تنبيه:</strong> لا توجد إجازات مسجلة لهذا المجند في النظام
+            <div class="info-card">
+                <div class="label">إجمالي الأيام</div>
+                <div class="value">
+                    @{
+                        var totalDaysInfo = Model.Leaves
+                        .Where(l => l.Start.HasValue && l.End.HasValue)
+                        .Sum(l => (l.End.Value - l.Start.Value).Days);
+                    }
+                    @totalDaysInfo يوم
+                </div>
             </div>
         }
     </div>
 
-    <script>
-        function confirmDelete(leaveId) {
-            if (confirm('⚠️ هل أنت متأكد من حذف هذا السجل؟\n\nهذا الإجراء لا يمكن التراجع عنه.')) {
-                fetch('@Url.Action("DeleteLeave", "SoldierLeave")/' + leaveId, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('✅ تم حذف السجل بنجاح');
-                        location.reload();
-                    } else {
-                        alert('❌ حدث خطأ أثناء عملية الحذف. يرجى المحاولة مرة أخرى.');
-                    }
-                })
-                .catch(error => {
-                    console.error('خطأ في الاتصال:', error);
-                    alert('❌ حدث خطأ في الاتصال بالخادم. يرجى التحقق من الاتصال بالإنترنت.');
-                });
-            }
-        }
+    <div class="header-section">
+        <a asp-action="Index" class="btn-secondary">
+            <span>←</span>
+            <span>العودة إلى القائمة الرئيسية</span>
+        </a>
+    </div>
 
-        // Print functionality
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'p') {
-                e.preventDefault();
-                window.print();
-            }
-        });
-    </script>
+    @if (Model.Leaves != null && Model.Leaves.Any())
+    {
+        <div class="table-wrapper">
+            <table class="soldiers-table">
+                <thead class="table-header">
+                    <tr>
+                        <th colspan="3" class="header-depart">بيانات القيام</th>
+                        <th colspan="3" class="header-return">بيانات العودة</th>
+                        <th rowspan="2" style="vertical-align: middle;">عدد الأيام</th>
+                        <th rowspan="2" style="vertical-align: middle;">نوع الإجازة</th>
+                        <th rowspan="2" style="vertical-align: middle;">الإجراءات</th>
+                    </tr>
+                    <tr>
+                        <th class="header-depart">البند</th>
+                        <th class="header-depart">الصحيفة</th>
+                        <th class="header-depart">التاريخ</th>
+                        <th class="header-return">البند</th>
+                        <th class="header-return">الصحيفة</th>
+                        <th class="header-return">التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var leave in Model.Leaves)
+                    {
+                        var leaveDays = leave.Start.HasValue && leave.End.HasValue
+                        ? (leave.End.Value - leave.Start.Value).Days
+                        : 0;
+
+                        <tr>
+                            <td>@(leave.StartNum?.ToString() ?? "-")</td>
+                            <td>@(leave.StartPage?.ToString() ?? "-")</td>
+                            <td>
+                                @if (leave.Start.HasValue)
+                                {
+                                    @leave.Start.Value.ToString("dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    <span style="color: #999;">-</span>
+                                }
+                            </td>
+                            <td>@(leave.EndNum?.ToString() ?? "-")</td>
+                            <td>@(leave.EndPage?.ToString() ?? "-")</td>
+                            <td>
+                                @if (leave.End.HasValue)
+                                {
+                                    @leave.End.Value.ToString("dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    <span style="color: #999;">-</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge">@leaveDays يوم</span>
+                            </td>
+                            <td><strong>@leave.Type</strong></td>
+                            <td>
+                                <div class="actions">
+                                    <a href="@Url.Action("EditLeave", "SoldierLeave", new { id = leave.Id })"
+                                       class="btn-edit" title="تعديل البيانات">
+                                        <span>✏️</span>
+                                        <span>تعديل</span>
+                                    </a>
+                                    <form method="post"
+                                          asp-action="DeleteLeave"
+                                          asp-controller="SoldierLeave"
+                                          style="display: inline;"
+                                          onsubmit="return confirm('⚠️ هل أنت متأكد من حذف هذا السجل؟\n\nهذا الإجراء لا يمكن التراجع عنه.');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="soldierLeaveId" value="@leave.Id" />
+                                        <input type="hidden" name="soldierId" value="@Model.SoldierId" />
+                                        <button type="submit" class="btn-delete" title="حذف السجل">
+                                            <span>🗑️</span>
+                                            <span>حذف</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <strong>ℹ️ تنبيه:</strong> لا توجد إجازات مسجلة لهذا المجند في النظام
+        </div>
+    }
 </body>

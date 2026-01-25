@@ -1,8 +1,11 @@
-﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using InsuranceAdministration.Core.DTOs.Soldier;
+using InsuranceAdministration.Core.Entities.PoliceManEntities;
+using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance;
 using InsuranceAdministration.Core.Interfaces.Repository;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace InsuranceAdministration.Infrastructure.Persistance
 {
@@ -10,11 +13,13 @@ namespace InsuranceAdministration.Infrastructure.Persistance
     {
         private readonly AppDbContext _context;
         private readonly DbSet<Soldier> _entity;
+        private readonly DbSet<SoldierLeave> _leavesEntity;
 
         public SoldierRepository(AppDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _entity = _context.Set<Soldier>();
+            _leavesEntity = _context.Set<SoldierLeave>();
         }
 
         public async ValueTask<Soldier> AddNewSoldier(Soldier soldier)
@@ -254,7 +259,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
 
             var existingLeave = soldier.Leaves?
                 .OrderByDescending(l => l.Start)
-                .LastOrDefault();
+                .FirstOrDefault();
 
             if (existingLeave == null)
                 throw new KeyNotFoundException($"No leave found for soldier ID {soldierLeave.SoldierId}");
@@ -263,6 +268,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             existingLeave.EndNum = soldierLeave.EndNum;
             existingLeave.EndPage = soldierLeave.EndPage;
             existingLeave.End = soldierLeave.End;
+            existingLeave.Type = soldierLeave.Type;
 
             await _context.SaveChangesAsync();
             return existingLeave;
@@ -277,9 +283,42 @@ namespace InsuranceAdministration.Infrastructure.Persistance
 
             var lastLeave = soldier?.Leaves?
                 .OrderByDescending(l => l.Start)
-                .LastOrDefault();
+                .FirstOrDefault();
 
             return lastLeave;
         }
+        public async ValueTask<int> GetSoldiersCounts()
+        {
+            return await _entity.CountAsync(); ;
+        }
+        public async ValueTask<int> GetSoldiersLeaveCounts()
+        {
+            int countSoldiersLeave = await _entity
+                .Where(s => s.CurrentIsLeave == true)
+                .CountAsync();
+            return countSoldiersLeave;
+        }
+
+        public async ValueTask<int> GetSoldierAttendanceCounts()
+        {
+            int countSoldiersAttendance = await _entity
+                .Where(s => s.CurrentIsLeave == false)
+                .CountAsync();
+            return countSoldiersAttendance;
+        }
+        public async ValueTask<SoldierLeave> GetSoldierLeaveById(int soldierLeaveId)
+        {
+            var soldierLeave = await _leavesEntity
+                .FirstOrDefaultAsync(l => l.Id == soldierLeaveId);
+            if (soldierLeave == null)
+                throw new KeyNotFoundException($"Soldier leave with ID {soldierLeaveId} not found.");
+            return soldierLeave;
+        }
+        public async ValueTask<SoldierLeave> DeleteSoldierLeave(SoldierLeave soldierLeave)
+        {
+            _leavesEntity.Remove(soldierLeave);
+            await _context.SaveChangesAsync();
+            return soldierLeave;
+        } 
     }
 }

@@ -169,7 +169,6 @@
                                     <th>م</th>
                                     <th>الاسم</th>
                                     <th>رقم التليفون</th>
-                                    <th>عدد ايام الحضور</th>
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
@@ -180,15 +179,11 @@
                                 @foreach (var soldier in group)
                                 {
                                     rowNum++;
-                                    var attendanceDays = soldier.Leaves?
-                                    .Where(l => l.Type == "حضور")
-                                    .Count() ?? 0;
 
                                     <tr class="soldier-row" data-name="@soldier.Name.ToLower()" data-assignment="@group.Key.ToLower()">
                                         <td>@rowNum</td>
                                         <td>@soldier.Name</td>
                                         <td>@soldier.PhoneNumber</td>
-                                        <td><span class="attendance-count">@attendanceDays</span></td>
                                         <td class="actions">
                                             <a asp-action="ShowSoldierLeaves" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary">عرض الاجازات</a>
                                             <a asp-action="Leave" asp-route-actionType="قيام" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">قيام</a>
@@ -238,7 +233,6 @@
                                     <th>م</th>
                                     <th>الاسم</th>
                                     <th>رقم التليفون</th>
-                                    <th>عدد الإجازات</th>
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
@@ -249,20 +243,16 @@
                                 @foreach (var soldier in group)
                                 {
                                     leaveRowNum++;
-                                    var leaveCount = soldier.Leaves?
-                                    .Where(l => l.Type == "قيام" || l.Type == "مد الاجازة")
-                                    .Count() ?? 0;
 
                                     <tr class="soldier-row" data-name="@soldier.Name.ToLower()" data-assignment="@group.Key.ToLower()">
                                         <td>@leaveRowNum</td>
                                         <td>@soldier.Name</td>
                                         <td>@soldier.PhoneNumber</td>
-                                        <td><span class="leave-count">@leaveCount</span></td>
                                         <td class="actions">
                                             <a asp-action="ShowSoldierLeaves" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary">عرض الاجازات</a>
                                             <a asp-action="Attendance" asp-route-actionType="حضور" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">حضور</a>
-                                            <a asp-action="Leave" asp-route-actionType="غياب" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">غياب</a>
-                                            <a asp-action="Leave" asp-route-actionType="مد الاجازة" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">مد الاجازة</a>
+                                            <a asp-action="Leave" asp-route-actionType="قيام" asp-route-soldierId="@soldier.Id" asp-route-soldierName="@soldier.Name" class="btn btn-primary" onclick="return openSmallWindow(this.href)">قيام</a>
+                                          
                                         </td>
                                     </tr>
                                 }

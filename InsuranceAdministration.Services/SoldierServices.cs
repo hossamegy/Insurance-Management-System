@@ -1,7 +1,9 @@
-﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using InsuranceAdministration.Core.DTOs.Soldier;
+using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Exceptions;
 using InsuranceAdministration.Core.Interfaces.Repository;
 using InsuranceAdministration.Core.Interfaces.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace InsuranceAdministration.Services
@@ -467,6 +469,31 @@ namespace InsuranceAdministration.Services
         {
             var leave = await _repository.GetLastSoldierLeave(soldierId);
             return leave;
+        }
+
+        public async ValueTask<int> GetSoldiersCounts()
+        {
+            return await _repository.GetSoldiersCounts();
+        }
+         
+        
+        public async ValueTask<int> GetSoldiersLeaveCounts()
+        {
+            return await _repository.GetSoldiersLeaveCounts();
+        }
+
+        public async ValueTask<int> GetSoldierAttendanceCounts()
+        {
+            return await _repository.GetSoldierAttendanceCounts();
+        }
+        public async ValueTask<SoldierLeave> GetSoldierLeaveById(int soldierLeaveId)
+        {
+           
+            return await _repository.GetSoldierLeaveById(soldierLeaveId);
+        }
+        public async ValueTask<SoldierLeave> DeleteSoldierLeave(SoldierLeave soldierLeave)
+        {
+            return await _repository.DeleteSoldierLeave(soldierLeave);
         }
     }
 }

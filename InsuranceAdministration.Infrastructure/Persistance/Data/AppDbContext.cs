@@ -25,8 +25,11 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
         public DbSet<AcquaintanceDocument> AcquaintanceDocument { get; set; }
         public DbSet<BaseFamily> BaseFamily { get; set; }
         public DbSet<Family> Family { get; set; }
-
+        public DbSet<SoldierLeaveOptions> SoldierLeaveOptions { get; set; }
         public DbSet<DailyMission> DailyMissions { get; set; }
+        public DbSet<Training> Training { get; set; }
+        public DbSet<PoliticalAndCriminal> PoliticalAndCriminal { get; set; }
+
 
 
         // Settings Options tables

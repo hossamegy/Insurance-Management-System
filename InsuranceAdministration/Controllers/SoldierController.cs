@@ -46,6 +46,7 @@ namespace InsuranceAdministration.Controllers
         {
             var assignmentOptions = await _settingsOptionsService.GetAllAssignmentOptions();
             var educationLevelOptions = await _settingsOptionsService.GetAllEducationLevelOptions();
+
             ViewBag.AssignmentOptions = new SelectList(assignmentOptions, "Name", "Name");
             ViewBag.EducationLevelOptions = new SelectList(educationLevelOptions, "Name", "Name");
             return View();
@@ -134,9 +135,22 @@ namespace InsuranceAdministration.Controllers
         [HttpGet]
         public async Task<IActionResult> DailyMeal(int id)
         {
+            ViewBag.soldierCounts = await _soldierService.GetSoldiersCounts();
+            ViewBag.soldiersLeaveCounts = await _soldierService.GetSoldiersLeaveCounts();
+            ViewBag.soldierAttendanceCounts = await _soldierService.GetSoldierAttendanceCounts();
+
             ViewBag.DepartmentName = await _settingsOptionsService.GetMainSettingsByDepartmentName();
             ViewBag.DepartmentDirectorName = await _settingsOptionsService.GetMainSettingsByDepartmentDirectorName();
+
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> DailyMission()
+        {
+   
+            return View();
+        }
+
     }
 }

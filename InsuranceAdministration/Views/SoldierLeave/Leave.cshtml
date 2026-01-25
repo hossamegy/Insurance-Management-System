@@ -3,10 +3,9 @@
 
 @{
     Layout = null;
-    var actionType = Model?.Type ?? ViewBag.ActionType ?? "قيام";
+
     var soldierName = ViewBag.SoldierName ?? "";
-    var isEdit = Model?.Id > 0;
-    var pageTitle = isEdit ? "تعديل " + actionType : actionType;
+
 }
 
 <!DOCTYPE html>
@@ -14,7 +13,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@pageTitle</title>
     <style>
         * {
             margin: 0;
@@ -202,7 +200,6 @@
 <body>
     <div class="form-container">
         <div class="form-header">
-            <h2>@pageTitle</h2>
             <p>@soldierName</p>
         </div>
 
@@ -223,10 +220,14 @@
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="SoldierId" />
-
             <div class="form-group">
-                <label asp-for="Type"><span class="required">*</span> نوع الإجراء</label>
-                <input type="text" asp-for="Type" value="@actionType" readonly />
+                <label class="">نوع الإجراء</label>
+                <select asp-for="Type" class="" asp-items="ViewBag.soldierLeaveOptions">
+                    <option value="">
+                        إختار نوع الاجراء
+                    </option>
+                    
+                </select>
                 <span asp-validation-for="Type" class="validation-message"></span>
             </div>
 
@@ -284,7 +285,7 @@
 
             <div class="form-footer">
                 <button type="submit" class="btn btn-save">
-                    @(isEdit ? "تحديث" : "حفظ")
+                    حفظ
                 </button>
                 <button type="button" class="btn btn-cancel" onclick="window.close()">إلغاء</button>
             </div>
@@ -296,15 +297,7 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
     <script>
-        // Set today's date as default if not editing
-        const isEdit = @(isEdit ? "true" : "false");
-        if (!isEdit) {
-            const today = new Date().toISOString().split('T')[0];
-            const startDateInput = document.getElementById('startDate');
-            if (startDateInput && !startDateInput.value) {
-                startDateInput.value = today;
-            }
-        }
+      
 
         // Calculate days between dates
         function calculateDays() {
@@ -335,10 +328,7 @@
         document.getElementById('startDate').addEventListener('change', calculateDays);
         document.getElementById('endDate').addEventListener('change', calculateDays);
 
-        // Calculate on page load if both dates exist
-        if (isEdit) {
-            calculateDays();
-        }
+       
 
         // Form validation
         document.getElementById('leaveForm').addEventListener('submit', function(e) {

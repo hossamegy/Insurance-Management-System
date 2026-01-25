@@ -1,3 +1,4 @@
+using InsuranceAdministration.Core.MappingProfiles.Soldiers;
 using InsuranceAdministration.Infrastructure;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using InsuranceAdministration.Services;
@@ -13,6 +14,8 @@ builder.Services.AddControllersWithViews();
 
 builder.AddServicesRegistration();
 builder.AddInfrastructureRegistration();
+
+builder.Services.AddAutoMapper(typeof(SoldierLeavesProfile));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));

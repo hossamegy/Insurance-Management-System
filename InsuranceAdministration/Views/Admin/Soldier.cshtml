@@ -82,3 +82,41 @@
         }
     </tbody>
 </table>
+
+<!-- Soldier leaves Options -->
+<form asp-action="UpdateSoldierLeaveOption" method="post">
+    <label>انواع اجراءت القيام من الادارو للمجندين</label>
+    <input type="text" name="LeaveType" required />
+    <button type="submit">إضافة</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>م</th>
+            <th>نوع القيام</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            counter = 0;
+        }
+        @foreach (SoldierLeaveOptions option in ViewBag.SoldierLeaveOption)
+        {
+            counter++;
+            <tr>
+                <td>@counter</td>
+                <td>@option.LeaveType</td>
+                <td>
+
+                    <form asp-action="DeleteSoldierLeaveOption" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@option.Id" />
+                        <button type="submit">حذف</button>
+                    </form>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

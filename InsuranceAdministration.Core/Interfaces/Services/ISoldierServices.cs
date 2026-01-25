@@ -1,4 +1,5 @@
-﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using InsuranceAdministration.Core.DTOs.Soldier;
+using InsuranceAdministration.Core.Entities.SoldierEntities;
 
 namespace InsuranceAdministration.Core.Interfaces.Services
 {
@@ -8,9 +9,12 @@ namespace InsuranceAdministration.Core.Interfaces.Services
         ValueTask<IEnumerable<Soldier>> GetAllSoldier();
         ValueTask<Soldier> GetSoldier(int id);
         ValueTask<IEnumerable<Soldier>> GetSoldierByAssignment(String SoldierAssignment);
-
         ValueTask<Soldier> UpdateCurrentSoldier(Soldier soldier);
         ValueTask<Soldier> DeleteSoldier(int id);
+        ValueTask<int> GetSoldiersCounts();
+        ValueTask<int> GetSoldierAttendanceCounts();
+        ValueTask<int> GetSoldiersLeaveCounts();
+
         ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiersByActive(int pageNumber, int pageSize, bool IsActive);
         ValueTask<AcquaintanceDocument> AddAcquaintanceDocument(int SoldierId, AcquaintanceDocument acquaintanceDocument);
         ValueTask<AcquaintanceDocument> GetAcquaintanceDocument(int SoldierId);
@@ -18,8 +22,10 @@ namespace InsuranceAdministration.Core.Interfaces.Services
 
         ValueTask<SoldierLeave> AddSoldierLeave(SoldierLeave SoldierLeave);
         ValueTask<IEnumerable<SoldierLeave>> GetSoldierLeave(int SoldierId);
+        ValueTask<SoldierLeave> GetSoldierLeaveById(int soldierLeaveId);
         ValueTask<SoldierLeave> GetLastSoldierLeave(int soldierId);
         ValueTask<SoldierLeave> UpdateSoldierLeave(SoldierLeave SoldierLeave);
+        ValueTask<SoldierLeave> DeleteSoldierLeave(SoldierLeave SoldierLeave);
 
     }
 }

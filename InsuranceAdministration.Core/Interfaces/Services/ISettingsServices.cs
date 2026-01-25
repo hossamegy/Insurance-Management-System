@@ -27,6 +27,11 @@ namespace InsuranceAdministration.Core.Interfaces.Services
         ValueTask<EducationLevelOptions> UpdateEducationLevelOption(EducationLevelOptions entity);
         ValueTask<EducationLevelOptions> DeleteEducationLevelOption(int id);
 
-        
+
+        // Soldier Leave Options
+        ValueTask<SoldierLeaveOptions> AddNewSoldierLeaveOptions(SoldierLeaveOptions entity);
+        ValueTask<IEnumerable<SoldierLeaveOptions>> GetAllSoldierLeaveOptions();
+        ValueTask<SoldierLeaveOptions> UpdateCurrentSoldierLeaveOptions(SoldierLeaveOptions entity);
+        ValueTask<SoldierLeaveOptions> DeleteSoldierLeaveOptions(int id);
     }
 }

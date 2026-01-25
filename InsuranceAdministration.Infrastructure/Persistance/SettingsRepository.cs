@@ -12,6 +12,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
         private readonly DbSet<AssignmentOptions> _assignment;
         private readonly DbSet<EducationLevelOptions> _education;
         private readonly DbSet<MainSettings> _main;
+        private readonly DbSet<SoldierLeaveOptions> _soldierLeave;
 
         public SettingsRepository(AppDbContext context)
         {
@@ -19,6 +20,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             _assignment = _context.Set<AssignmentOptions>();
             _education = _context.Set<EducationLevelOptions>();
             _main = _context.Set<MainSettings>();
+            _soldierLeave = _context.Set<SoldierLeaveOptions>();
         }
 
         /* ================= Assignment ================= */
@@ -140,6 +142,36 @@ namespace InsuranceAdministration.Infrastructure.Persistance
         {
             var entity = await _main.FirstOrDefaultAsync();
             return entity?.ConscriptsAffairsPoliceManName;
+        }
+
+        public async ValueTask<SoldierLeaveOptions> AddNewSoldierLeaveOptions(SoldierLeaveOptions entity)
+        {
+
+            await _soldierLeave.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async ValueTask<IEnumerable<SoldierLeaveOptions>> GetAllSoldierLeaveOptions()
+        {
+            return await _soldierLeave.ToListAsync();
+        }
+
+        public async ValueTask<SoldierLeaveOptions> UpdateCurrentSoldierLeaveOptions(SoldierLeaveOptions entity)
+        {
+            _soldierLeave.Update(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async ValueTask<SoldierLeaveOptions> DeleteSoldierLeaveOptions(int id)
+        {
+            var entity = await _soldierLeave.FindAsync(id);
+            if (entity == null) return null;
+
+            _soldierLeave.Remove(entity);
+            await _context.SaveChangesAsync();
+            return entity;
         }
     }
 }

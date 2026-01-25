@@ -70,6 +70,8 @@ namespace InsuranceAdministration.Controllers
 
             ViewBag.EducationLevelOptions =
                 await _settingsOptionsService.GetAllEducationLevelOptions();
+            ViewBag.SoldierLeaveOption =
+               await _settingsOptionsService.GetAllSoldierLeaveOptions();
 
             return View();
         }
@@ -147,5 +149,33 @@ namespace InsuranceAdministration.Controllers
             await _missionServices.UpdateCurrentMission(mission);
             return RedirectToAction(nameof(Mission));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSoldierLeaveOption(SoldierLeaveOptions option)
+        {
+            if (!ModelState.IsValid)
+                return RedirectToAction(nameof(Soldier));
+
+            await _settingsOptionsService.AddNewSoldierLeaveOptions(option);
+            return RedirectToAction(nameof(Soldier));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateSoldierLeaveOption(SoldierLeaveOptions option)
+        {
+            if (!ModelState.IsValid)
+                return RedirectToAction(nameof(Soldier));
+
+            await _settingsOptionsService.UpdateCurrentSoldierLeaveOptions(option);
+            return RedirectToAction(nameof(Soldier));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteSoldierLeaveOption(int id)
+        {
+            await _settingsOptionsService.DeleteSoldierLeaveOptions(id);
+            return RedirectToAction(nameof(Soldier));
+        }
+
     }
 }

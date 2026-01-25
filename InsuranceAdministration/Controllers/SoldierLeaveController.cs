@@ -1,6 +1,9 @@
-﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using AutoMapper;
+using InsuranceAdministration.Core.DTOs.Soldier;
+using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 
 namespace InsuranceAdministration.Controllers
@@ -10,14 +13,16 @@ namespace InsuranceAdministration.Controllers
         private readonly ISoldierServices _soldierService;
         private readonly ISettingsServices _settingsOptionsService;
         private readonly ILogger<SoldierLeaveController> _logger;
-
+        private readonly IMapper _mapper;
         public SoldierLeaveController(
             ISoldierServices soldierService,
             ISettingsServices settingsOptionsService,
+            IMapper mapper,
             ILogger<SoldierLeaveController> logger)
         {
             _soldierService = soldierService;
             _settingsOptionsService = settingsOptionsService;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -33,6 +38,9 @@ namespace InsuranceAdministration.Controllers
         [HttpGet]
         public async Task<IActionResult> Leave(int soldierId, string actionType, string soldierName)
         {
+            var soldierLeaveOptions = await _settingsOptionsService.GetAllSoldierLeaveOptions(); 
+            ViewBag.soldierLeaveOptions = new SelectList(soldierLeaveOptions, "LeaveType", "LeaveType");
+
             try
             {
                 var soldier = await _soldierService.GetSoldier(soldierId);
@@ -71,7 +79,6 @@ namespace InsuranceAdministration.Controllers
                     ViewBag.SoldierName = "";
                 }
 
-                ViewBag.ActionType = soldierLeave.Type;
                 return View("Leave", soldierLeave);
             }
 
@@ -118,7 +125,11 @@ namespace InsuranceAdministration.Controllers
             try
             {
                 var soldier = await _soldierService.GetSoldier(soldierId);
-                return View(soldier);
+                var soldierLeavesDto = _mapper.Map<SoldierLeavesDto>(soldier);
+
+               
+
+                return View(soldierLeavesDto);
             }
             catch (KeyNotFoundException)
             {
@@ -170,13 +181,13 @@ namespace InsuranceAdministration.Controllers
                     ViewBag.SoldierName = "";
                 }
 
-                ViewBag.ActionType = soldierLeave.Type;
                 // FIX: تصحيح اسم الـ View
                 return View("Attendance", soldierLeave);
             }
 
             try
             {
+                soldierLeave.Type = "حضور";
                 var updatedLeave = await _soldierService.UpdateSoldierLeave(soldierLeave);
 
                 var soldier = await _soldierService.GetSoldier(soldierLeave.SoldierId);
@@ -207,9 +218,79 @@ namespace InsuranceAdministration.Controllers
                     ViewBag.SoldierName = "";
                 }
 
-                ViewBag.ActionType = soldierLeave.Type;
-          
                 return View("Attendance", soldierLeave);
+            }
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteLeave(int soldierLeaveId, int soldierId)
+        {
+            try
+            {
+                var soldierLeave = await _soldierService.GetSoldierLeaveById(soldierLeaveId);
+
+                if (soldierLeave == null)
+                {
+                    _logger.LogWarning("No leave found with ID {SoldierLeaveId}", soldierLeaveId);
+                    TempData["ErrorMessage"] = "لا توجد إجازة بهذا المعرف";
+                    return RedirectToAction("ShowSoldierLeaves", new { soldierId });
+                }
+
+                await _soldierService.DeleteSoldierLeave(soldierLeave);
+
+                _logger.LogInformation("Leave with ID {SoldierLeaveId} deleted successfully", soldierLeaveId);
+
+                TempData["SuccessMessage"] = "تم حذف السجل بنجاح";
+                return RedirectToAction("ShowSoldierLeaves", new { soldierId });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Leave with ID {SoldierLeaveId} not found", soldierLeaveId);
+                TempData["ErrorMessage"] = "السجل غير موجود";
+                return RedirectToAction("ShowSoldierLeaves", new { soldierId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting leave with ID {SoldierLeaveId}", soldierLeaveId);
+                TempData["ErrorMessage"] = "حدث خطأ أثناء الحذف";
+                return RedirectToAction("ShowSoldierLeaves", new { soldierId });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult>UpdateLeave(int soldierLeaveId, int soldierId)
+        {
+            try
+            {
+                var soldierLeave = await _soldierService.GetSoldierLeaveById(soldierLeaveId);
+
+                if (soldierLeave == null)
+                {
+                    _logger.LogWarning("No leave found with ID {SoldierLeaveId}", soldierLeaveId);
+                    TempData["ErrorMessage"] = "لا توجد إجازة بهذا المعرف";
+                    return RedirectToAction("ShowSoldierLeaves", new { soldierId });
+                }
+
+                await _soldierService.DeleteSoldierLeave(soldierLeave);
+
+                _logger.LogInformation("Leave with ID {SoldierLeaveId} deleted successfully", soldierLeaveId);
+
+                TempData["SuccessMessage"] = "تم حذف السجل بنجاح";
+                return RedirectToAction("ShowSoldierLeaves", new { soldierId });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Leave with ID {SoldierLeaveId} not found", soldierLeaveId);
+                TempData["ErrorMessage"] = "السجل غير موجود";
+                return RedirectToAction("ShowSoldierLeaves", new { soldierId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting leave with ID {SoldierLeaveId}", soldierLeaveId);
+                TempData["ErrorMessage"] = "حدث خطأ أثناء الحذف";
+                return RedirectToAction("ShowSoldierLeaves", new { soldierId });
             }
         }
     }
