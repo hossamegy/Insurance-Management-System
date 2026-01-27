@@ -109,14 +109,13 @@ namespace InsuranceAdministration.Controllers
             await _settingsOptionsService.DeleteEducationLevelOption(id);
             return RedirectToAction(nameof(Soldier));
         }
-      
+
 
         /* ===================== Mission ===================== */
 
         public async Task<IActionResult> Mission()
         {
-            ViewBag.Missions =
-               await _missionServices.GetAllMissions();
+            ViewBag.Missions = await _missionServices.GetAllMissions();
             return View();
         }
 
@@ -125,28 +124,75 @@ namespace InsuranceAdministration.Controllers
         public async Task<IActionResult> AddNewMission(Mission mission)
         {
             if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "البيانات المدخلة غير صحيحة";
                 return RedirectToAction(nameof(Mission));
+            }
 
-            await _missionServices.AddNewMission(mission);
+            try
+            {
+                await _missionServices.AddNewMission(mission);
+                TempData["SuccessMessage"] = "تم إضافة الخدمة بنجاح";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "حدث خطأ أثناء إضافة الخدمة";
+            }
+
             return RedirectToAction(nameof(Mission));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMission(int id)
         {
+            try
+            {
+                var result = await _missionServices.DeleteMission(id);
 
-            if (!ModelState.IsValid)
-                return RedirectToAction(nameof(Mission));
-            await _missionServices.DeleteMission(id);
+                if (result != null)
+                {
+                    TempData["SuccessMessage"] = "تم حذف الخدمة بنجاح";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "لم يتم العثور على الخدمة";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "حدث خطأ أثناء حذف الخدمة";
+            }
+
             return RedirectToAction(nameof(Mission));
         }
-        
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateMission(Mission mission)
         {
             if (!ModelState.IsValid)
+            {
+                // Log validation errors
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Model Error: {error.ErrorMessage}");
+                }
+                TempData["ErrorMessage"] = "البيانات المدخلة غير صحيحة";
                 return RedirectToAction(nameof(Mission));
-            await _missionServices.UpdateCurrentMission(mission);
+            }
+
+            try
+            {
+                await _missionServices.UpdateCurrentMission(mission);
+                TempData["SuccessMessage"] = "تم تحديث الخدمة بنجاح";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Update Error: {ex.Message}");
+                TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث الخدمة";
+            }
+
             return RedirectToAction(nameof(Mission));
         }
 
@@ -176,6 +222,40 @@ namespace InsuranceAdministration.Controllers
             await _settingsOptionsService.DeleteSoldierLeaveOptions(id);
             return RedirectToAction(nameof(Soldier));
         }
+        // ===================== Daily Meal ===================== //
 
+        // ===================== Daily Meal ===================== //
+        [HttpGet]
+        public async Task<IActionResult> DailyMeal()
+        {
+            ViewBag.DailyMealOptions = await _settingsOptionsService.GetAllDailyMealOptions();
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddDailyMealOption(DailyMealOptions dailyMeal)
+        {
+            if (ModelState.IsValid)
+            {
+                await _settingsOptionsService.AddNewDailyMealOptions(dailyMeal);
+                TempData["SuccessMessage"] = "تم إضافة الخيار بنجاح";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "حدث خطأ أثناء الإضافة";
+            }
+
+            return RedirectToAction(nameof(DailyMeal));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteDailyMealOption(int id)
+        {
+            var result = await _settingsOptionsService.DeleteDailyMealOptions(id);
+
+            return RedirectToAction(nameof(DailyMeal));
+        }
     }
 }

@@ -1,61 +1,51 @@
-﻿@*
-    يومية التعيين اليومية
-*@
+﻿@model InsuranceAdministration.Core.DTOs.Soldiers.SoldierDailyMealDto
 
 @{
     ViewData["Title"] = "يومية التعيين";
-    var today = DateTime.Now;
-    var hijriDate = ""; // يمكنك إضافة تحويل التاريخ الهجري هنا
+    var nextDay = DateTime.Now.AddDays(1);
 }
 
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
+
+        .report-container {
+            background: white;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             font-family: 'Traditional Arabic', 'Arial', sans-serif;
             background: #f5f5f5;
             padding: 20px;
             direction: rtl;
         }
 
-        .report-container {
-            background: white;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
         .report-header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #0090b0;
-            padding-bottom: 20px;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #0090b0;
         }
 
         .department-name {
-            font-size: 28px;
+            font-size: 40px;
             font-weight: bold;
             color: #0090b0;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .report-title {
-            font-size: 22px;
+            font-size: 30px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .date-info {
@@ -63,9 +53,10 @@
             justify-content: center;
             align-items: center;
             gap: 10px;
-            font-size: 18px;
-            color: #666;
-            margin-top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 12px;
         }
 
         .date-label {
@@ -81,49 +72,36 @@
         .main-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 15px;
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: bold;
         }
 
-            .main-table thead tr:first-child {
-
-                color: black;
-            }
-
-                .main-table thead tr:first-child td {
-                    padding: 15px 10px;
-                    font-weight: bold;
-                    font-size: 16px;
-                    text-align: center;
-                    border: 1px solid;
-                }
-
-            .main-table thead tr:nth-child(2) {
-      
-            }
-
-                .main-table thead tr:nth-child(2) td {
-                    padding: 12px 8px;
-                    font-weight: bold;
-                    text-align: center;
-                   
-                    border: 1px solid;
-                }
-
-            .main-table thead tr:nth-child(3) {
+            .main-table thead tr:first-child td {
+                padding: 14px 10px;
+                font-weight: bold;
+                font-size: 20px;
+                text-align: center;
                 border: 1px solid;
+                background: #f8f9fa;
+                color: #333;
             }
 
-                .main-table thead tr:nth-child(3) td {
-                    padding: 12px 8px;
-                    font-weight: bold;
-                    text-align: center;
-                    border: 1px solid;
-                    color: #0090b0;
-                }
+            .main-table thead tr:nth-child(2) td {
+                padding: 12px 1px;
+                font-weight: bold;
+                text-align: center;
+                border: 1px solid;
+                background: #f8f9fa;
+                color: black;
+                font-size: 20px;
+            }
 
             .main-table tbody tr {
                 background: white;
+                font-size: 18px;
+                border-bottom: none;
+                border-top: none;
             }
 
                 .main-table tbody tr:hover {
@@ -134,33 +112,65 @@
                 padding: 10px 8px;
                 text-align: center;
                 border: 1px solid;
+                font-size: 18px;
+                border-bottom: none;
+                border-top: none;
             }
 
-        .total-row {
-            background: #fff3cd !important;
-            font-weight: bold;
+            .main-table input[type="text"] {
+                width: 90%;
+                padding: 8px;
+                border: 1px solid #e0e0e0;
+                text-align: center;
+                font-size: 18px;
+                font-family: inherit;
+                background: transparent;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+
+                .main-table input[type="text"]:focus {
+                    outline: none;
+                    border-color: #0090b0;
+                    background: #f0f8ff;
+                }
+
+        .calculated-cell {
+            background-color: #e8f4f8;
         }
 
-            .total-row td {
-                color: #856404;
-                border: 1px solid #ffc107 !important;
+            .calculated-cell input[type="text"] {
+                font-weight: bold;
+                color: black;
+                background: transparent;
             }
 
         .action-buttons {
             text-align: center;
-            margin: 20px 0;
+            margin: 30px 0 20px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
         }
 
         .btn {
-            padding: 12px 30px;
+            padding: 12px 28px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             border: none;
-            margin: 0 5px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+            .btn-save:hover {
+                background: #218838;
+            }
 
         .btn-print {
             background: #0090b0;
@@ -169,19 +179,6 @@
 
             .btn-print:hover {
                 background: #006080;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0, 144, 176, 0.4);
-            }
-
-        .btn-export {
-            background: #28a745;
-            color: white;
-        }
-
-            .btn-export:hover {
-                background: #218838;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
             }
 
         .btn-back {
@@ -191,54 +188,26 @@
 
             .btn-back:hover {
                 background: #5a6268;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
             }
-
-        .notes-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border-right: 4px solid #0090b0;
-        }
-
-        .notes-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0090b0;
-            margin-bottom: 10px;
-        }
-
-        .notes-content {
-            color: #666;
-            line-height: 1.8;
-        }
-
-        .committee-members {
-            display: flex;
-            align-content: center;
-            justify-content: center;
-            align-items: center;
-            min-height: 70px;
-            gap: 50px;
-        }
 
         .member-card {
             text-align: center;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
+            margin-top: 50px;
+            margin-bottom: 10px;
+            margin-left: 50px;
         }
 
             .member-card div {
                 margin-bottom: 3px;
-                font-size: 18px;
+                font-size: 24px;
             }
 
         .member-title {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 20px;
         }
 
         .member-rank {
@@ -246,130 +215,332 @@
         }
 
         .member-section {
-            line-height: 2.5;
+            line-height: 4;
         }
 
+        /* ============= PRINT STYLES ============= */
         @@media print {
-            body {
-                background: white;
-                padding: 0;
+        /* Remove browser headers/footers */
+        @@page {
+            size: A4;
+            margin: 10mm;
+        }
+        /* Hide everything by default */
+        body * {
+            visibility: hidden;
+        }
+        /* Show only .printed and its children */
+        .printed,
+        .printed * {
+            visibility: visible;
+        }
+        /* Position .printed at the top of the page */
+        .printed {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        /* Hide elements that shouldn't be printed */
+        .action-buttons {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        /* Reset body for printing */
+        body {
+            background: white !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        /* Optimize container */
+        .report-container {
+            box-shadow: none !important;
+            padding: 10mm !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            border-radius: 0 !important;
+        }
+        /* Prevent page breaks */
+        .report-header {
+            page-break-after: avoid;
+            page-break-inside: avoid;
+        }
+
+        .main-table {
+            page-break-inside: auto;
+        }
+
+            .main-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            /* Simplify inputs for printing */
+            .main-table input[type="text"] {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                width: 100% !important;
+                font-size: 16px !important;
+            }
+            /* Preserve colors */
+            .calculated-cell,
+            .main-table thead tr td {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
-            .action-buttons {
-                display: none;
-            }
+        /* Member card adjustments */
+        .member-card {
+            margin-top: 30px;
+            page-break-inside: avoid;
+        }
 
-            .report-container {
-                box-shadow: none;
-                padding: 0;
-            }
+        .report-header {
+            border-bottom: 2px solid #000 !important;
+        }
 
-            .notes-section {
-                page-break-before: avoid;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="report-container">
-        <div class="report-header">
-            <div class="department-name">
-                @ViewBag.DepartmentName
-            </div>
-
-            <div class="report-title">
-                يومية التعيين عن
-            </div>
-
-            <div class="date-info">
-                <span class="date-label">الموافق</span>
-                <span class="day-name">@today.ToString("dddd", new System.Globalization.CultureInfo("ar-EG"))</span>
-                <span>@today.ToString("dd / MM / yyyy")</span>
-            </div>
-        </div>
-
-        <table class="main-table">
-            <thead>
-                <tr>
-                    <td rowspan="2">أصل القوة</td>
-                    <td colspan="10">ملاحظات خارج التعيين</td>
-                    <td rowspan="2">مستحقين التعيين عن اليوم</td>
-                </tr>
-                <tr>
-                    <td>إجازة</td>
-                    <td>مأمورية</td>
-                    <td>فرقة</td>
-                    <td>مرضى</td>
-                    <td>بدل تعيين</td>
-                    <td>غياب</td>
-                    <td>سجن خارجي</td>
-                    <td>شطب</td>
-                    <td>اجمالى الخارج</td>
-                    <td>اجمالى الموجود</td>
-                </tr>
-             
-            </thead>
-            <tbody>
-                <tr>
-                    <td>@ViewBag.soldierCounts</td>
-                    <td></td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>@ViewBag.soldiersLeaveCounts</td>
-                    <td>-</td>
-                    <td>مجندين من قوة @ViewBag.DepartmentName</td>
-                </tr>
-                
-               
-
-               
-               
-            </tbody>
-        </table>
-
-        @if (Model?.Notes != null && !string.IsNullOrEmpty(Model.Notes))
-        {
-            <div class="notes-section">
-                <div class="notes-title">ملاحظات:</div>
-                <div class="notes-content">
-                    @Html.Raw(Model.Notes.Replace("\n", "<br>"))
+    <div class="printed">
+        @Html.AntiForgeryToken()
+        <div class="report-container">
+            <div class="report-header">
+                <div class="department-name">@ViewBag.DepartmentName</div>
+                <div class="report-title">يومية التعيين عن</div>
+                <div class="date-info">
+                    <span class="date-label">الموافق</span>
+                    <span class="day-name">@nextDay.ToString("dddd", new System.Globalization.CultureInfo("ar-EG"))</span>
+                    <span class="date-value">@nextDay.ToString("dd / MM / yyyy")</span>
                 </div>
             </div>
-        }
-        <!-- Committee Members -->
+
+            <table class="main-table">
+                <thead>
+                    <tr>
+                        <td rowspan="2">أصل القوة</td>
+                        <td colspan="10">ملاحظات خارج التعيين</td>
+                        <td rowspan="2">مستحقين التعيين عن اليوم</td>
+                    </tr>
+                    <tr>
+                        <td>إجازة</td>
+                        <td>مأمورية</td>
+                        <td>فرقة</td>
+                        <td>مرضى</td>
+                        <td>بدل تعيين</td>
+                        <td>غياب</td>
+                        <td>سجن خارجي</td>
+                        <td>شطب</td>
+                        <td>اجمالى الخارج</td>
+                        <td>اجمالى الموجود</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" id="soldierCounts" name="SoldierCounts" value="@Model.SoldierCounts" data-original="@Model.SoldierCounts"></td>
+                        <td><input type="text" id="leave" name="SoldiersLeaveCounts" value="@Model.SoldiersLeaveCounts" data-original="@Model.SoldiersLeaveCounts"></td>
+                        <td><input type="text" id="mamoria" name="SoldiersLeaveCountsMamoria" value="@Model.SoldiersLeaveCountsMamoria" data-original="@Model.SoldiersLeaveCountsMamoria"></td>
+                        <td><input type="text" id="training" name="SoldiersLeaveCountsTraining" value="@Model.SoldiersLeaveCountsTraining" data-original="@Model.SoldiersLeaveCountsTraining"></td>
+                        <td><input type="text" id="illness" name="SoldiersLeaveCountsIllness" value="@Model.SoldiersLeaveCountsIllness" data-original="@Model.SoldiersLeaveCountsIllness"></td>
+                        <td><input type="text" id="replacement" name="SoldiersLeaveCountsReplacement" value="@Model.SoldiersLeaveCountsReplacement" data-original="@Model.SoldiersLeaveCountsReplacement"></td>
+                        <td><input type="text" id="absence" name="SoldiersLeaveCountsAbsence" value="@Model.SoldiersLeaveCountsAbsence" data-original="@Model.SoldiersLeaveCountsAbsence"></td>
+                        <td><input type="text" id="prison" name="SoldiersLeaveCountsPrison" value="@Model.SoldiersLeaveCountsPrison" data-original="@Model.SoldiersLeaveCountsPrison"></td>
+                        <td><input type="text" id="strikeOff" name="SoldiersLeaveCountsStrikeOff" value="@Model.SoldiersLeaveCountsStrikeOff" data-original="@Model.SoldiersLeaveCountsStrikeOff"></td>
+                        <td class="calculated-cell"><input type="text" id="allCountLeaves" name="AllCountLeaves" value="@Model.AllCountLeaves" readonly data-original="@Model.AllCountLeaves"></td>
+                        <td class="calculated-cell"><input type="text" id="soldierAttendance" name="SoldierAttendanceCounts" value="@Model.SoldierAttendanceCounts" readonly data-original="@Model.SoldierAttendanceCounts"></td>
+                        <td>مجندين من قوة @ViewBag.DepartmentName</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><input type="text" id="afrad" name="Afrad" value="@Model.Afrad" data-original="@Model.Afrad"></td>
+                        <td>افراد من قوة @ViewBag.DepartmentName </td>
+                    </tr>
+                    @if (ViewBag.allDepartmentsNeedMeal != null)
+                    {
+                        var departmentIndex = 0;
+                        foreach (var department in ViewBag.allDepartmentsNeedMeal)
+                        {
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><input type="text" class="department-meal" name="DepartmentMeals[@departmentIndex].Count" data-dept-id="@department.Id" value="@(Model.DepartmentMeals?.FirstOrDefault(d => d.DepartmentId == department.Id)?.Count ?? 0)" data-original="@(Model.DepartmentMeals?.FirstOrDefault(d => d.DepartmentId == department.Id)?.Count ?? 0)"></td>
+                                <td>@department.Name</td>
+                            </tr>
+                            departmentIndex++;
+                        }
+                    }
+                    <tr style="border-bottom:1px solid;border-top:1px solid;">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="calculated-cell"><input type="text" id="grandTotal" name="GrandTotal" value="@Model.GrandTotal" readonly data-original="@Model.GrandTotal"></td>
+                        <td>الاجمالي</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Committee Members -->
             <div class="member-card">
                 <div class="member-rank">عميد/</div>
                 <div class="member-section">
                     <div class="member-title">مدير @ViewBag.DepartmentName</div>
-                    <div class="member-title">"@ViewBag.DepartmentDirectorName"</div>
+                    <div class="member-title">@ViewBag.DepartmentDirectorName</div>
                 </div>
-
             </div>
-        
-
-        <div class="action-buttons">
-            <button class="btn btn-print" onclick="window.print()">
-                طباعة التقرير
-            </button>
-            <button class="btn btn-export" onclick="exportToExcel()">
-                تصدير إلى Excel
-            </button>
-            <button class="btn btn-back" onclick="window.history.back()">
-                رجوع
-            </button>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-print" onclick="window.print()">طباعة التقرير</button>
+                <button type="button" class="btn btn-back" onclick="window.history.back()">رجوع</button>
+            </div>
         </div>
+
     </div>
 
+
+
     <script>
-        function exportToExcel() {
-            // يمكنك إضافة كود التصدير إلى Excel هنا
-            alert('سيتم تصدير التقرير إلى Excel');
+        // Convert English numbers to Arabic numbers
+        function toArabicNumerals(str) {
+            const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return str.toString().replace(/[0-9]/g, function(w) {
+                return arabicNumbers[+w];
+            });
         }
+
+        // Convert Arabic numbers to English numbers
+        function toEnglishNumerals(str) {
+            const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            let result = str.toString();
+            for (let i = 0; i < arabicNumbers.length; i++) {
+                result = result.replace(new RegExp(arabicNumbers[i], 'g'), i.toString());
+            }
+            return result;
+        }
+
+        function calculateTotals() {
+            // Get all leave counts (convert from Arabic to English first)
+            const leave = parseInt(document.getElementById('leave').getAttribute('data-original')) || 0;
+            const mamoria = parseInt(document.getElementById('mamoria').getAttribute('data-original')) || 0;
+            const training = parseInt(document.getElementById('training').getAttribute('data-original')) || 0;
+            const illness = parseInt(document.getElementById('illness').getAttribute('data-original')) || 0;
+            const replacement = parseInt(document.getElementById('replacement').getAttribute('data-original')) || 0;
+            const absence = parseInt(document.getElementById('absence').getAttribute('data-original')) || 0;
+            const prison = parseInt(document.getElementById('prison').getAttribute('data-original')) || 0;
+            const strikeOff = parseInt(document.getElementById('strikeOff').getAttribute('data-original')) || 0;
+
+            // Calculate total leaves
+            const totalLeaves = leave + mamoria + training + illness + replacement + absence + prison + strikeOff;
+            document.getElementById('allCountLeaves').setAttribute('data-original', totalLeaves);
+            document.getElementById('allCountLeaves').value = toArabicNumerals(totalLeaves);
+
+            // Get soldier counts
+            const soldierCounts = parseInt(document.getElementById('soldierCounts').getAttribute('data-original')) || 0;
+
+            // Calculate attendance
+            const attendance = soldierCounts - totalLeaves;
+            document.getElementById('soldierAttendance').setAttribute('data-original', attendance);
+            document.getElementById('soldierAttendance').value = toArabicNumerals(attendance);
+
+            // Update grand total
+            calculateGrandTotal();
+        }
+
+        function calculateGrandTotal() {
+            const attendance = parseInt(document.getElementById('soldierAttendance').getAttribute('data-original')) || 0;
+            const afrad = parseInt(document.getElementById('afrad').getAttribute('data-original')) || 0;
+
+            // Get all department meal inputs
+            let departmentMealsTotal = 0;
+            const departmentInputs = document.querySelectorAll('.department-meal');
+            departmentInputs.forEach(input => {
+                departmentMealsTotal += parseInt(input.getAttribute('data-original')) || 0;
+            });
+
+            const grandTotal = attendance + afrad + departmentMealsTotal;
+            document.getElementById('grandTotal').setAttribute('data-original', grandTotal);
+            document.getElementById('grandTotal').value = toArabicNumerals(grandTotal);
+        }
+
+        // Setup input handlers
+        function setupInputHandlers() {
+            document.querySelectorAll('input[type="text"]:not([readonly])').forEach(input => {
+                // Focus event - show English numbers
+                input.addEventListener('focus', function() {
+                    this.value = this.getAttribute('data-original') || '';
+                });
+
+                // Blur event - convert to Arabic and recalculate
+                input.addEventListener('blur', function() {
+                    const englishValue = toEnglishNumerals(this.value);
+                    this.setAttribute('data-original', englishValue);
+                    this.value = toArabicNumerals(englishValue);
+
+                    // Trigger calculations
+                    if (this.id === 'soldierCounts' || this.id === 'leave' || this.id === 'mamoria' ||
+                        this.id === 'training' || this.id === 'illness' || this.id === 'replacement' ||
+                        this.id === 'absence' || this.id === 'prison' || this.id === 'strikeOff') {
+                        calculateTotals();
+                    } else if (this.id === 'afrad' || this.classList.contains('department-meal')) {
+                        calculateGrandTotal();
+                    }
+                });
+
+                // Input event - update data-original in real-time
+                input.addEventListener('input', function() {
+                    const englishValue = toEnglishNumerals(this.value);
+                    this.setAttribute('data-original', englishValue);
+                });
+            });
+        }
+
+        // Convert all numbers to Arabic numerals on page
+        function convertAllNumbers() {
+            // Convert all input values to Arabic numerals
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                if (input.value) {
+                    const originalValue = input.getAttribute('data-original') || input.value;
+                    input.setAttribute('data-original', toEnglishNumerals(originalValue));
+                    input.value = toArabicNumerals(originalValue);
+                }
+            });
+
+            // Convert dates
+            const dateValue = document.querySelector('.date-value');
+            if (dateValue) {
+                dateValue.textContent = toArabicNumerals(dateValue.textContent);
+            }
+        }
+
+        // Initialize on page load
+        window.onload = function () {
+            convertAllNumbers();
+            setupInputHandlers();
+            calculateTotals();
+        };
     </script>
 </body>
 </html>

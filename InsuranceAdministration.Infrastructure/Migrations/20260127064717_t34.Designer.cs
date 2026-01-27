@@ -3,6 +3,7 @@ using System;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,14 +11,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuranceAdministration.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260127064717_t34")]
+    partial class t34
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.21");
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.MissionEntities.DailyMission", b =>
+            modelBuilder.Entity("InsuranceAdministration.Core.Entities.DailyMissionEntities.DailyMission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -494,16 +497,7 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("DailyMissionId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("MissionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("MissionId1")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
@@ -515,15 +509,10 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedAt");
-
-                    b.HasIndex("DailyMissionId");
-
                     b.HasIndex("MissionId");
 
-                    b.HasIndex("MissionId1");
-
-                    b.HasIndex("SoldierId", "MissionId");
+                    b.HasIndex("SoldierId", "MissionId")
+                        .IsUnique();
 
                     b.ToTable("SoldierMission");
                 });
@@ -568,6 +557,9 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.Property<int?>("CodeNumber")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("DailyMissionId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("TEXT");
 
@@ -585,6 +577,8 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DailyMissionId");
 
                     b.ToTable("Mission");
                 });
@@ -719,28 +713,17 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.SoldierMission", b =>
                 {
-                    b.HasOne("InsuranceAdministration.Core.Entities.MissionEntities.DailyMission", "DailyMission")
-                        .WithMany("SoldierMissions")
-                        .HasForeignKey("DailyMissionId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Mission", "Mission")
-                        .WithMany()
+                        .WithMany("SoldierMissions")
                         .HasForeignKey("MissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Mission", null)
-                        .WithMany("SoldierMissions")
-                        .HasForeignKey("MissionId1");
 
                     b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", "Soldier")
                         .WithMany("SoldierMissions")
                         .HasForeignKey("SoldierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("DailyMission");
 
                     b.Navigation("Mission");
 
@@ -758,6 +741,16 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.Navigation("Soldier");
                 });
 
+            modelBuilder.Entity("Mission", b =>
+                {
+                    b.HasOne("InsuranceAdministration.Core.Entities.DailyMissionEntities.DailyMission", "DailyMission")
+                        .WithMany("Missions")
+                        .HasForeignKey("DailyMissionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("DailyMission");
+                });
+
             modelBuilder.Entity("MissionPoliceMan", b =>
                 {
                     b.HasOne("Mission", null)
@@ -773,9 +766,9 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.MissionEntities.DailyMission", b =>
+            modelBuilder.Entity("InsuranceAdministration.Core.Entities.DailyMissionEntities.DailyMission", b =>
                 {
-                    b.Navigation("SoldierMissions");
+                    b.Navigation("Missions");
                 });
 
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.PoliceManEntities.PoliceMan", b =>

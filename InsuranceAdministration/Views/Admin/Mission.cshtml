@@ -1,17 +1,36 @@
 ﻿@model Mission
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@removeTagHelper Microsoft.AspNetCore.Mvc.TagHelpers.OptionTagHelper, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <h1>إعدادات خدمات المسطح المائى</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
 <table class="table table-bordered text-center align-middle">
     <thead>
         <tr>
             <th>م</th>
+            <th>نوع الخدمة</th>
             <th>كود الخدمة</th>
             <th>اسم الخدمة</th>
             <th>رقم اللنش</th>
             <th>رقم الجهاز اللاسلكى</th>
             <th>حالة الخدمة</th>
-            <th>تحديث</th>
+            <th>الإجراءات</th>
         </tr>
     </thead>
     <tbody>
@@ -20,67 +39,169 @@
             int counter = 1;
         }
 
+        @if (!missions.Any())
+        {
+            <tr>
+                <td colspan="8" class="text-center">لا توجد بيانات</td>
+            </tr>
+        }
+
         <!-- Existing missions -->
         @foreach (var mission in missions)
         {
             <tr>
                 <td>@counter</td>
-
-                <td>
-                    <input name="CodeNumber" value="@mission.CodeNumber" class="form-control" form="update-@mission.Id" />
-                </td>
-                <td>
-                    <input name="Name" value="@mission.Name" class="form-control" form="update-@mission.Id" />
-                </td>
-                <td>
-                    <input name="BoatNumber" value="@mission.BoatNumber" class="form-control" form="update-@mission.Id" />
-                </td>
-                <td>
-                    <input name="WirelessCallSign" value="@mission.WirelessCallSign" class="form-control" form="update-@mission.Id" />
-                </td>
-              
                 
-                <td class="d-flex raw">
-                    @if (mission.IsActive == true)
-                    {
-                        <label name="WirelessCallSign" value="@mission.WirelessCallSign" class="form-control bg-primary text-light">تعمل</label>
-                    }
-                    else
-                    {
-                        <label name="WirelessCallSign" value="@mission.WirelessCallSign" class="form-control bg-danger text-light">متوقفة</label>
-
-                    }
-                    <select name="IsActive" class="form-control" form="update-@mission.Id">
-                        <option value="">-- اختار حالة الخدمة --</option>
-                        <option value="true">تعمل</option>
-                        <option value="false">متوقفة</option>
-                    </select>
-
-                </td>
-                <!-- Update button -->
+                <!-- Mission Type Column -->
                 <td>
-                    <form id="update-@mission.Id" asp-action="UpdateMission" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="Id" value="@mission.Id" />
-                        <button type="submit" class="btn btn-success btn-sm">تحديث</button>
-                    </form>
+                    <div class="d-flex flex-column gap-2">
+                       
+                            @if (mission.MissionType == 0)
+                            {
+                                <span class="badge bg-primary p-2">مسطح مائى</span>
+                            }
+                            else if (mission.MissionType == 1)
+                            {
+                                <span class="badge bg-danger p-2">تأمين الإدارة</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary p-2">@mission.MissionType</span>
+                            }
+                        
+                        
+                        
+                        <select name="MissionType" class="form-control form-control-sm" form="update-@mission.Id">
+                            <option value="">-- إختار نوع الخدمة --</option>
+                            <option value="0" @(mission.MissionType == 0 ? "selected" : "")>مسطح مائى</option>
+                            <option value="1" @(mission.MissionType == 1 ? "selected" : "")>تأمين الإدارة</option>
+                        </select>
+                    </div>
+                </td>
+                
+                <!-- Code Number -->
+                <td>
+                    <input type="number" 
+                           name="CodeNumber" 
+                           value="@(mission.CodeNumber?.ToString() ?? "")" 
+                           class="form-control form-control-sm" 
+                           form="update-@mission.Id" 
+                           placeholder="كود الخدمة" />
+                </td>
+                
+                <!-- Name -->
+                <td>
+                    <input type="text" 
+                           name="Name" 
+                           value="@(mission.Name ?? "")" 
+                           class="form-control form-control-sm" 
+                           form="update-@mission.Id" 
+                           placeholder="اسم الخدمة"
+                           required />
+                </td>
+                
+                <!-- Boat Number -->
+                <td>
+                    <input type="text" 
+                           name="BoatNumber" 
+                           value="@(mission.BoatNumber ?? "")" 
+                           class="form-control form-control-sm" 
+                           form="update-@mission.Id" 
+                           placeholder="رقم اللنش" />
+                </td>
+                
+                <!-- Wireless Call Sign -->
+                <td>
+                    <input type="text" 
+                           name="WirelessCallSign" 
+                           value="@(mission.WirelessCallSign ?? "")" 
+                           class="form-control form-control-sm" 
+                           form="update-@mission.Id" 
+                           placeholder="رقم الجهاز" />
+                </td>
+                
+                <!-- IsActive Column -->
+                <td>
+                    <div class="d-flex flex-column gap-2">
+                        @if (mission.IsActive)
+                        {
+                            <span class="badge bg-success p-2">تعمل</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger p-2">متوقفة</span>
+                        }
+                        
+                        <select name="IsActive" class="form-control form-control-sm" form="update-@mission.Id">
+                            <option value="">-- اختار حالة الخدمة --</option>
+                            <option value="true" @(mission.IsActive ? "selected" : "")>تعمل</option>
+                            <option value="false" @(!mission.IsActive ? "selected" : "")>متوقفة</option>
+                        </select>
+                    </div>
+                </td>
+                
+                <!-- Action Buttons -->
+                <td>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <!-- Update Form -->
+                        <form id="update-@mission.Id" asp-action="UpdateMission" method="post" style="display: inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="Id" value="@mission.Id" />
+                            <button type="submit" class="btn btn-success btn-sm" title="تحديث">
+                                <i class="fas fa-save"></i> تحديث
+                            </button>
+                        </form>
+                        
+                        <!-- Delete Form -->
+                        <form asp-action="DeleteMission" method="post" style="display: inline;" 
+                              onsubmit="return confirm('هل أنت متأكد من حذف هذه الخدمة؟');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@mission.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm" title="حذف">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             counter++;
         }
 
         <!-- Row for adding a new mission -->
-        <tr>
+        <tr class="table-info">
             <td>@counter</td>
-            <td><input name="CodeNumber" class="form-control" form="add-mission" /></td>
-            <td><input name="Name" class="form-control" form="add-mission" /></td>
-            <td><input name="BoatNumber" class="form-control" form="add-mission" /></td>
-            <td><input name="WirelessCallSign" class="form-control" form="add-mission" /></td>
-
-            <td colspan="2">
+            <td>
+                <select name="MissionType" class="form-control form-control-sm" form="add-mission" required>
+                    <option value="">-- إختار نوع الخدمة --</option>
+                    <option value="مسطح مائى">مسطح مائى</option>
+                    <option value="تأمين الإدارة">تأمين الإدارة</option>
+                </select>
+            </td>
+            <td>
+                <input type="number" name="CodeNumber" class="form-control form-control-sm" form="add-mission" placeholder="كود الخدمة" />
+            </td>
+            <td>
+                <input type="text" name="Name" class="form-control form-control-sm" form="add-mission" placeholder="اسم الخدمة" required />
+            </td>
+            <td>
+                <input type="text" name="BoatNumber" class="form-control form-control-sm" form="add-mission" placeholder="رقم اللنش" />
+            </td>
+            <td>
+                <input type="text" name="WirelessCallSign" class="form-control form-control-sm" form="add-mission" placeholder="رقم الجهاز" />
+            </td>
+            <td>
+                <select name="IsActive" class="form-control form-control-sm" form="add-mission" required>
+                    <option value="">-- اختار حالة الخدمة --</option>
+                    <option value="true" selected>تعمل</option>
+                    <option value="false">متوقفة</option>
+                </select>
+            </td>
+            <td>
                 <form id="add-mission" asp-action="AddNewMission" method="post">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-primary btn-sm w-100">إضافة</button>
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="fas fa-plus"></i> إضافة
+                    </button>
                 </form>
             </td>
         </tr>

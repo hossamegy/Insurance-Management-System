@@ -1,11 +1,9 @@
-﻿using InsuranceAdministration.Core.DTOs.Soldier;
-using InsuranceAdministration.Core.Entities.PoliceManEntities;
-using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance;
 using InsuranceAdministration.Core.Interfaces.Repository;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+
 
 namespace InsuranceAdministration.Infrastructure.Persistance
 {
@@ -52,7 +50,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 .Include(s => s.AcquaintanceDocument)
                     .ThenInclude(a => a.Family)
                 .Include(s => s.Leaves)
-                .Include(s => s.Missions)
+                .Include(s => s.SoldierMissions)
                 .ToListAsync();
         }
 
@@ -64,7 +62,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 .Include(s => s.AcquaintanceDocument)
                     .ThenInclude(a => a.Family)
                 .Include(s => s.Leaves)
-                .Include(s => s.Missions)
+                .Include(s => s.SoldierMissions)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (soldier == null)
@@ -98,7 +96,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 .Take(pageSize)
                 .Include(s => s.AcquaintanceDocument)
                 .Include(s => s.Leaves)
-                .Include(s => s.Missions)
+                .Include(s => s.SoldierMissions)
                 .ToListAsync();
         }
 
@@ -111,7 +109,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 .Where(s => s.Assignment == soldierAssignment)
                 .Include(s => s.AcquaintanceDocument)
                 .Include(s => s.Leaves)
-                .Include(s => s.Missions)
+                .Include(s => s.SoldierMissions)
                 .ToListAsync();
         }
 
@@ -287,16 +285,21 @@ namespace InsuranceAdministration.Infrastructure.Persistance
 
             return lastLeave;
         }
-        public async ValueTask<int> GetSoldiersCounts()
+        public async ValueTask<int> GetSoldiersCountsIsActive()
         {
-            return await _entity.CountAsync(); ;
+            return await _entity.CountAsync(s => s.IsActive == true); ;
         }
         public async ValueTask<int> GetSoldiersLeaveCounts()
         {
-            int countSoldiersLeave = await _entity
-                .Where(s => s.CurrentIsLeave == true)
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            // Count soldiers where ANY leave has End >= tomorrow (meaning End > today)
+            return await _entity
+                .Where(s => s.IsActive == true
+                         && s.Leaves.Any(l => l.End > tomorrow))
                 .CountAsync();
-            return countSoldiersLeave;
+           
         }
 
         public async ValueTask<int> GetSoldierAttendanceCounts()
@@ -305,6 +308,17 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 .Where(s => s.CurrentIsLeave == false)
                 .CountAsync();
             return countSoldiersAttendance;
+        }
+
+        public async ValueTask<int> GetSoldiersLeaveCountsByType(string type)
+        {
+            var count = await _entity
+                .Where(s => s.IsActive == true)
+                .SelectMany(s => s.Leaves)
+                .Where(l => l.Type == type)
+                .CountAsync();
+
+            return count;
         }
         public async ValueTask<SoldierLeave> GetSoldierLeaveById(int soldierLeaveId)
         {
@@ -319,6 +333,55 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             _leavesEntity.Remove(soldierLeave);
             await _context.SaveChangesAsync();
             return soldierLeave;
-        } 
+        }
+
+        public async ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceNotRiver()
+        {
+            var soldiers = await _entity
+                .Include(s => s.SoldierMissions)
+                .Where(s => s.IsActive == true && s.CurrentIsLeave == false && s.Assignment != "مسطح مائى")
+                .ToListAsync();
+            return soldiers;
+        }
+        public async ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceRiver()
+        {
+            var soldiers = await _entity
+                .Include(s => s.SoldierMissions)
+                .Where(s => s.IsActive == true && s.CurrentIsLeave == false && s.Assignment == "مسطح مائى")
+                .ToListAsync();
+            return soldiers;
+        }
+        // SoldierRepository.cs
+        public async ValueTask<IEnumerable<SoldierMission>> AddDailyMissionsToSoldiers(List<SoldierMission> soldierMissions)
+        {
+            if (soldierMissions == null || !soldierMissions.Any())
+                throw new ArgumentException("Soldier missions list cannot be null or empty");
+
+            try
+            {
+                // Validate that all soldiers exist
+                var soldierIds = soldierMissions.Select(sm => sm.SoldierId).Distinct().ToList();
+                var existingSoldiers = await _entity
+                    .Where(s => soldierIds.Contains(s.Id))
+                    .Select(s => s.Id)
+                    .ToListAsync();
+
+                var missingSoldiers = soldierIds.Except(existingSoldiers).ToList();
+                if (missingSoldiers.Any())
+                {
+                    throw new KeyNotFoundException($"Soldiers with IDs {string.Join(", ", missingSoldiers)} not found");
+                }
+
+                // Add all soldier missions
+                await _context.Set<SoldierMission>().AddRangeAsync(soldierMissions);
+                await _context.SaveChangesAsync();
+
+                return soldierMissions;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error adding soldier missions", ex);
+            }
+        }
     }
 }

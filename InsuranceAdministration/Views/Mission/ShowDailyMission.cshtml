@@ -1,0 +1,497 @@
+﻿@using InsuranceAdministration.Core.DTOs.Soldiers
+@model SoldierMissionDto;
+@{
+
+    var displayDate = ViewBag.MissionDate != null ? ((DateTime)ViewBag.MissionDate) : DateTime.Now;
+}
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        .report-container {
+            background: white;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-family: 'Traditional Arabic', 'Arial', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #0090b0;
+        }
+
+        .department-name {
+            font-size: 40px;
+            font-weight: bold;
+            color: #0090b0;
+            margin-bottom: 12px;
+        }
+
+        .report-title {
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .date-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 12px;
+        }
+
+        .date-label {
+            font-weight: bold;
+            color: #0090b0;
+        }
+
+        .day-name {
+            font-weight: bold;
+            color: #0090b0;
+        }
+
+        .main-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+            .main-table thead tr:first-child td {
+                padding: 5px 2px;
+                font-weight: bold;
+                font-size: 20px;
+                text-align: center;
+                border: 1px solid;
+                background: #f8f9fa;
+                color: black;
+            }
+
+            .main-table thead tr:nth-child(2) td {
+                padding: 5px 1px;
+                font-weight: bold;
+                text-align: center;
+                border: 1px solid;
+                color: black;
+                font-size: 16px;
+            }
+
+            .main-table tbody tr {
+                background: white;
+                font-size: 16px;
+            }
+
+                .main-table tbody tr:hover {
+                    background: #f8f9fa;
+                }
+
+            .main-table tbody td {
+                padding: 8px 4px;
+                text-align: center;
+                border: 1px solid;
+                font-size: 16px;
+            }
+
+        .calculated-cell {
+            background-color: #e8f4f8;
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin: 30px 0 20px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-print {
+            background: #0090b0;
+            color: white;
+        }
+
+            .btn-print:hover {
+                background: #006080;
+            }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+            .btn-back:hover {
+                background: #5a6268;
+            }
+
+        .member-card {
+            text-align: center;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 50px;
+            margin-bottom: 10px;
+            margin-left: 50px;
+        }
+
+            .member-card div {
+                margin-bottom: 3px;
+                font-size: 24px;
+            }
+
+        .member-title {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .member-rank {
+            font-weight: bold;
+        }
+
+        .member-section {
+            line-height: 4;
+        }
+
+        .alert {
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 1400px;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        /* ============= PRINT STYLES ============= */
+        @@media print {
+            @@page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+
+            .department-name {
+                font-size: 30px;
+                color: black;
+            }
+
+            .date-info {
+                color: black;
+            }
+
+            .date-label {
+                color: black;
+            }
+
+            .day-name {
+                color: black;
+            }
+
+            .printed,
+            .printed * {
+                visibility: visible;
+            }
+
+            .printed {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .action-buttons {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
+            .alert {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .report-container {
+                box-shadow: none !important;
+                padding: 10mm !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                border-radius: 0 !important;
+            }
+
+            .report-header {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
+
+            .main-table {
+                page-break-inside: auto;
+            }
+
+                .main-table tr {
+                    page-break-inside: avoid;
+                    page-break-after: auto;
+                }
+
+                .calculated-cell,
+                .main-table thead tr td {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+
+            .member-card {
+                margin-top: 30px;
+                page-break-inside: avoid;
+            }
+
+            .report-header {
+                border-bottom: 1px solid #000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["WarningMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="printed">
+        <div class="report-container">
+            <div class="report-header">
+                <div class="report-title">يومية خدمات اقسام الإدارة العامة لشرطة البيئة والمسطحات</div>
+                <div class="department-name">@ViewBag.DepartmentName</div>
+
+                <div class="date-info">
+                    <span class="date-label">الموافق</span>
+                    <span class="day-name" id="displayDayName"></span>
+                    <span class="day-name" id="displayDate"></span>
+                    <input type="date"
+                           hidden
+                           id="missionDate"
+                           class="day-name"
+                           value="@displayDate.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+
+            <div class="report-header">
+                <div class="department-name">
+                    خدمات ديوان @ViewBag.DepartmentName
+                </div>
+                <table class="main-table">
+                    <thead>
+                        <tr>
+                            <td>م</td>
+                            <td>الرتبة</td>
+                            <td>الاسم</td>
+                            <td>الخدمة</td>
+                            <td>ملاحظات</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int counter1 = 1;
+                        }
+                        @if (ViewBag.SoldierMissionNotRiver != null)
+                        {
+                            @foreach (var soldier in ViewBag.SoldierMissionNotRiver)
+                            {
+                                <tr>
+                                    <td class="row-number">@counter1</td>
+                                    <td>مجند</td>
+                                    <td>@soldier.Name</td>
+                                    <td>@soldier.MissionName</td>
+                                    <td>@(soldier.Notes ?? "")</td>
+                                </tr>
+                                counter1++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">لا توجد بيانات</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="report-header">
+                <div class="department-name">
+                    الخدمات الخارجية المسطح المائى @ViewBag.DepartmentName
+                </div>
+                <table class="main-table">
+                    <thead>
+                        <tr>
+                            <td>م</td>
+                            <td>الرتبة</td>
+                            <td>الاسم</td>
+                            <td>الخدمة</td>
+                            <td>ملاحظات</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int counter2 = 1;
+                        }
+                        @if (ViewBag.SoldierMissionRiver != null)
+                        {
+                            @foreach (var soldier in ViewBag.SoldierMissionRiver)
+                            {
+                                <tr>
+                                    <td class="row-number">@counter2</td>
+                                    <td>مجند</td>
+                                    <td>@soldier.Name</td>
+                                    <td>@soldier.MissionName</td>
+                                    <td>@(soldier.Notes ?? "")</td>
+                                </tr>
+                                counter2++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">لا توجد بيانات</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Committee Members -->
+            <div class="member-card">
+                <div class="member-rank">عميد/</div>
+                <div class="member-section">
+                    <div class="member-title">مدير @ViewBag.DepartmentName</div>
+                    <div class="member-title">"@ViewBag.DepartmentDirectorName"</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn btn-print" onclick="window.print()">
+                    طباعة التقرير
+                </button>
+                <button type="button" class="btn btn-back" onclick="window.history.back()">
+                    رجوع
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Convert English numbers to Arabic numbers
+        function toArabicNumerals(str) {
+            const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return str.toString().replace(/[0-9]/g, function(w) {
+                return arabicNumbers[+w];
+            });
+        }
+
+        // Convert date to Arabic format
+        function formatDateToArabic(dateString) {
+            // Expected format: yyyy-MM-dd
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                const year = toArabicNumerals(parts[0]);
+                const month = toArabicNumerals(parts[1]);
+                const day = toArabicNumerals(parts[2]);
+                return `${year}/${month}/${day}`;
+            }
+            return toArabicNumerals(dateString);
+        }
+
+        // Get day name in Arabic
+        function getArabicDayName(dateString) {
+            const date = new Date(dateString);
+            const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            return days[date.getDay()];
+        }
+
+        function convertAllNumbers() {
+            // Convert row numbers in tables to Arabic
+            document.querySelectorAll('.row-number').forEach(cell => {
+                cell.textContent = toArabicNumerals(cell.textContent);
+            });
+
+            // Convert and display the date in Arabic
+            const dateInput = document.getElementById('missionDate');
+            if (dateInput && dateInput.value) {
+                const dateValue = dateInput.value;
+                document.getElementById('displayDayName').textContent = getArabicDayName(dateValue);
+                document.getElementById('displayDate').textContent = formatDateToArabic(dateValue);
+            }
+        }
+
+        window.onload = function () {
+            convertAllNumbers();
+        };
+    </script>
+</body>
+</html>

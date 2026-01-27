@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using InsuranceAdministration.Core.DTOs.Soldier;
+using InsuranceAdministration.Core.DTOs.Soldiers;
 using InsuranceAdministration.Core.Entities.SoldierEntities;
 namespace InsuranceAdministration.Core.MappingProfiles.Soldiers
 {

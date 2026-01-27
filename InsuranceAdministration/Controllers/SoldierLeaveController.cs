@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using InsuranceAdministration.Core.DTOs.Soldier;
+using InsuranceAdministration.Core.DTOs.Soldiers;
 using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -87,7 +87,14 @@ namespace InsuranceAdministration.Controllers
                 var addedLeave = await _soldierService.AddSoldierLeave(soldierLeave);
 
                 var soldier = await _soldierService.GetSoldier(soldierLeave.SoldierId);
-                soldier.CurrentIsLeave = true;
+
+                if (soldierLeave.Type == "اجازة" || soldierLeave.Type == "هروب" || soldierLeave.Type == "غياب" || soldierLeave.Type == "مرضي" || soldierLeave.Type == "فرق تعليمية")
+                    soldier.CurrentIsLeave = true;
+                else
+                {
+                    soldier.CurrentIsLeave = false;
+
+                }
                 await _soldierService.UpdateCurrentSoldier(soldier);
 
                 _logger.LogInformation("Leave added successfully for Soldier ID {SoldierId}", soldierLeave.SoldierId);

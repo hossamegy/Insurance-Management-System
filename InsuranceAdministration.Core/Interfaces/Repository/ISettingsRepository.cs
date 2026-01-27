@@ -1,4 +1,5 @@
 ﻿using InsuranceAdministration.Core.Entities.Settings;
+using InsuranceAdministration.Core.Entities.SoldierEntities;
 
 namespace InsuranceAdministration.Core.Interfaces.Repository
 {
@@ -36,6 +37,9 @@ namespace InsuranceAdministration.Core.Interfaces.Repository
         ValueTask<SoldierLeaveOptions> UpdateCurrentSoldierLeaveOptions(SoldierLeaveOptions entity);
         ValueTask<SoldierLeaveOptions> DeleteSoldierLeaveOptions(int id);
 
-
+        // Daily Meal Options
+        ValueTask<DailyMealOptions> AddNewDailyMealOptions(DailyMealOptions entity);
+        ValueTask<IEnumerable<DailyMealOptions>> GetAllDailyMealOptions();
+        ValueTask<DailyMealOptions> DeleteDailyMealOptions(int id) ;
     }
 }

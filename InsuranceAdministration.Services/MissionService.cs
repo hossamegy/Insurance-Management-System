@@ -1,4 +1,5 @@
-﻿using InsuranceAdministration.Core.Exceptions;
+﻿using InsuranceAdministration.Core.Entities.MissionEntities;
+using InsuranceAdministration.Core.Exceptions;
 using InsuranceAdministration.Core.Interfaces.Repository;
 using InsuranceAdministration.Core.Interfaces.Services;
 using Microsoft.Extensions.Logging;
@@ -128,7 +129,26 @@ namespace InsuranceAdministration.Services
                 throw;
             }
         }
+      
 
+
+        public async ValueTask<IEnumerable<Mission>> GetAllMissionsByActiveAndType(bool IsActive, int MissionType)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Service: Retrieving all missions with active status: {IsActive}",
+                    IsActive);
+                var missions = await _repository.GetAllMissionsByActiveAndType(IsActive, MissionType);
+                return missions;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while retrieving missions by active status");
+                throw;
+            }
+        }
         /* ================= GET BY ID ================= */
 
         public async ValueTask<Mission> GetMission(int id)
@@ -191,15 +211,17 @@ namespace InsuranceAdministration.Services
                     throw new EntityNotFoundException(
                         $"Mission with ID {mission.Id} not found");
 
-                /* Update properties */
+                /* Update ONLY scalar properties - DO NOT touch navigation properties */
+                existingMission.MissionType = mission.MissionType;
                 existingMission.Name = mission.Name;
                 existingMission.BoatNumber = mission.BoatNumber;
                 existingMission.CodeNumber = mission.CodeNumber;
                 existingMission.WirelessCallSign = mission.WirelessCallSign;
                 existingMission.IsActive = mission.IsActive;
-                existingMission.Policemen = mission.Policemen;
-                existingMission.Soldiers = mission.Soldiers;
 
+                // REMOVE THESE LINES - they overwrite with null:
+                // existingMission.Policemen = mission.Policemen;
+                // existingMission.Soldiers = mission.Soldiers;
 
                 var updatedMission =
                     await _repository.UpdateCurrentMission(existingMission);
@@ -226,6 +248,174 @@ namespace InsuranceAdministration.Services
                     mission.Id);
                 throw;
             }
+
         }
+        /* ================= DAILY MISSION - ADD ================= */
+
+        public async ValueTask<DailyMission> AddNewDailyMission(DateTime date, IEnumerable<int> soldierMissionIds)
+        {
+            if (soldierMissionIds == null || !soldierMissionIds.Any())
+            {
+                _logger.LogError("Service: Attempted to add daily mission with null or empty soldier mission IDs");
+                throw new ArgumentNullException(nameof(soldierMissionIds));
+            }
+
+            try
+            {
+                _logger.LogInformation("Service: Adding new daily mission for date {Date} with {Count} soldier missions",
+                    date, soldierMissionIds.Count());
+
+                var result = await _repository.AddNewDailyMission(date, soldierMissionIds);
+
+                _logger.LogInformation("Service: Successfully added daily mission for date {Date}", date);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while adding daily mission");
+                throw;
+            }
+        }
+
+        /* ================= DAILY MISSION - GET ================= */
+
+        public async ValueTask<DailyMission?> GetDailyMission(int id)
+        {
+            try
+            {
+                _logger.LogInformation("Service: Retrieving daily mission with ID: {DailyMissionId}", id);
+
+                var dailyMission = await _repository.GetDailyMission(id);
+
+                if (dailyMission == null)
+                    throw new EntityNotFoundException($"Daily mission with ID {id} not found");
+
+                _logger.LogInformation("Service: Successfully retrieved daily mission with ID: {DailyMissionId}", id);
+
+                return dailyMission;
+            }
+            catch (EntityNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Service: Daily mission with ID {DailyMissionId} not found", id);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while retrieving daily mission with ID: {DailyMissionId}", id);
+                throw;
+            }
+        }
+
+        public async ValueTask<IEnumerable<Mission>> GetAllMissionsByType()
+        {
+            try
+            {
+                _logger.LogInformation("Service: Retrieving all missions ordered by type");
+
+                var missions = await _repository.GetAllMissionsByType();
+
+                _logger.LogInformation("Service: Successfully retrieved missions by type");
+
+                return missions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while retrieving missions by type");
+                throw;
+            }
+        }
+
+        public async ValueTask<IEnumerable<DailyMission>> GetAllDailyMissions()
+        {
+            try
+            {
+                _logger.LogInformation("Service: Retrieving all daily missions");
+
+                var dailyMissions = await _repository.GetAllDailyMissions();
+
+                _logger.LogInformation("Service: Successfully retrieved all daily missions");
+
+                return dailyMissions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while retrieving all daily missions");
+                throw;
+            }
+        }
+
+        /* ================= DAILY MISSION - DELETE ================= */
+
+        public async ValueTask<DailyMission?> DeletDailyMission(int id)
+        {
+            try
+            {
+                _logger.LogInformation("Service: Deleting daily mission with ID: {DailyMissionId}", id);
+
+                var dailyMission = await _repository.DeletDailyMission(id);
+
+                if (dailyMission == null)
+                    throw new EntityNotFoundException($"Daily mission with ID {id} not found");
+
+                _logger.LogInformation("Service: Successfully deleted daily mission with ID: {DailyMissionId}", id);
+
+                return dailyMission;
+            }
+            catch (EntityNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Service: Daily mission with ID {DailyMissionId} not found", id);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while deleting daily mission with ID: {DailyMissionId}", id);
+                throw;
+            }
+        }
+
+        /* ================= DAILY MISSION - UPDATE ================= */
+
+        public async ValueTask<DailyMission> UpdateCurrentDailyMission(DailyMission mission)
+        {
+            if (mission == null)
+            {
+                _logger.LogError("Service: Attempted to update null daily mission");
+                throw new ArgumentNullException(nameof(mission));
+            }
+
+            try
+            {
+                _logger.LogInformation("Service: Updating daily mission with ID: {DailyMissionId}", mission.Id);
+
+                var existingDailyMission = await _repository.GetDailyMission(mission.Id);
+
+                if (existingDailyMission == null)
+                    throw new EntityNotFoundException($"Daily mission with ID {mission.Id} not found");
+
+                existingDailyMission.Date = mission.Date;
+                // Note: Missions collection should be handled separately if needed
+
+                var updatedDailyMission = await _repository.UpdateCurrentDailyMission(existingDailyMission);
+
+                _logger.LogInformation("Service: Successfully updated daily mission with ID: {DailyMissionId}", updatedDailyMission.Id);
+
+                return updatedDailyMission;
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (EntityNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while updating daily mission with ID: {DailyMissionId}", mission.Id);
+                throw;
+            }
+        }
+
     }
 }

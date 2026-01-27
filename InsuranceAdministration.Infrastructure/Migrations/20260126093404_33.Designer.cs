@@ -3,6 +3,7 @@ using System;
 using InsuranceAdministration.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,14 +11,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuranceAdministration.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260126093404_33")]
+    partial class _33
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.21");
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.MissionEntities.DailyMission", b =>
+            modelBuilder.Entity("InsuranceAdministration.Core.Entities.DailyMissionEntities.DailyMission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -488,46 +491,6 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.ToTable("SoldierLeave");
                 });
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.SoldierMission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("DailyMissionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MissionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("MissionId1")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SoldierId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedAt");
-
-                    b.HasIndex("DailyMissionId");
-
-                    b.HasIndex("MissionId");
-
-                    b.HasIndex("MissionId1");
-
-                    b.HasIndex("SoldierId", "MissionId");
-
-                    b.ToTable("SoldierMission");
-                });
-
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.Training", b =>
                 {
                     b.Property<int>("Id")
@@ -568,6 +531,9 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.Property<int?>("CodeNumber")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("DailyMissionId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("TEXT");
 
@@ -586,6 +552,8 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DailyMissionId");
+
                     b.ToTable("Mission");
                 });
 
@@ -602,6 +570,21 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.HasIndex("PoliceManId");
 
                     b.ToTable("MissionPoliceMan");
+                });
+
+            modelBuilder.Entity("MissionSoldier", b =>
+                {
+                    b.Property<int>("MissionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SoldierId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MissionId", "SoldierId");
+
+                    b.HasIndex("SoldierId");
+
+                    b.ToTable("MissionSoldier");
                 });
 
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.PoliceManEntities.Leave", b =>
@@ -717,36 +700,6 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                     b.Navigation("Soldier");
                 });
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.SoldierMission", b =>
-                {
-                    b.HasOne("InsuranceAdministration.Core.Entities.MissionEntities.DailyMission", "DailyMission")
-                        .WithMany("SoldierMissions")
-                        .HasForeignKey("DailyMissionId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Mission", "Mission")
-                        .WithMany()
-                        .HasForeignKey("MissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mission", null)
-                        .WithMany("SoldierMissions")
-                        .HasForeignKey("MissionId1");
-
-                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", "Soldier")
-                        .WithMany("SoldierMissions")
-                        .HasForeignKey("SoldierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DailyMission");
-
-                    b.Navigation("Mission");
-
-                    b.Navigation("Soldier");
-                });
-
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.SoldierEntities.Training", b =>
                 {
                     b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", "Soldier")
@@ -756,6 +709,16 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Soldier");
+                });
+
+            modelBuilder.Entity("Mission", b =>
+                {
+                    b.HasOne("InsuranceAdministration.Core.Entities.DailyMissionEntities.DailyMission", "DailyMission")
+                        .WithMany("Missions")
+                        .HasForeignKey("DailyMissionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("DailyMission");
                 });
 
             modelBuilder.Entity("MissionPoliceMan", b =>
@@ -773,9 +736,24 @@ namespace InsuranceAdministration.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("InsuranceAdministration.Core.Entities.MissionEntities.DailyMission", b =>
+            modelBuilder.Entity("MissionSoldier", b =>
                 {
-                    b.Navigation("SoldierMissions");
+                    b.HasOne("Mission", null)
+                        .WithMany()
+                        .HasForeignKey("MissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InsuranceAdministration.Core.Entities.SoldierEntities.Soldier", null)
+                        .WithMany()
+                        .HasForeignKey("SoldierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InsuranceAdministration.Core.Entities.DailyMissionEntities.DailyMission", b =>
+                {
+                    b.Navigation("Missions");
                 });
 
             modelBuilder.Entity("InsuranceAdministration.Core.Entities.PoliceManEntities.PoliceMan", b =>
@@ -800,14 +778,7 @@ namespace InsuranceAdministration.Infrastructure.Migrations
 
                     b.Navigation("PoliticalAndCriminal");
 
-                    b.Navigation("SoldierMissions");
-
                     b.Navigation("Trainings");
-                });
-
-            modelBuilder.Entity("Mission", b =>
-                {
-                    b.Navigation("SoldierMissions");
                 });
 #pragma warning restore 612, 618
         }

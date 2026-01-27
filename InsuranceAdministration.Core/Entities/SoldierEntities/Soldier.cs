@@ -87,6 +87,6 @@ namespace InsuranceAdministration.Core.Entities.SoldierEntities
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public ICollection<SoldierLeave>? Leaves { get; set; }
-        public ICollection<Mission>? Missions { get; set; } = new List<Mission>();
+        public ICollection<SoldierMission>? SoldierMissions { get; set; } = new List<SoldierMission>();
     }
 }

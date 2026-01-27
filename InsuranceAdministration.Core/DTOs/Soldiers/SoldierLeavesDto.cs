@@ -1,6 +1,6 @@
 ﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
 
-namespace InsuranceAdministration.Core.DTOs.Soldier
+namespace InsuranceAdministration.Core.DTOs.Soldiers
 {
     public class SoldierLeavesDto
     {
@@ -8,6 +8,7 @@ namespace InsuranceAdministration.Core.DTOs.Soldier
         public string SoldierName { get; set; }
         public string Assignment { get; set; }
         public ICollection<SoldierLeave>? Leaves { get; set; }
+
        
     }
 }

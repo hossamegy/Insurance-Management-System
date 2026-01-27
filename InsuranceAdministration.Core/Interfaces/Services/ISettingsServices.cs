@@ -33,5 +33,10 @@ namespace InsuranceAdministration.Core.Interfaces.Services
         ValueTask<IEnumerable<SoldierLeaveOptions>> GetAllSoldierLeaveOptions();
         ValueTask<SoldierLeaveOptions> UpdateCurrentSoldierLeaveOptions(SoldierLeaveOptions entity);
         ValueTask<SoldierLeaveOptions> DeleteSoldierLeaveOptions(int id);
+
+        // Daily Meal Options
+        ValueTask<DailyMealOptions> AddNewDailyMealOptions(DailyMealOptions entity);
+        ValueTask<IEnumerable<DailyMealOptions>> GetAllDailyMealOptions();
+        ValueTask<DailyMealOptions> DeleteDailyMealOptions(int id);
     }
 }

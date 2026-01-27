@@ -3,6 +3,7 @@ using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Exceptions;
 using InsuranceAdministration.Core.Interfaces.Repository;
 using InsuranceAdministration.Core.Interfaces.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace InsuranceAdministration.Services
@@ -198,6 +199,25 @@ namespace InsuranceAdministration.Services
         public async ValueTask<SoldierLeaveOptions> DeleteSoldierLeaveOptions(int id)
         {
             return await _repository.DeleteSoldierLeaveOptions(id);
+        }
+
+        // Daily Meal Options
+        public async ValueTask<DailyMealOptions> AddNewDailyMealOptions(DailyMealOptions entity)
+        {
+
+ 
+            return await _repository.AddNewDailyMealOptions(entity) ;
+        }
+
+        public async ValueTask<IEnumerable<DailyMealOptions>> GetAllDailyMealOptions()
+        {
+            return await _repository.GetAllDailyMealOptions();
+        }
+
+        public async ValueTask<DailyMealOptions> DeleteDailyMealOptions(int id)
+        {
+          
+            return await _repository.DeleteDailyMealOptions(id);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using InsuranceAdministration.Core.DTOs.Soldier;
+﻿using InsuranceAdministration.Core.DTOs.Soldiers;
 using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Exceptions;
 using InsuranceAdministration.Core.Interfaces.Repository;
@@ -150,9 +150,9 @@ namespace InsuranceAdministration.Services
 
 
                 // Update missions if provided
-                if (soldier.Missions != null && soldier.Missions.Any())
+                if (soldier.SoldierMissions != null && soldier.SoldierMissions.Any())
                 {
-                    existingSoldier.Missions = soldier.Missions;
+                    existingSoldier.SoldierMissions = soldier.SoldierMissions;
                 }
 
                 var updatedSoldier = await _repository.UpdateCurrentSoldier(existingSoldier);
@@ -471,9 +471,9 @@ namespace InsuranceAdministration.Services
             return leave;
         }
 
-        public async ValueTask<int> GetSoldiersCounts()
+        public async ValueTask<int> GetSoldiersCountsIsActive()
         {
-            return await _repository.GetSoldiersCounts();
+            return await _repository.GetSoldiersCountsIsActive();
         }
          
         
@@ -486,6 +486,11 @@ namespace InsuranceAdministration.Services
         {
             return await _repository.GetSoldierAttendanceCounts();
         }
+        public async ValueTask<int> GetSoldiersLeaveCountsByType(string Type)
+        {
+            return await _repository.GetSoldiersLeaveCountsByType(Type);
+        }
+
         public async ValueTask<SoldierLeave> GetSoldierLeaveById(int soldierLeaveId)
         {
            
@@ -494,6 +499,40 @@ namespace InsuranceAdministration.Services
         public async ValueTask<SoldierLeave> DeleteSoldierLeave(SoldierLeave soldierLeave)
         {
             return await _repository.DeleteSoldierLeave(soldierLeave);
+        }
+        public async ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceNotRiver()
+        {
+            var soldiers = await _repository.GetAllSoldierAttendenceNotRiver();
+            return soldiers.ToList();
+        }
+        public async ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceRiver()
+        {
+            var soldiers = await _repository.GetAllSoldierAttendenceRiver();
+            return soldiers.ToList();
+        }
+        // SoldierServices.cs
+        public async ValueTask<IEnumerable<SoldierMission>> AddDailyMissionsToSoldiers(List<SoldierMission> soldierMissions)
+        {
+            if (soldierMissions == null || !soldierMissions.Any())
+            {
+                _logger.LogWarning("Service: Attempted to add null or empty soldier missions list");
+                throw new ArgumentException("Soldier missions list cannot be null or empty");
+            }
+
+            try
+            {
+                _logger.LogInformation($"Service: Adding {soldierMissions.Count} soldier missions");
+
+                var result = await _repository.AddDailyMissionsToSoldiers(soldierMissions);
+
+                _logger.LogInformation($"Service: Successfully added {soldierMissions.Count} soldier missions");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Error occurred while adding soldier missions");
+                throw;
+            }
         }
     }
 }

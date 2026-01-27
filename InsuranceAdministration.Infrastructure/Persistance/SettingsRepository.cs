@@ -13,6 +13,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
         private readonly DbSet<EducationLevelOptions> _education;
         private readonly DbSet<MainSettings> _main;
         private readonly DbSet<SoldierLeaveOptions> _soldierLeave;
+        private readonly DbSet<DailyMealOptions> _dailyMeal;
 
         public SettingsRepository(AppDbContext context)
         {
@@ -21,6 +22,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             _education = _context.Set<EducationLevelOptions>();
             _main = _context.Set<MainSettings>();
             _soldierLeave = _context.Set<SoldierLeaveOptions>();
+            _dailyMeal = _context.Set<DailyMealOptions>();
         }
 
         /* ================= Assignment ================= */
@@ -173,5 +175,29 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             await _context.SaveChangesAsync();
             return entity;
         }
+
+        public async ValueTask<DailyMealOptions> AddNewDailyMealOptions(DailyMealOptions entity)
+        {
+
+            await _dailyMeal.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async ValueTask<IEnumerable<DailyMealOptions>> GetAllDailyMealOptions()
+        {
+            return await _dailyMeal.ToListAsync();
+        }
+
+        public async ValueTask<DailyMealOptions> DeleteDailyMealOptions(int id)
+        {
+            var entity = await _dailyMeal.FindAsync(id);
+            if (entity == null) return null;
+
+            _dailyMeal.Remove(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
     }
 }

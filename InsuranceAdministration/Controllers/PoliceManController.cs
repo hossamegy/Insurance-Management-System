@@ -1,11 +1,7 @@
 ﻿using InsuranceAdministration.Core.Entities.PoliceManEntities;
-using InsuranceAdministration.Core.Entities.Settings;
-using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Interfaces.Services;
-using InsuranceAdministration.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Threading.Tasks;
+
 
 namespace InsuranceAdministration.Controllers
 {

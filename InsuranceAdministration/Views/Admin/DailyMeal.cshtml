@@ -1,0 +1,40 @@
+﻿@using InsuranceAdministration.Core.Entities.Settings
+<!-- Daily Meal Options -->
+<form asp-action="AddDailyMealOption" method="post">
+    @Html.AntiForgeryToken()
+    <label>خيارات الوجبات اليومية</label>
+    <input type="text" name="Name" required />
+    <button type="submit">إضافة</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>م</th>
+            <th>اسم الخيار</th>
+            <th>العمليات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var counter = 0;
+        }
+        @if (ViewBag.DailyMealOptions != null)
+        {
+            @foreach (DailyMealOptions option in ViewBag.DailyMealOptions)
+            {
+                counter++;
+                <tr>
+                    <td>@counter</td>
+                    <td>@option.Name</td>
+                    <td>
+                        <form asp-action="DeleteDailyMealOption" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@option.Id" />
+                            <button type="submit" onclick="return confirm('هل أنت متأكد من الحذف؟');">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
