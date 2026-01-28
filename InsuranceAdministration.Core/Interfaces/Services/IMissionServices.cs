@@ -1,6 +1,4 @@
-﻿
-
-using InsuranceAdministration.Core.Entities.MissionEntities;
+﻿using InsuranceAdministration.Core.Entities.MissionEntities;
 
 namespace InsuranceAdministration.Core.Interfaces.Services
 {

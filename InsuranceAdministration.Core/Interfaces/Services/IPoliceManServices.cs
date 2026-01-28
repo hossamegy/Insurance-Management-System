@@ -1,6 +1,4 @@
-﻿
-
-using InsuranceAdministration.Core.Entities.PoliceManEntities;
+﻿using InsuranceAdministration.Core.Entities.PoliceManEntities;
 
 
 namespace InsuranceAdministration.Core.Interfaces.Services

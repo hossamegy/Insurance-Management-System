@@ -68,7 +68,6 @@ namespace InsuranceAdministration.Controllers
             return View(model);
         }
 
-        // ===== CRITICAL FIX: Changed parameter name from "model" to match form binding =====
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAcquaintanceDocument(
@@ -83,7 +82,6 @@ namespace InsuranceAdministration.Controllers
                 Family?.Count ?? 0
             );
 
-            // Create the model manually
             var model = new AcquaintanceDocument
             {
                 SoldierId = SoldierId,
@@ -91,7 +89,6 @@ namespace InsuranceAdministration.Controllers
                 Family = Family ?? new List<Family>()
             };
 
-            // Validate manually since we're not using model binding directly
             if (SoldierId <= 0)
             {
                 _logger.LogWarning("Controller: Invalid SoldierId");

@@ -69,7 +69,7 @@ namespace InsuranceAdministration.Core.Entities.SoldierEntities
         [StringLength(250, ErrorMessage = "المؤهل الدراسي يجب ألا يتجاوز 250 حرف")]
         public string EducationLevel { get; set; }
 
-        // رقم الهاتف - Optional but with validation if provided
+        // رقم الهاتف
         [StringLength(11, MinimumLength = 11, ErrorMessage = "رقم الهاتف يجب أن يكون 11 رقم بالضبط")]
         [RegularExpression(@"^(010|011|012|015)[0-9]{8}$", ErrorMessage = "رقم الهاتف يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015 ويتبعه 8 أرقام")]
         public string? PhoneNumber { get; set; }

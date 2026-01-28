@@ -1,9 +1,7 @@
-﻿using InsuranceAdministration.Core.DTOs.Soldiers;
-using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Exceptions;
 using InsuranceAdministration.Core.Interfaces.Repository;
 using InsuranceAdministration.Core.Interfaces.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace InsuranceAdministration.Services
@@ -510,7 +508,6 @@ namespace InsuranceAdministration.Services
             var soldiers = await _repository.GetAllSoldierAttendenceRiver();
             return soldiers.ToList();
         }
-        // SoldierServices.cs
         public async ValueTask<IEnumerable<SoldierMission>> AddDailyMissionsToSoldiers(List<SoldierMission> soldierMissions)
         {
             if (soldierMissions == null || !soldierMissions.Any())

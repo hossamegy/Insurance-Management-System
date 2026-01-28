@@ -22,13 +22,13 @@ namespace InsuranceAdministration.Core.Entities.SoldierEntities
         [ForeignKey(nameof(MissionId))]
         public Mission Mission { get; set; }
 
-        // ملاحظات
+       
         [StringLength(1000, ErrorMessage = "الملاحظات يجب ألا تتجاوز 1000 حرف")]
         public string? Notes { get; set; }
         [Required]
         public DateTime AssignedAt { get; set; } = DateTime.Now;
 
-        // أضف هذا
+        
         public int? DailyMissionId { get; set; }
         public DailyMission? DailyMission { get; set; }
     }

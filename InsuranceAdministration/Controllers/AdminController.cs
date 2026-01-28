@@ -1,7 +1,6 @@
 ﻿using InsuranceAdministration.Core.Entities.Settings;
 using InsuranceAdministration.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace InsuranceAdministration.Controllers
 {
@@ -222,9 +221,9 @@ namespace InsuranceAdministration.Controllers
             await _settingsOptionsService.DeleteSoldierLeaveOptions(id);
             return RedirectToAction(nameof(Soldier));
         }
-        // ===================== Daily Meal ===================== //
 
         // ===================== Daily Meal ===================== //
+
         [HttpGet]
         public async Task<IActionResult> DailyMeal()
         {

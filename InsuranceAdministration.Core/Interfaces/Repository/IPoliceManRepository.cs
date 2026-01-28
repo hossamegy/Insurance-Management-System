@@ -1,6 +1,4 @@
-﻿
-using InsuranceAdministration.Core.Entities.PoliceManEntities;
-using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using InsuranceAdministration.Core.Entities.PoliceManEntities;
 
 namespace InsuranceAdministration.Core.Interfaces.Repository
 {

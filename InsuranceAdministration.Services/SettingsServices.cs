@@ -1,9 +1,7 @@
 ﻿using InsuranceAdministration.Core.Entities.Settings;
-using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Exceptions;
 using InsuranceAdministration.Core.Interfaces.Repository;
 using InsuranceAdministration.Core.Interfaces.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace InsuranceAdministration.Services

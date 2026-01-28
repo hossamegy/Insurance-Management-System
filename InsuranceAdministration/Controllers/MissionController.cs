@@ -1,9 +1,8 @@
-﻿using InsuranceAdministration.Core.DTOs.Soldiers;
+﻿
 using InsuranceAdministration.Core.Interfaces.Services;
-using InsuranceAdministration.Services;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Threading.Tasks;
+
 
 namespace InsuranceAdministration.Controllers
 {
@@ -47,7 +46,7 @@ namespace InsuranceAdministration.Controllers
 
             await _missionService.AddNewMission(mission);
             return RedirectToAction(nameof(Index));
-        }  // POST: MissionController/Create
+        } 
 
 
         // GET: MissionController/Edit/5

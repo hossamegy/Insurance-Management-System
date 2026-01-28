@@ -46,7 +46,7 @@
 </head>
 
 <div>
-    @* Display validation summary if there are errors *@
+
     <div asp-validation-summary="ModelOnly" class="validation-summary" style="@(ViewData.ModelState.IsValid ? "display:none;" : "")">
         <h4>⚠️ يرجى تصحيح الأخطاء التالية:</h4>
     </div>
@@ -54,7 +54,7 @@
     <form asp-action="AddNewSoldierItem" asp-controller="Soldier" method="post" class="row g-3 p-0" id="soldierForm">
         @Html.AntiForgeryToken()
 
-        @* Hidden field for IsActive *@
+      
         <input type="hidden" asp-for="IsActive" value="true" />
 
         @* البيانات الشخصية *@

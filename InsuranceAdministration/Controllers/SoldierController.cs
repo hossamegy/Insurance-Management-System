@@ -1,6 +1,4 @@
-﻿// ============================================
-// SoldierController.cs - FINAL CORRECTED VERSION
-// ============================================
+﻿
 using AutoMapper;
 using InsuranceAdministration.Core.DTOs.Soldiers;
 using InsuranceAdministration.Core.Entities.SoldierEntities;

@@ -73,10 +73,10 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
                           .OnDelete(DeleteBehavior.Cascade)
                 );
             modelBuilder.Entity<SoldierMission>()
-    .HasOne(sm => sm.DailyMission)
-    .WithMany(dm => dm.SoldierMissions)
-    .HasForeignKey(sm => sm.DailyMissionId)
-    .OnDelete(DeleteBehavior.SetNull);
+                    .HasOne(sm => sm.DailyMission)
+                    .WithMany(dm => dm.SoldierMissions)
+                    .HasForeignKey(sm => sm.DailyMissionId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
             base.OnModelCreating(modelBuilder);
             // SoldierMission configuration - allows same soldier to have same mission multiple times

@@ -211,7 +211,6 @@ namespace InsuranceAdministration.Services
                     throw new EntityNotFoundException(
                         $"Mission with ID {mission.Id} not found");
 
-                /* Update ONLY scalar properties - DO NOT touch navigation properties */
                 existingMission.MissionType = mission.MissionType;
                 existingMission.Name = mission.Name;
                 existingMission.BoatNumber = mission.BoatNumber;
@@ -219,9 +218,7 @@ namespace InsuranceAdministration.Services
                 existingMission.WirelessCallSign = mission.WirelessCallSign;
                 existingMission.IsActive = mission.IsActive;
 
-                // REMOVE THESE LINES - they overwrite with null:
-                // existingMission.Policemen = mission.Policemen;
-                // existingMission.Soldiers = mission.Soldiers;
+               
 
                 var updatedMission =
                     await _repository.UpdateCurrentMission(existingMission);
@@ -394,7 +391,6 @@ namespace InsuranceAdministration.Services
                     throw new EntityNotFoundException($"Daily mission with ID {mission.Id} not found");
 
                 existingDailyMission.Date = mission.Date;
-                // Note: Missions collection should be handled separately if needed
 
                 var updatedDailyMission = await _repository.UpdateCurrentDailyMission(existingDailyMission);
 

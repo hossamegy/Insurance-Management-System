@@ -1,5 +1,4 @@
-﻿using InsuranceAdministration.Core.DTOs.Soldiers;
-using InsuranceAdministration.Core.Entities.SoldierEntities;
+﻿using InsuranceAdministration.Core.Entities.SoldierEntities;
 
 
 namespace InsuranceAdministration.Core.Interfaces.Repository

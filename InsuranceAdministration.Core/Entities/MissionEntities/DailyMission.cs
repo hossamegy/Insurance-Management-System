@@ -7,8 +7,6 @@ namespace InsuranceAdministration.Core.Entities.MissionEntities
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-
-        // أضف هذا
         public ICollection<SoldierMission> SoldierMissions { get; set; } = new List<SoldierMission>();
     }
 }

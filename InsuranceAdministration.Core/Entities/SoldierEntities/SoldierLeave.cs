@@ -18,7 +18,7 @@ namespace InsuranceAdministration.Core.Entities.SoldierEntities
         [Required(ErrorMessage = "معرف المجند مطلوب")]
         public int SoldierId { get; set; }
 
-        // Make navigation property nullable
+   
         public Soldier? Soldier { get; set; }
 
     }

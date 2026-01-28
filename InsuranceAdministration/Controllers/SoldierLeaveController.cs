@@ -153,7 +153,6 @@ namespace InsuranceAdministration.Controllers
                 var soldier = await _soldierService.GetSoldier(soldierId);
                 var lastSoldierLeave = await _soldierService.GetLastSoldierLeave(soldierId);
 
-                // التحقق من وجود إجازة سابقة
                 if (lastSoldierLeave == null)
                 {
                     _logger.LogWarning("No leave found for soldier ID {SoldierId}", soldierId);
@@ -188,7 +187,7 @@ namespace InsuranceAdministration.Controllers
                     ViewBag.SoldierName = "";
                 }
 
-                // FIX: تصحيح اسم الـ View
+             
                 return View("Attendance", soldierLeave);
             }
 

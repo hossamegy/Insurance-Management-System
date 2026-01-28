@@ -1,5 +1,4 @@
 ﻿using InsuranceAdministration.Core.Entities.Settings;
-using InsuranceAdministration.Core.Entities.SoldierEntities;
 
 namespace InsuranceAdministration.Core.Interfaces.Repository
 {

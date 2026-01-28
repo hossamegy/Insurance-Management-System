@@ -115,7 +115,6 @@ namespace InsuranceAdministration.Infrastructure.Persistance
         }
 
         // AcquaintanceDocument Methods
-
         public async ValueTask<AcquaintanceDocument> AddAcquaintanceDocument(int soldierId, AcquaintanceDocument acquaintanceDocument)
         {
             if (acquaintanceDocument == null)
@@ -159,7 +158,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             return acquaintanceDocument;
         }
 
-        // في SoldierRepository.cs
+       
 
         public async ValueTask<AcquaintanceDocument> UpdateAcquaintanceDocument(AcquaintanceDocument acquaintanceDocument)
         {
@@ -223,12 +222,10 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             if (soldier == null)
                 throw new KeyNotFoundException($"Soldier with ID {soldierLeave.SoldierId} not found.");
 
-            // إزالة الشرط الخاطئ - المجند يمكن أن يكون لديه عدة إجازات
-            // Initialize the collection if null (في حالات نادرة)
+          
             if (soldier.Leaves == null)
                 soldier.Leaves = new List<SoldierLeave>();
 
-            // ببساطة أضف الإجازة الجديدة
             soldier.Leaves.Add(soldierLeave);
             await _context.SaveChangesAsync();
 
@@ -263,7 +260,6 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             if (existingLeave == null)
                 throw new KeyNotFoundException($"No leave found for soldier ID {soldierLeave.SoldierId}");
 
-            // Update properties
             existingLeave.EndNum = soldierLeave.EndNum;
             existingLeave.EndPage = soldierLeave.EndPage;
             existingLeave.End = soldierLeave.End;
@@ -352,7 +348,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance
                 .ToListAsync();
             return soldiers;
         }
-        // SoldierRepository.cs
+      
         public async ValueTask<IEnumerable<SoldierMission>> AddDailyMissionsToSoldiers(List<SoldierMission> soldierMissions)
         {
             if (soldierMissions == null || !soldierMissions.Any())
