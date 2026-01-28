@@ -18,6 +18,7 @@ namespace InsuranceAdministration.Core.Interfaces.Repository
         ValueTask<int> GetSoldierAttendanceCounts();
         ValueTask<int> GetSoldiersLeaveCounts();
         ValueTask<int> GetSoldiersLeaveCountsByType(string type);
+        ValueTask<IEnumerable<SoldierMission>> GetSoldierMissions(int id);
 
         ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceRiver();
         ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceNotRiver(); 

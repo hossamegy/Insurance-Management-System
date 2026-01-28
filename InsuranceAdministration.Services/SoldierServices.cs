@@ -534,5 +534,11 @@ namespace InsuranceAdministration.Services
                 throw;
             }
         }
+
+        public async ValueTask<IEnumerable<SoldierMission>> GetSoldierMissions(int id)
+        {
+            var soldierMissions = await _repository.GetSoldierMissions(id); 
+            return soldierMissions;
+        }
     }
 }

@@ -1,0 +1,426 @@
+﻿@using InsuranceAdministration.Core.Entities.SoldierEntities
+@model IEnumerable<SoldierMission>
+@{
+    ViewData["Title"] = "عرض جميع الخدمات";
+    ViewData["SubTitle"] = "إدارة وتوزيع المجندين";
+    Layout = "_Layout";
+
+    string ToArabicNumber(int num)
+    {
+        return num.ToString()
+            .Replace('0', '٠')
+            .Replace('1', '١')
+            .Replace('2', '٢')
+            .Replace('3', '٣')
+            .Replace('4', '٤')
+            .Replace('5', '٥')
+            .Replace('6', '٦')
+            .Replace('7', '٧')
+            .Replace('8', '٨')
+            .Replace('9', '٩');
+    }
+
+    string ToArabicNumberString(string str)
+    {
+        return str.Replace('0', '٠')
+            .Replace('1', '١')
+            .Replace('2', '٢')
+            .Replace('3', '٣')
+            .Replace('4', '٤')
+            .Replace('5', '٥')
+            .Replace('6', '٦')
+            .Replace('7', '٧')
+            .Replace('8', '٨')
+            .Replace('9', '٩');
+    }
+
+    var arCulture = new System.Globalization.CultureInfo("ar-EG");
+    int totalMissions = Model?.Count() ?? 0;
+    string soldierName = ViewData["SoldierName"]?.ToString() ?? "غير محدد";
+}
+
+<style>
+    .missions-container {
+        max-width: 100%;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+    }
+
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        color: #0090b0;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #0090b0;
+    }
+
+    .soldier-name {
+        color: #333;
+        font-weight: normal;
+    }
+
+    .info-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 6px;
+    }
+
+    .total-missions {
+        font-size: 16px;
+        color: #0090b0;
+        font-weight: bold;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .back-button,
+    .print-button {
+        padding: 10px 20px;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background 0.3s;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .back-button {
+        background: #6c757d;
+    }
+
+        .back-button:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+    .print-button {
+        background: #0090b0;
+    }
+
+        .print-button:hover {
+            background: #007a95;
+        }
+
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .missions-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+
+    .table-header {
+        background: #0090b0;
+        color: white;
+    }
+
+        .table-header th {
+            padding: 15px 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            border: 1px solid #0078a0;
+            white-space: nowrap;
+        }
+
+    .missions-table tbody tr {
+        transition: background 0.3s, transform 0.2s;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+        .missions-table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .missions-table tbody tr:hover {
+            background: #e3f2fd;
+            transform: scale(1.005);
+        }
+
+    .missions-table td {
+        padding: 14px 12px;
+        text-align: center;
+        font-size: 15px;
+        color: #333;
+        border-left: 1px solid #e0e0e0;
+    }
+
+        .missions-table td:first-child {
+            border-right: 1px solid #e0e0e0;
+        }
+
+    .counter-cell {
+        font-weight: bold;
+        color: #0090b0;
+        font-size: 16px;
+    }
+
+    .mission-name-cell {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .date-cell {
+        direction: ltr;
+        color: #555;
+    }
+
+    .day-cell {
+        color: #0090b0;
+        font-weight: 500;
+    }
+
+    .notes-cell {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: right;
+        padding-right: 15px;
+        color: #666;
+        font-style: italic;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+        font-size: 18px;
+        background: #f9f9f9;
+    }
+
+        .no-data i {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+    /* Print Styles */
+    @@media print {
+        @@page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .missions-container {
+            box-shadow: none;
+            border-radius: 0;
+            padding: 0;
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .info-section {
+            background: white !important;
+            border: 1px solid #ddd;
+            page-break-inside: avoid;
+        }
+
+        .action-buttons,
+        .back-button,
+        .print-button {
+            display: none !important;
+        }
+
+        .page-header {
+            page-break-inside: avoid;
+        }
+
+        .page-title {
+            color: #0090b0 !important;
+            border-bottom: 2px solid #0090b0 !important;
+        }
+
+        .table-wrapper {
+            border: none;
+            overflow: visible;
+        }
+
+        .missions-table {
+            min-width: 100%;
+            page-break-inside: auto;
+        }
+
+        .table-header {
+            background: #0090b0 !important;
+            color: white !important;
+        }
+
+            .table-header th {
+                background: #0090b0 !important;
+                color: white !important;
+                border: 1px solid #0078a0 !important;
+            }
+
+        .missions-table tbody tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+            .missions-table tbody tr:hover {
+                background: transparent;
+                transform: none;
+            }
+
+            .missions-table tbody tr:nth-child(even) {
+                background: #f9f9f9 !important;
+            }
+
+        .missions-table td {
+            border: 1px solid #ddd !important;
+        }
+
+        .counter-cell {
+            color: #0090b0 !important;
+        }
+
+        .day-cell {
+            color: #0090b0 !important;
+        }
+        /* Avoid breaking table headers */
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .missions-container {
+            padding: 15px;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .info-section {
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+
+            .action-buttons a,
+            .action-buttons button {
+                width: 100%;
+            }
+
+        .table-header th {
+            font-size: 13px;
+            padding: 10px 6px;
+        }
+
+        .missions-table td {
+            font-size: 13px;
+            padding: 10px 6px;
+        }
+
+        .notes-cell {
+            max-width: 150px;
+        }
+    }
+</style>
+
+@await Html.PartialAsync("_PageHeader")
+
+<div class="missions-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            عرض خدمات المجند: <span class="soldier-name">@soldierName</span>
+        </h1>
+    </div>
+
+    <!-- Info Section -->
+    <div class="info-section">
+        <div class="total-missions">
+            إجمالي الخدمات: @ToArabicNumber(totalMissions)
+        </div>
+        <div class="action-buttons">
+            <button onclick="window.print()" class="print-button">
+                🖨️ طباعة
+            </button>
+            <a href="@Url.Action("Index", "Soldier")" class="back-button">
+                ← الرجوع للقائمة
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-wrapper">
+        <table class="missions-table">
+            <thead class="table-header">
+                <tr>
+                    <th style="width: 60px;">م</th>
+                    <th>اسم الخدمة</th>
+                    <th style="width: 150px;">تاريخ التعيين</th>
+                    <th style="width: 120px;">اليوم</th>
+                    <th style="width: 250px;">الملاحظات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int counter = 1;
+                    foreach (var mission in Model)
+                    {
+                        <tr>
+                            <td class="counter-cell">@ToArabicNumber(counter)</td>
+                            <td class="mission-name-cell">@(mission.Mission?.Name ?? "غير محدد")</td>
+                            <td class="date-cell">@ToArabicNumberString(mission.AssignedAt.ToString("yyyy/MM/dd"))</td>
+                            <td class="day-cell">@mission.AssignedAt.ToString("dddd", arCulture)</td>
+                            <td class="notes-cell" title="@mission.Notes">
+                                @(string.IsNullOrWhiteSpace(mission.Notes) ? "-" : mission.Notes)
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="no-data">
+                            <i>📋</i>
+                            لا توجد مهام مسجلة لهذا المجند
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

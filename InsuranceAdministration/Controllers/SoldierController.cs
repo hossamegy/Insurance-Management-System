@@ -117,6 +117,15 @@ namespace InsuranceAdministration.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet] 
+        public async Task<IActionResult> ShowSoldierMission (int id)
+        {
+            var soldierMissions = await _soldierService.GetSoldierMissions(id);
+            var soldier = await _soldierService.GetSoldier(id);
+            ViewData["SoldierName"] = soldier.Name;
+            return View(soldierMissions);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Ornik114(int pageNumber = 1, int pageSize = 10)
         {

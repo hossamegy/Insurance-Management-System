@@ -6,15 +6,153 @@
 <head>
     <link rel="stylesheet" href="~/css/Shared/Show.css" asp-append-version="true" />
 </head>
+
+<style>
+    .mission-btn {
+    }
+
+    /* Print Styles */
+    @@media print {
+        @@page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+            /* Hide everything except the main content */
+            body * {
+                visibility: hidden;
+            }
+
+        .container, .container * {
+            visibility: visible;
+        }
+        /* Hide all buttons, headers, footers, and navigation */
+        .card-header .btn,
+        .card-footer,
+        .btn,
+        button,
+        nav,
+        header,
+        footer,
+        .navbar,
+        .sidebar,
+        .breadcrumb,
+        [class*="page-header"],
+        [class*="PageHeader"] {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        /* Position the printable content */
+        .container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            box-shadow: none !important;
+            border: none !important;
+            page-break-inside: avoid;
+        }
+
+        .card-header {
+            background: #0090b0 !important;
+            color: white !important;
+            border: none !important;
+            padding: 15px !important;
+            page-break-inside: avoid;
+        }
+
+            .card-header h3 {
+                margin: 0 !important;
+                color: white !important;
+            }
+
+            .card-header .d-flex {
+                display: block !important;
+            }
+
+        .card-body {
+            padding: 20px !important;
+        }
+
+        hr {
+            border-top: 1px solid #ddd !important;
+            page-break-after: avoid;
+        }
+
+        h5 {
+            page-break-after: avoid;
+            color: #0090b0 !important;
+        }
+
+        .row {
+            page-break-inside: avoid;
+        }
+        /* Ensure proper margins and spacing */
+        .mb-2, .mb-3, .mt-3, .mt-4, .mt-5 {
+            margin-bottom: 10px !important;
+        }
+        /* Remove bootstrap shadows and effects */
+        .shadow-sm {
+            box-shadow: none !important;
+        }
+    }
+
+    /* Print button styling (visible on screen only) */
+    .print-button-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .print-btn {
+        padding: 12px 24px;
+        background: #0090b0;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+        font-size: 16px;
+    }
+
+        .print-btn:hover {
+            background: #007a95;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+
+    @@media print {
+        .print-button-container {
+            display: none !important;
+        }
+    }
+</style>
+
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header text-white">
-            <h3 class="mb-0">بيانات المجند</h3>
+            <div class="d-flex gap-4">
+                <h3 class="mb-0">بيانات المجند</h3>
+                <a asp-route-id="@Model.Id" asp-action="ShowSoldierMission" class="btn btn-light mb-0">عرض جميع الخدمات</a>
+                <a asp-controller="SoldierLeave" asp-action="ShowSoldierLeaves" asp-route-soldierId="@Model.Id" asp-route-soldierName="@Model.Name" class="btn btn-light mb-0">عرض الاجازات</a>
+            </div>
         </div>
         <div class="card-body">
-
             @* البيانات الشخصية *@
             <h5 class="text-primary mt-3 mb-3">البيانات الشخصية</h5>
+
             <div class="row mb-3">
                 <div class="col-md-6 mb-2">
                     <strong>الاسم:</strong> @Model.Name
@@ -26,7 +164,7 @@
                     <strong>الاعمال الملحقة الحالية والسابقة:</strong> @Model.Job
                 </div>
                 <div class="col-md-6 mb-2">
-                    <strong>الحالةالاجتماعية:</strong> @Model.MaritalStatus
+                    <strong>الحالة الاجتماعية:</strong> @Model.MaritalStatus
                 </div>
             </div>
             <div class="row mb-3">
@@ -41,7 +179,6 @@
                 <div class="col-md-6 mb-2">
                     <strong>رقم الهاتف:</strong> @Model.PhoneNumber
                 </div>
-                
             </div>
 
             <hr />
@@ -97,4 +234,11 @@
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">تعديل</a>
         </div>
     </div>
+</div>
+
+<!-- Floating Print Button -->
+<div class="print-button-container">
+    <button onclick="window.print()" class="print-btn">
+        🖨️ طباعة
+    </button>
 </div>

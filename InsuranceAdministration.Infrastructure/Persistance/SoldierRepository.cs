@@ -12,12 +12,13 @@ namespace InsuranceAdministration.Infrastructure.Persistance
         private readonly AppDbContext _context;
         private readonly DbSet<Soldier> _entity;
         private readonly DbSet<SoldierLeave> _leavesEntity;
-
+        private readonly DbSet<SoldierMission> _soldierMission;
         public SoldierRepository(AppDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _entity = _context.Set<Soldier>();
             _leavesEntity = _context.Set<SoldierLeave>();
+            _soldierMission = _context.Set<SoldierMission>();
         }
 
         public async ValueTask<Soldier> AddNewSoldier(Soldier soldier)
@@ -382,6 +383,18 @@ namespace InsuranceAdministration.Infrastructure.Persistance
             {
                 throw new InvalidOperationException("Error adding soldier missions", ex);
             }
+        }
+
+        public async ValueTask<IEnumerable<SoldierMission>> GetSoldierMissions(int id)
+        {
+           var soldierMissions = await _entity.Where(s => s.Id == id)
+                .SelectMany(s => s.SoldierMissions)
+                .Where(sm => sm.DailyMission != null)
+                .Include(sm => sm.DailyMission)
+                .Include(sm => sm.Mission)  
+                .Include(sm => sm.Soldier)
+                .ToListAsync();
+            return soldierMissions;
         }
     }
 }

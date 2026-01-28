@@ -15,7 +15,8 @@ namespace InsuranceAdministration.Core.Interfaces.Services
         ValueTask<int> GetSoldierAttendanceCounts();
         ValueTask<int> GetSoldiersLeaveCounts();
         ValueTask<int> GetSoldiersLeaveCountsByType(string type);
-
+        ValueTask<IEnumerable<SoldierMission>> GetSoldierMissions(int id);
+      
         ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceRiver();
         ValueTask<IEnumerable<Soldier>> GetAllSoldierAttendenceNotRiver();
         ValueTask<IEnumerable<Soldier>> GetPaginatedSoldiersByActive(int pageNumber, int pageSize, bool IsActive);
