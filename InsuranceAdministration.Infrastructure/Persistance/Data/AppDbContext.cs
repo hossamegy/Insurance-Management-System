@@ -1,5 +1,4 @@
 ﻿using InsuranceAdministration.Core.Entities.MissionEntities;
-using InsuranceAdministration.Core.Entities.PoliceManEntities;
 using InsuranceAdministration.Core.Entities.Settings;
 using InsuranceAdministration.Core.Entities.SoldierEntities;
 using InsuranceAdministration.Core.Entities.SoldierEntities.Acquaintance;
@@ -15,9 +14,6 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
         }
 
         // PoliceMan related tables
-        public DbSet<PoliceMan> Policemen { get; set; }
-        public DbSet<Punishment> Punishments { get; set; }
-        public DbSet<Leave> Leaves { get; set; }
         public DbSet<Mission> Mission { get; set; }
 
         // Soldier related tables
@@ -40,38 +36,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            
-
-            // PoliceMan - Leave (One-to-Many)
-            modelBuilder.Entity<PoliceMan>()
-                .HasMany(p => p.Leaves)
-                .WithOne(l => l.PoliceMan)
-                .HasForeignKey(l => l.PolicemanId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // PoliceMan - Punishment (One-to-Many)
-            modelBuilder.Entity<PoliceMan>()
-                .HasMany(p => p.Punishments)
-                .WithOne(pu => pu.PoliceMan)
-                .HasForeignKey(pu => pu.PoliceManId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Mission - PoliceMan (Many-to-Many)
-            modelBuilder.Entity<Mission>()
-                .HasMany(m => m.Policemen)
-                .WithMany(p => p.Missions)
-                .UsingEntity<Dictionary<string, object>>(
-                    "MissionPoliceMan",
-                    j => j.HasOne<PoliceMan>()
-                          .WithMany()
-                          .HasForeignKey("PoliceManId")
-                          .OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasOne<Mission>()
-                          .WithMany()
-                          .HasForeignKey("MissionId")
-                          .OnDelete(DeleteBehavior.Cascade)
-                );
+  
             modelBuilder.Entity<SoldierMission>()
                     .HasOne(sm => sm.DailyMission)
                     .WithMany(dm => dm.SoldierMissions)
@@ -127,19 +92,7 @@ namespace InsuranceAdministration.Infrastructure.Persistance.Data
                 .HasMany(s => s.Leaves)
                 .WithOne(l => l.Soldier)
                 .HasForeignKey(l => l.SoldierId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Indexes for better query performance
-         
-
-            modelBuilder.Entity<Leave>()
-                .HasIndex(l => l.PolicemanId);
-
-            modelBuilder.Entity<Punishment>()
-                .HasIndex(p => p.PoliceManId);
-
-            modelBuilder.Entity<PoliceMan>()
-                .HasIndex(p => p.Name);
+                .OnDelete(DeleteBehavior.Cascade);  
 
             // Unique constraint on Soldier NationalId
             modelBuilder.Entity<Soldier>()

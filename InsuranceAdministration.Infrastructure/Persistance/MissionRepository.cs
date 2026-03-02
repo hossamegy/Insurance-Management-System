@@ -28,7 +28,6 @@ namespace InsuranceAdministration.Infrastructure.Persistance
         public async ValueTask<IEnumerable<Mission>> GetAllMissions()
         {
             return await _entities
-                .Include(m => m.Policemen)
                 .Include(m => m.SoldierMissions)
                 .ToListAsync();
         }
@@ -36,7 +35,6 @@ namespace InsuranceAdministration.Infrastructure.Persistance
         public async ValueTask<Mission?> GetMission(int id)
         {
             return await _entities
-                .Include(m => m.Policemen)
                 .Include(m => m.SoldierMissions)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }

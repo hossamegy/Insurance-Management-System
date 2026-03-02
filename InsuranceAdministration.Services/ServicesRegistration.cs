@@ -9,7 +9,6 @@ namespace InsuranceAdministration.Services
         {
             builder.Services.AddScoped<IMissionServices, MissionService>();
             builder.Services.AddScoped<ISoldierServices, SoldierServices>();
-            builder.Services.AddScoped<IPoliceManServices, PoliceManServices>();
 
             // Settings
             builder.Services.AddScoped<ISettingsServices, SettingsServices>();

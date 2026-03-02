@@ -16,7 +16,6 @@ namespace InsuranceAdministration.Infrastructure
         {
             builder.Services.AddScoped<IMissionRepository, MissionRepository>();
             builder.Services.AddScoped<ISoldierRepository, SoldierRepository>();
-            builder.Services.AddScoped<IPoliceManRepository, PoliceManRepository>();
 
             // Settings
             builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
